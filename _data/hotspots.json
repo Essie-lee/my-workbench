@@ -1,0 +1,148 @@
+{
+  "updatedAt": "2026-07-24T07:31:43.908Z",
+  "sources": {
+    "weibo": {
+      "label": "微博热搜",
+      "icon": "🔥",
+      "color": "#e6162d"
+    },
+    "bilibili": {
+      "label": "B站热门",
+      "icon": "📺",
+      "color": "#fb7299"
+    },
+    "baidu": {
+      "label": "百度热搜",
+      "icon": "🔍",
+      "color": "#3385ff"
+    },
+    "douyin": {
+      "label": "抖音热点",
+      "icon": "🎵",
+      "color": "#2a2a2a"
+    },
+    "xiaohongshu": {
+      "label": "小红书热点",
+      "icon": "📕",
+      "color": "#ff2e4d"
+    }
+  },
+  "items": {
+    "weibo": [],
+    "bilibili": [
+      {
+        "title": "树恨你",
+        "url": "https://b23.tv/BV1h4KU66ENd",
+        "hot": 7809780,
+        "rank": 1
+      },
+      {
+        "title": "《梦战：剑之海》首支实机预告片丨全球首测招募开启",
+        "url": "https://b23.tv/BV1AnKs6tE2n",
+        "hot": 4666749,
+        "rank": 2
+      },
+      {
+        "title": "世界上五种特色调式音阶。#几何图形 #解压",
+        "url": "https://b23.tv/BV1KLg66DEi2",
+        "hot": 3340431,
+        "rank": 3
+      },
+      {
+        "title": "差点被烟管单杀了",
+        "url": "https://b23.tv/BV11oK16pEEz",
+        "hot": 4667210,
+        "rank": 4
+      },
+      {
+        "title": "一条老奶奶",
+        "url": "https://b23.tv/BV17rKb68EQ7",
+        "hot": 6466563,
+        "rank": 5
+      },
+      {
+        "title": "我婚礼上要放这个",
+        "url": "https://b23.tv/BV1n9gC6HEzP",
+        "hot": 4304876,
+        "rank": 6
+      },
+      {
+        "title": "《崩坏：星穹铁道》× Fate[UBW] 联动PV——「别来无恙」",
+        "url": "https://b23.tv/BV1ThgD6nEie",
+        "hot": 3254522,
+        "rank": 7
+      },
+      {
+        "title": "非AI生成！网友分享自家鹦鹉学唱《说唱脸谱》成果，网友：这转音太丝滑了！",
+        "url": "https://b23.tv/BV1ygKa67Eay",
+        "hot": 2595468,
+        "rank": 8
+      }
+    ],
+    "baidu": [],
+    "douyin": [
+      {
+        "title": "#钢琴版热门BGM 挑战",
+        "url": "https://so.toutiao.com/search?keyword=%E9%92%A2%E7%90%B4%E7%89%88%E7%83%AD%E9%97%A8BGM",
+        "hot": 500000,
+        "rank": 1
+      },
+      {
+        "title": "#30天学会一首歌",
+        "url": "https://so.toutiao.com/search?keyword=30%E5%A4%A9%E5%AD%A6%E4%BC%9A%E4%B8%80%E9%A6%96%E6%AD%8C",
+        "hot": 400000,
+        "rank": 2
+      },
+      {
+        "title": "#Barre芭杆塑形",
+        "url": "https://so.toutiao.com/search?keyword=Barre%E8%8A%AD%E6%9D%86%E5%A1%91%E5%BD%A2",
+        "hot": 350000,
+        "rank": 3
+      },
+      {
+        "title": "#普通人学琴第N天",
+        "url": "https://so.toutiao.com/search?keyword=%E6%99%AE%E9%80%9A%E4%BA%BA%E5%AD%A6%E7%90%B4%E7%AC%ACN%E5%A4%A9",
+        "hot": 300000,
+        "rank": 4
+      },
+      {
+        "title": "#零基础学韩语",
+        "url": "https://so.toutiao.com/search?keyword=%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%AD%A6%E9%9F%A9%E8%AF%AD",
+        "hot": 280000,
+        "rank": 5
+      }
+    ],
+    "xiaohongshu": [
+      {
+        "title": "普通人学琴第N天",
+        "url": "https://www.xiaohongshu.com/search_result?keyword=%E6%99%AE%E9%80%9A%E4%BA%BA%E5%AD%A6%E7%90%B4",
+        "hot": 300000,
+        "rank": 1
+      },
+      {
+        "title": "钢琴版流行BGM",
+        "url": "https://www.xiaohongshu.com/search_result?keyword=%E9%92%A2%E7%90%B4%E7%89%88%E6%B5%81%E8%A1%8CBGM",
+        "hot": 250000,
+        "rank": 2
+      },
+      {
+        "title": "欧阳春晓芭杆跟练",
+        "url": "https://www.xiaohongshu.com/search_result?keyword=%E6%AC%A7%E9%98%B3%E6%98%A5%E6%99%93%E8%8A%AD%E6%9D%86",
+        "hot": 200000,
+        "rank": 3
+      },
+      {
+        "title": "零基础学韩语",
+        "url": "https://www.xiaohongshu.com/search_result?keyword=%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%AD%A6%E9%9F%A9%E8%AF%AD",
+        "hot": 180000,
+        "rank": 4
+      },
+      {
+        "title": "粤语零基础跟读",
+        "url": "https://www.xiaohongshu.com/search_result?keyword=%E7%B2%A4%E8%AF%AD%E9%9B%B6%E5%9F%BA%E7%A1%80",
+        "hot": 150000,
+        "rank": 5
+      }
+    ]
+  }
+}

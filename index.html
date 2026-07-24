@@ -760,10 +760,54 @@
     }
 
     // ===================== 选题 =====================
+    // ===== 热点数据（GitHub Actions 每天自动生成 _data/hotspots.json）=====
+    let _hotspots = null;
+    async function prefetchHotspots() {
+      try {
+        const r = await fetch('./_data/hotspots.json', { cache: 'no-cache' });
+        if (r.ok) {
+          _hotspots = await r.json();
+          // 如果当前正显示选题页，刷新热点 section
+          if (currentView === 'topic') {
+            const el = document.getElementById('hotspots-section');
+            if (el) el.outerHTML = renderHotspotsSection(_hotspots);
+        }
+        }
+      } catch(e) { /* 离线或无数据时不显示 */ }
+    }
+    function renderHotspotsSection(hot) {
+      if (!hot || !hot.items) return '';
+      const sources = hot.sources || {};
+      const items = hot.items || {};
+      const keys = Object.keys(sources);
+      const activeKey = keys[0];
+      const time = hot.updatedAt ? new Date(hot.updatedAt).toLocaleString('zh-CN', { month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
+      const tabs = keys.map(k => `<button class="pill ${k===activeKey?'active':''}" data-action="hot-tab" data-k="${k}" style="${k===activeKey?'background:'+sources[k].color+';color:#fff;border-color:'+sources[k].color:''}">${sources[k].icon} ${sources[k].label}</button>`).join('');
+      const list = (items[activeKey] || []).map((it, i) => `<div class="video-card" style="background:var(--bg)">
+        <div class="play" style="background:${sources[activeKey].color};font-weight:700">${it.rank || (i+1)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.title)}</div>
+          <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;align-items:center">
+            <span class="tag gray">🔥 ${(it.hot/10000).toFixed(0)} 万</span>
+            <a href="${esc(it.url)}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">查看 →</a>
+            <button class="btn sm outline" data-action="save-topic" data-t="${esc(it.title)}" style="padding:3px 10px;font-size:12px">⭐ 存灵感</button>
+          </div>
+        </div>
+      </div>`).join('');
+      return `<div class="card" id="hotspots-section">
+        <div class="card-title">🔥 今日自动热点</div>
+        <div class="card-sub">GitHub Actions 每天自动更新 · 最后更新：${time || '加载中...'}</div>
+        <div class="tabs" style="margin-bottom:10px">${tabs}</div>
+        <div id="hotItems">${list || '<div class="empty">暂无数据</div>'}</div>
+      </div>`;
+    }
+
     function renderTopic() {
       // 防御性初始化
       if (!Array.isArray(state.topicSaved)) { state.topicSaved = []; save(); }
+      const hotHtml = renderHotspotsSection(_hotspots);
       $('main').innerHTML = `
+        ${hotHtml}
         <div class="card">
           <div class="card-title">🐣 新人简易灵感</div>
           <div class="card-sub">抖音 / 小红书新人，挑简单易上手、真实感强的方向。</div>
@@ -1053,6 +1097,33 @@
         case 'save-profile': { state.health.profile.height=$('hHeight').value; state.health.profile.goalWeight=$('hGoal').value; save(); toast('已保存基础数据'); break; }
         case 'save-record': { const d=today(); state.health.records[d]={ sleep:$('recSleep').value, weight:$('recWeight').value, mood:+$('recMood').value, exercise:$('recEx').value, note:$('recNote').value }; save(); toast('✅ 今日健康记录已保存'); break; }
         case 'save-topic': { const tt=t.dataset.t; if(state.topicSaved.includes(tt)) state.topicSaved=state.topicSaved.filter(x=>x!==tt); else state.topicSaved.push(tt); save(); renderTopic(); break; }
+        case 'hot-tab': {
+          if (!_hotspots) break;
+          const k = t.dataset.k;
+          const sources = _hotspots.sources || {};
+          const items = (_hotspots.items || {})[k] || [];
+          // 更新 tab 样式
+          document.querySelectorAll('#hotspots-section [data-action="hot-tab"]').forEach(b => {
+            const isActive = b.dataset.k === k;
+            b.classList.toggle('active', isActive);
+            if (isActive) { b.style.background = sources[k].color; b.style.color = '#fff'; b.style.borderColor = sources[k].color; }
+            else { b.style.background = ''; b.style.color = ''; b.style.borderColor = ''; }
+          });
+          // 更新列表
+          const itemsEl = document.getElementById('hotItems');
+          if (itemsEl) itemsEl.innerHTML = items.map((it,i) => `<div class="video-card" style="background:var(--bg)">
+            <div class="play" style="background:${sources[k].color};font-weight:700">${it.rank||(i+1)}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.title)}</div>
+              <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;align-items:center">
+                <span class="tag gray">🔥 ${(it.hot/10000).toFixed(0)} 万</span>
+                <a href="${esc(it.url)}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">查看 →</a>
+                <button class="btn sm outline" data-action="save-topic" data-t="${esc(it.title)}" style="padding:3px 10px;font-size:12px">⭐ 存灵感</button>
+              </div>
+            </div>
+          </div>`).join('') || '<div class="empty">暂无数据</div>';
+          break;
+        }
         case 'save-book': { const tt=t.dataset.t; if(state.bookSaved.includes(tt)) state.bookSaved=state.bookSaved.filter(x=>x!==tt); else state.bookSaved.push(tt); save(); renderBook(); break; }
         case 'add-note': { const b=$('bnBook').value.trim(), x=$('bnText').value.trim(); if(!b||!x)break; state.bookNotes.push({id:uid(),book:b,text:x,date:today()}); save(); toast('笔记已添加'); renderBook(); break; }
         case 'fetch-books': {
@@ -1146,6 +1217,8 @@
       save();
     }
     window.state = state;
+    // 启动时拉取今日热点（GitHub Actions 每天自动生成 _data/hotspots.json）
+    prefetchHotspots();
     // 启动时根据 URL hash 直接跳到对应模块（修打开 #book 还是首页的 bug）
     const startView = (location.hash || '#home').slice(1);
     navigate(VIEWS[startView] ? startView : 'home');
