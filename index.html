@@ -164,7 +164,7 @@
     .card-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--ink-1); }
     .card-sub { font-size: 13px; color: var(--ink-3); margin-bottom: 12px; line-height: 1.5; }
 
-    .stat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+    .stat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 4px; }
     .stat-card {
       background: rgba(255,255,255,.72);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -234,7 +234,14 @@
     .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
     /* ===== 章节标题 ===== */
-    .section-title { font-size: 14px; font-weight: 600; margin: 22px 4px 12px; color: var(--ink-1); text-transform: uppercase; letter-spacing: .04em; }
+    .section-title {
+      font-size: 12px; font-weight: 600; margin: 20px 6px 10px;
+      color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-title::before {
+      content: ''; width: 3px; height: 12px; background: var(--primary); border-radius: 2px;
+    }
 
     /* ===== Tab ===== */
     .tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px; }
@@ -1078,18 +1085,21 @@
       }
       $('main').innerHTML = `
         ${learnReminder}
+        <div class="section-title">今日进度</div>
         <div class="stat-grid">
           <div class="stat-card"><div class="num">${done}/${r.length}</div><div class="lbl">今日计划完成</div></div>
           <div class="stat-card"><div class="num">${mastered}/5</div><div class="lbl">钢琴阶段掌握</div></div>
         </div>
+        <div class="section-title">今日阅读</div>
         <div class="card">
           <div class="card-title">📖 今日书摘</div>
           <div class="quote">「${quote}」<span class="by">— 《${todayBook.t}》</span></div>
-          <div class="item-actions" style="margin-top:12px"><button class="btn sm outline" data-action="go" data-v="book">去读书</button></div>
+          <div class="item-actions" style="margin-top:14px"><button class="btn sm outline" data-action="go" data-v="book">去读书 →</button></div>
         </div>
+        <div class="section-title">今日行动</div>
         <div class="card">
           <div class="card-title">🎯 今日建议</div>
-          <div class="card-sub">语言 · 钢琴 · 运动 · 阅读，四件事每天推进一点点。</div>
+          <div class="card-sub">语言 · 钢琴 · 运动 · 阅读,四件事每天推进一点点。</div>
           <div class="row">
             <button class="btn sm" data-action="go" data-v="study">📚 学习</button>
             <button class="btn sm" data-action="go" data-v="piano">🎹 钢琴</button>
