@@ -540,7 +540,8 @@
         shoot: SHOOT_PLAN.map((s,i)=>({ id:'s'+i, ...s, done:false })),
         gameHistory: {},
         pianoUnlocked: 1, pianoMastered: [],
-        memos: []
+        memos: [],
+        lastLearnUpdate: null  // 由 AI 每次 push 学习内容时更新（ISO 日期 'YYYY-MM-DD'）
       };
     }
     let state = load();
@@ -630,7 +631,34 @@
       const mastered = state.pianoMastered.length;
       const todayBook = BOOKS.find(b => b.m === '2026-' + String(new Date().getMonth()+1).padStart(2,'0')) || BOOKS[0];
       const quote = (todayBook.q[new Date().getDate() % todayBook.q.length]);
+      // 每日学习内容更新提醒
+      const tdy = today();
+      const lastUpd = state.lastLearnUpdate;
+      const updDaysAgo = lastUpd ? Math.floor((Date.parse(tdy) - Date.parse(lastUpd)) / 86400000) : null;
+      let learnReminder;
+      if (updDaysAgo === null) {
+        learnReminder = `<div class="card" style="border:2px solid var(--accent);background:var(--accent-soft)">
+          <div class="card-title" style="color:#a0702d">📚 每日学习内容还没开始更新</div>
+          <div class="card-sub" style="color:#7a5530">AI 半自动方案已启用。对 AI 说：<strong>"帮我更新学习内容"</strong>，我会用 WebSearch 搜索当周热门内容（英语文章/韩语粤语会话/钢琴曲/选题），每天更新到工作台。</div>
+        </div>`;
+      } else if (updDaysAgo === 0) {
+        learnReminder = `<div class="card" style="border:1px solid var(--primary);background:var(--primary-soft)">
+          <div class="card-title" style="color:var(--primary-dark)">✅ 今日学习内容已更新</div>
+          <div class="card-sub">上次更新：今天 · 进入学习中心查看 →</div>
+        </div>`;
+      } else if (updDaysAgo <= 2) {
+        learnReminder = `<div class="card" style="border:2px solid var(--accent);background:var(--accent-soft)">
+          <div class="card-title" style="color:#a0702d">⏰ 学习内容 ${updDaysAgo} 天没更新了</div>
+          <div class="card-sub">上次更新：${lastUpd}（${updDaysAgo} 天前）。对 AI 说 "帮我更新学习内容" 立刻加新内容。</div>
+        </div>`;
+      } else {
+        learnReminder = `<div class="card" style="border:2px solid #d9534f;background:#fbe9e7">
+          <div class="card-title" style="color:#a94442">⚠️ 学习内容 ${updDaysAgo} 天没更新</div>
+          <div class="card-sub">上次更新：${lastUpd}。已经停更多天了，今天让 AI 加点新内容吧 → 说 "帮我更新学习内容"。</div>
+        </div>`;
+      }
       $('main').innerHTML = `
+        ${learnReminder}
         <div class="stat-grid">
           <div class="stat-card"><div class="num">${done}/${r.length}</div><div class="lbl">今日计划完成</div></div>
           <div class="stat-card"><div class="num">${mastered}/5</div><div class="lbl">钢琴阶段掌握</div></div>
