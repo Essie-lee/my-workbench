@@ -925,15 +925,79 @@
     function completion(){ const all=[...state.daily.routine,...state.daily.tasks]; return all.length?Math.round(all.filter(i=>i.done).length/all.length*100):0; }
 
     // ===================== 学习中心 =====================
-    let curLang = 'english';
+    let curLang = null;
     function renderStudy() {
       const langs = Object.keys(LANG);
+      // tabs 增加 "全部" 选项
+      const tabsHtml = `<button class="${!curLang?'active':''}" data-action="lang-all">全部</button>` +
+        langs.map(k=>`<button class="${curLang===k?'active':''}" data-action="lang" data-k="${k}">${LANG[k].flag} ${LANG[k].name}</button>`).join('');
       $('main').innerHTML = `
-        <div class="tabs">${langs.map(k=>`<button class="${curLang===k?'active':''}" data-action="lang" data-k="${k}">${LANG[k].flag} ${LANG[k].name}</button>`).join('')}</div>
+        <div class="tabs">${tabsHtml}</div>
         <div id="langBody"></div>`;
       renderLangBody();
     }
+
+    // 新增:三个语言总览
+    function renderAllLangs() {
+      const langs = Object.keys(LANG);
+      const today = new Date();
+      const dayKey = Math.floor(today.getTime() / 86400000);
+      const cards = langs.map(k => {
+        const L = LANG[k];
+        const st = state.lang[k] || (state.lang[k] = { level: null });
+        const lvIdx = st.level;
+        const lvName = lvIdx === null ? '未测评' : L.levels[lvIdx];
+        const lvTotal = L.levels.length;
+        // 今日材料索引(基于日期轮换)
+        const todayVocab = L.vocabulary[dayKey % L.vocabulary.length];
+        const todayTr = L.translations[dayKey % L.translations.length];
+        // 今日原文:有 articles 用 articles,否则用 dialogues 第一句
+        let todayOriginal = '';
+        if (L.articles && L.articles.length) {
+          todayOriginal = L.articles[dayKey % L.articles.length].title;
+        } else if (L.dialogues && L.dialogues.length) {
+          todayOriginal = L.dialogues[dayKey % L.dialogues.length].zh.slice(0, 20) + '…';
+        }
+        return `
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="padding:14px 16px;border-bottom:1px solid var(--line-2)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="font-size:24px;line-height:1">${L.flag}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:700;font-size:15px;color:var(--ink)">${L.name}</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px">${L.intro}</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:14px 16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div style="font-size:12px;color:var(--muted)">当前阶段</div>
+              <div style="font-weight:600;color:var(--ink)">${lvName} <span style="color:var(--muted);font-weight:400">/ 共 ${lvTotal} 阶段</span></div>
+            </div>
+            <div class="progress" style="height:6px;background:var(--line-2);border-radius:3px;overflow:hidden;margin-bottom:12px">
+              <span style="display:block;height:100%;background:var(--primary);border-radius:3px;width:${lvIdx===null?0:Math.round(((lvIdx+1)/lvTotal)*100)}%"></span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+              <button class="btn sm outline" data-action="lang" data-k="${k}">📖 全文</button>
+              <button class="btn sm outline" data-action="lang" data-k="${k}">🎴 单词</button>
+              <button class="btn sm outline" data-action="lang" data-k="${k}">✍️ 翻译</button>
+            </div>
+            <div style="font-size:11px;color:var(--muted);background:var(--bg);border-radius:8px;padding:8px 10px;line-height:1.6">
+              <div>📖 今日原文 · ${todayOriginal}</div>
+              <div>🎴 今日单词 · ${todayVocab.word} <span style="color:var(--muted)">(${todayVocab.meaning || todayVocab.mean || ''})</span></div>
+              <div>✍️ 今日翻译 · ${todayTr.answer.slice(0,24)}…</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+      $('langBody').innerHTML = `
+        <div class="card-sub" style="margin:0 4px 12px;line-height:1.6">3 个语言的完整学习计划。今日按日期自动轮换原文 / 单词 / 翻译练习。</div>
+        ${cards}
+        <div style="height:8px"></div>
+      `;
+    }
     function renderLangBody() {
+      if(!curLang) return renderAllLangs();
       const L = LANG[curLang];
       const st = state.lang[curLang];
       const lvIdx = st.level;
@@ -1499,6 +1563,7 @@
         case 'toggle-task': { const g=t.dataset.g,id=t.dataset.id; const it=state.daily[g].find(x=>x.id===id); if(it){it.done=!it.done;save();renderDaily();} break; }
         case 'del-task': { const g=t.dataset.g,id=t.dataset.id; state.daily[g]=state.daily[g].filter(x=>x.id!==id); save(); renderDaily(); break; }
         case 'add-task': { const v=$('newTask').value.trim(); if(!v)break; const ty=$('newType').value; state.daily[ty].push({id:uid(),title:v,tag:ty==='routine'?'每日必做':'创作任务',done:false}); save(); renderDaily(); break; }
+        case 'lang-all': curLang=null; renderLangBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.action==='lang-all')); break;
         case 'lang': curLang=t.dataset.k; renderLangBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.k===curLang)); break;
         case 'assess': startAssess(); break;
         case 'lang-done': { const i=+t.dataset.i; const L=LANG[curLang]; if(state.lang[curLang].level===i && i<L.plan.length-1){ state.lang[curLang].level=i+1; } save(); renderLangBody(); break; }
