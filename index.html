@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="我的工作台">
+  <link rel="apple-touch-icon" href="data:image/png;base64,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">
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22%E6%88%91%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8F%B0%22%2C%20%22short_name%22%3A%20%22%E5%B7%A5%E4%BD%9C%E5%8F%B0%22%2C%20%22start_url%22%3A%20%22.%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%23f4f5f2%22%2C%20%22theme_color%22%3A%20%22%234f7a52%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22data%3Aimage/png%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAPS0lEQVR4nO3d2a5kVR3H8V2d/R48iImvADTgFBFQIKIM6o1EQEBAvVIZmiZGZYpcqEyvYOKD9JO0FycF1c0Zalh7r%2BH3%2BSR943BOrX1S%2B/%2BttatqbyaadO9vrt%2Bu/RgASvjy959taj8GvskfpRIDHuCMQKjDQV%2BBYQ9wGFGwPAd4AQY%2BQFmCoDwHtAADH2BdguB0DuCRDH2ANoiB4zhoBzD0AdomBvbnQF3B0Afokxi4nINzAYMfYAxC4HwOyg5DH2BsYuBrDsRk8AOkEQLhAWDwA2RLDoHIhRv8AOxKDIGoBd/7gsEPwMW%2BfCMnBCIWavADcIiEELhW%2BwEszfAH4FAJs2PYwrnvhQeG/%2BMBsLwv3vh0yFk53KIMfgCWMFoIDHUJwPAHYCmjzZghama0PwoAbRthN6D7HQDDH4C1jTB7ug6AEf4AAPSp9xnU5RZG7wcdgLH0eEmgux0Awx%2BA1vQ4m7oKgB4PMAAZeptRXWxZ3PdiXwcVgGxfvN7%2BJYHmdwAMfwB608PsajoAejiAAHCe1mdYswHQ%2BoEDgKu0PMuaDICWDxgAHKLVmdZcALR6oADgWC3OtqYCoMUDBAAltDbjmvmYwv0vPtjUgQGAJXz%2B%2Bn%2BamL1N7AAY/gCkaGXmVQ%2BAVg4EAKylhdlXNQBaOAAAUEPtGVgtAGovHABqqzkLqwSA4Q8AZ2rNxNXfiXj/S4Y/ANzt89fW/XTAqjsAhj8AnG/tGblaABj%2BAHC5NWflKgFg%2BAPAftaamdW/BwAAWN/iAeDVPwAcZo3ZuWgAGP4AcJylZ%2BhiAWD4A8Bplpyl3gMAAIEWCQCv/gGgjKVmavFvHbr%2B0kOGPwAU9tlr/y46s4vuABj%2BALCM0jN2LvnD1r%2BzAABwjGI7ANd/69U/ACyp5KwtEgCGPwCso9TM9TFAAAh0cgB49Q8A6yoxe%2B0AAECgkwLAq38AqOPUGXx0ABj%2BAFDXKbPYJQAACHRUAHj1DwBtOHYm2wEAgEAHB4BX/wDQlmNmsx0AAAh00O17rr/s1T8AtOqzV/e/ZfBBdwPcuN0fAAxh70sAD7z8Ha/%2BAaBhh8xq7wEAgEB7BYBX/wDQh31nth0AAAgkAAAg0JUBYPsfAPqyz%2By2AwAAgS4NAK/%2BAaBPV81wOwAAEEgAAECgC7/b94FXbP8DQO8%2BfeVf5856OwAAEEgAAECgcwPA9j8AjOGimW4HAAACzef9h5uL3xsIAAzgGzsAD77yXdv/ADCQ82a7SwAAEEgAAEAgAQAAge4IANf/AWBMd894OwAAEEgAAECgO78HwMf/ASDCVzsAD77q%2Bj8AjGx31rsEAACBBAAABBIAABBIAABAoGvT5A2AAJBiO/PtAABAoHmapmnjCwAAIIodAAAIJAAAIJAAAIBAZ/cC8BYAAIhiBwAAAm0e%2Bt33fAcAAISxAwAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIHmjRsBAECc2fwHgDwuAQBAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABHIvAAAIZAcAAAIJAAAING9cAwCAOHYAACCQAACAQAIAAAIJAAAIJAAAIJAAAIBAAgAAAgkAAAgkAAAgkJsBAUAgOwAAEEgAAEAgAQAAgQQAAAQSAAAQaN74GAAAxLEDAACBBAAABBIAABBIAABAIAEAAIHcCwAAAtkBAIBAAgAAAgkAAAgkAAAgkAAAgEACAAACCQAACCQAACCQAACAQPPGVwECQBw7AAAQSAAAQCA3AwKAQHYAACCQAACAQAIAAAIJAAAIJAAAIJAAAIBAc%2B0HQJZPnv%2B46u//wR8fnqZpmv53879Ff%2B63nvr2NE3Wt7SU9cEaNt//ww9v134QjK/2iXXXPffcs8jPvXXr1iI/91DWd5xW1jdNQoB1CAAW1dLgn6blhsdW7SFifaepvb67CQGW5D0ALCZt%2BK/1O2r%2BbutbV2vPIcYiAIiw5om9xhCxvj5/F9R0bdpMk3/%2Blf7nlQuU8cnzH1d/Pvs35r95M20mANrlPM0SXAKguH/%2B%2BqPaDwGG4jnFEgQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEmn3DJEAHnKspzA4AAAQSAAAQSAAAQCABAACBZveZBmifczWl2QEAgEACAAACCQAACCQAACCQAACAQAIAAAIJAAAI5GZAAD1wrqYwOwAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBZveYBmifczWl2QEAgEACAAACCQAACOReAAA9cK6mMDsAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBZveYBmifczWluRkQQA%2BcqynMJQAACCQAACCQAACAQAIAAAIJAAAIJAAAIJAAAIBAAgAAAgkAAAgkAAAgkAAAgEDuBQDQA%2BdqCrMDAACBBAAABJrdYxqgfc7VlGYHAAACCQAACCQAACCQAACAQAIAAAIJAAAIJAAAIJAAAIBAAgAAArkZEEAPnKspzA4AAAQSAAAQSAAAQCABAACBBAAABJrdYxqgfc7VlGYHAAACCQAACCQAACCQAACAQAIAAAK5FwBAD5yrKcwOAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABJrdYxqgfc7VlGYHAAACCQAACORmQAA9cK6mMDsAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAUCEW7duDfm7avxO64MxCABirHFirzk8rK%2BP3wGtEABEWfIE38LwsL42fza0SAAQZ4kTfUvDw/ra%2BJnQurn2A4AazjvhP/bm43v9f99/7m%2BlH05x1nexHtYHa3AvANga/blgfX0bfX2sbnaPaTgz%2BnPB%2Bvo2%2BvpYn/cAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEcjMg2Br9uWB9fRt9fazODgAABBIAABBIAABAoNk9puHM6M8F6%2Bvb6OtjfXYAACCQAACAQAIAAAIJAAAIJAAAIJAAAIBAAgAAArkXAGyN/lywvr6Nvj5WZwcAAAIJAAAIJAAAIJAAAIBAAgAAAgkAAAgkAAAg0Owe03Bm9OeC9fVt9PWxPjsAABBIAABAIAEAAIEEAAAEcjMg2Br9uWB9fRt9fazODgAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQaHaPaTgz%2BnPB%2Bvo2%2BvpYn3sBwNbozwXr69vo62N1LgEAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAARyLwDYGv25YH19G319rM4OAAAEEgAAEGh2j2k4M/pzwfr6Nvr6WJ8dAAAIJAAo7smbT9V%2BCAc75DFbX3usDw4nAAAgkABgET29YjnmsVpfO6wPjiMAACCQAGAxPbxyOeUxWl991gfH2zzx7k9v134QjO%2BvT92s/RDuUPrEan3rsj44nQBgVbVPtEufWK1vWdYH5QgAAAjkZkAAEMibAAEgkAAAgEACAAACCQAACCQAACDQ7B7TAJDHDgAABBIAABBIAABAIAEAAIEEAAAEci8AAAhkBwAAAgkAAAgkAAAgkAAAgEACAAACCQAACCQAACCQAACAQAIAAALNG18FCABx7AAAQCABAACB3AwIAALZAQCAQAIAAAIJAAAIJAAAIJAAAIBAAgAAAgkAAAgkAAAgkAAAgEACAAACCQAACOReAAAQaN4oAACI4xIAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEuvbekzd8FSAABHnvyRsbOwAAEGiepmlyOwAAyGIHAAACCQAACCQAACDQPE3TtPEmAACIYgcAAAJdm6ZpuvnEO7YAACDAdubbAQCAQAIAAAIJAAAIJAAAINBXAeCNgAAwtt1ZP9/x30gAAIjgEgAABBIAABDojgC4%2Bbj3AQDAiO6e8XYAACCQAACAQAIAAAJ9IwC8DwAAxnLebJ/P%2Bx9ufCEAAAzNJQAACHRuALz7%2BNu2AABgABfNdDsAABBIAABAoEu3%2Bn/292dur/VAAICy3v3JxZf07QAAQCABAACBLg2Ay7YOAIB2XTXD7QAAQKArA8AuAAD0ZZ/ZbQcAAAIJAAAItFcAuAwAAH3Yd2bbAQCAQHsHgF0AAGjbIbN6PuQHby7/5mAAoBMHT/Sf/%2BNZ9wcAgMbc%2BPFbB8107wEAgEAHB8ChhQEALOuY2WwHAAACHRUAdgEAoA3HzmQ7AAAQ6OgAsAsAAHWdMotP2gEQAQBQx6kz2CUAAAh0cgDYBQCAdZWYvXYAACBQkQCwCwAA6yg1c4vtAIgAAFhWyVl70N0AryQBAKALRd8DcOMxuwAAsITSM3aRgf30%2B8%2B5ZTAAFPLOY28Wn9eLfApgiQcKAImWmqk%2BBggAgRYLALsAAHCaJWfpojsAIgAAjrP0DF38EoAIAIDDrDE7vQcAAAKtEgB2AQBgP2vNzNV2AEQAAFxuzVm56iUAEQAA51t7RlYZyE9/4JsCAWDrnUfXf4Fc5U2ANRYKAC2qNROrfQpABACQruYsrPoxQBEAQKraM7D69wDUPgAAsLYWZl/1AJimNg4EAKyhlZnXxIPYeuaDX/h0AADDevvRvzQzd5vYAdhq6cAAQEmtzbimAmCa2jtAAHCqFmdbcwEwTW0eKAA4RqszrckAmKZ2DxgA7KvlWdZsAExT2wcOAC7T%2BgxrOgCmqf0DCAB362F2Nf8Adz3zoY8JAtCutx9pf/BvNb8DsKunAwtAlt5mVFcBME39HWAAxtfjbOruAe9ySQCAmnoc/Fvd7QDs6vnAA9C33mdQ1wEwTf3/AQDozwizp/sF7HJJAIAljTD4t7rfAdg10h8GgLaMNmOGWswuuwEAlDDa4N8aclG7nv3wl0IAgIO99cifh56RQ10COM/of0AAykuYHcMvcJfdAAAukzD4t2IWuuvZj4QAAF9760c5g38rbsG7hABAtsTBvxW78F1CACBL8uDfij8Au4QAwNgM/q85EBcQAwBjMPTP56BcQQgA9Mngv5yDcwAxANA2Q39/DtSRxABAGwz94zhoBYgBgHUZ%2BqdzABcgCADKMvDLc0BXIAgADmPgL88BrkQUAJwx7Otw0Bv13Me/EgjAEN58%2BE9mTYP%2BD5ZhzTTyUFarAAAAAElFTkSuQmCC%22%2C%20%22sizes%22%3A%20%22512x512%22%2C%20%22type%22%3A%20%22image/png%22%7D%5D%7D">
+
+  <title>我的工作台</title>
+  <style>
+    :root {
+      --bg: #f4f5f2; --panel: #ffffff; --ink: #2b2b2b; --muted: #8a8a85;
+      --line: #e7e8e2; --primary: #4f7a52; --primary-soft: #e7f0e6; --primary-dark: #3a5e3d;
+      --accent: #d98a3d; --accent-soft: #fbeede; --blue: #3f6fb0; --blue-soft: #e6eef8;
+      --shadow: 0 2px 12px rgba(0,0,0,.06); --radius: 16px; --radius-sm: 10px;
+    }
+    [data-theme="dark"] {
+      --bg:#191a17; --panel:#232420; --ink:#f1f1ec; --muted:#9a9a92; --line:#34352f;
+      --primary:#79b07c; --primary-soft:#283a2a; --primary-dark:#a6d9a8; --accent:#e9b074;
+      --accent-soft:#3a3020; --blue:#7fa9e0; --blue-soft:#1f2c3c; --shadow:0 2px 14px rgba(0,0,0,.3);
+    }
+    * { box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
+    [hidden] { display: none !important; }
+    html, body { height: 100%; }
+    body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+      background: var(--bg); color: var(--ink); font-size: 15px; }
+    #app { max-width: 540px; margin: 0 auto; min-height: 100%; position: relative; background: var(--bg); }
+
+    .topbar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px calc(12px) 16px; padding-top: calc(12px + env(safe-area-inset-top));
+      background: var(--panel); border-bottom: 1px solid var(--line); }
+    .topbar h1 { font-size: 17px; font-weight: 700; flex: 1; cursor: pointer; }
+    .topbar .date { font-size: 12px; color: var(--muted); }
+    .icon-btn { width: 36px; height: 36px; border: none; background: transparent; border-radius: 50%; font-size: 18px; color: var(--ink); display: grid; place-items: center; }
+    .icon-btn:active { background: var(--bg); }
+
+    .drawer { position: fixed; top: 0; left: 0; width: 78%; max-width: 300px; height: 100%; background: var(--panel);
+      z-index: 60; transform: translateX(-110%); transition: transform .25s ease; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+    .drawer.open { transform: translateX(0); }
+    .drawer-header { padding: 32px 20px 16px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; }
+    .avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--primary-soft); display: grid; place-items: center; font-size: 24px; }
+    .drawer-header .name { font-weight: 700; font-size: 17px; cursor: pointer; }
+    .drawer-header .sub { font-size: 12px; color: var(--muted); }
+    .drawer-nav { flex: 1; padding: 10px 14px; overflow-y: auto; }
+    .drawer-nav button { width: 100%; text-align: left; padding: 13px 12px; border: none; background: transparent; border-radius: var(--radius-sm);
+      color: var(--ink); font-size: 15px; display: flex; align-items: center; gap: 12px; }
+    .drawer-nav button.active { background: var(--primary-soft); color: var(--primary-dark); font-weight: 600; }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 55; opacity: 0; pointer-events: none; transition: opacity .2s; }
+    .overlay.show { opacity: 1; pointer-events: auto; }
+
+    #main { padding: 14px 16px calc(40px + env(safe-area-inset-bottom)); }
+
+    .card { background: var(--panel); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow); border: 1px solid var(--line); }
+    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .card-sub { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+    .stat-card { background: var(--panel); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); border: 1px solid var(--line); }
+    .stat-card .num { font-size: 24px; font-weight: 700; color: var(--primary); }
+    .stat-card .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    .btn { border: none; border-radius: 20px; padding: 10px 18px; font-size: 14px; font-weight: 600; background: var(--primary); color: #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .btn:active { opacity: .9; }
+    .btn.outline { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+    .btn.sm { padding: 7px 13px; font-size: 13px; }
+    .btn.accent { background: var(--accent); }
+    .btn.blue { background: var(--blue); }
+
+    .tag { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .tag.primary { background: var(--primary-soft); color: var(--primary-dark); }
+    .tag.accent { background: var(--accent-soft); color: #a0702d; }
+    .tag.blue { background: var(--blue-soft); color: var(--blue); }
+    .tag.gray { background: var(--bg); color: var(--muted); }
+
+    .item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .item:last-child { border-bottom: none; }
+    .check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); flex-shrink: 0; margin-top: 1px; display: grid; place-items: center; font-size: 13px; color: #fff; }
+    .item.done .check { background: var(--primary); border-color: var(--primary); }
+    .item.done .item-title { text-decoration: line-through; color: var(--muted); }
+    .item-body { flex: 1; }
+    .item-title { font-size: 15px; font-weight: 500; }
+    .item-desc { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+    .item-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .icon-btn.inline { width: 28px; height: 28px; font-size: 15px; }
+
+    .progress-wrap { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+    .progress { flex: 1; height: 8px; background: var(--line); border-radius: 10px; overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--primary); border-radius: 10px; transition: width .3s; }
+
+    .input { width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--bg); color: var(--ink); font-size: 16px; font-family: inherit; }
+    .input:focus { outline: none; border-color: var(--primary); }
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .section-title { font-size: 18px; font-weight: 700; margin: 20px 0 12px; }
+    .tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px; }
+    .tabs button { white-space: nowrap; padding: 7px 15px; border-radius: 20px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); font-size: 13px; }
+    .tabs button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .filter-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px; }
+    .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+    .day-cell { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px 4px; text-align: center; cursor: pointer; transition: transform .1s; }
+    .day-cell.today { background: var(--primary-soft); border-color: var(--primary); }
+    .day-cell:active { transform: scale(0.96); }
+
+    .video-card { display: flex; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--bg); align-items: center; }
+    .video-card .play { width: 40px; height: 40px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-size: 18px; flex-shrink: 0; }
+    .video-card a { color: var(--blue); text-decoration: none; font-size: 13px; word-break: break-all; }
+
+    .stage-card { border: 2px solid var(--primary); background: linear-gradient(180deg, var(--panel) 0%, var(--primary-soft) 100%); }
+    .exercise { background: var(--panel); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px; border: 1px solid var(--line); }
+    .locked { opacity: .55; }
+
+    .memo-item { background: #fffbe6; border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px; color: #5c4b00; }
+    [data-theme="dark"] .memo-item { background: #3a3418; color: #e8dca8; }
+    .memo-date { font-size: 12px; opacity: .7; margin-top: 6px; }
+
+    .quote { font-style: italic; font-size: 15px; line-height: 1.7; color: var(--primary-dark); border-left: 3px solid var(--primary); padding-left: 14px; }
+    .quote .by { display: block; margin-top: 8px; font-size: 12px; color: var(--muted); font-style: normal; }
+
+    .sentence { padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .sentence:last-child { border-bottom: none; }
+    .en { font-size: 16px; margin-bottom: 4px; }
+    .zh { font-size: 14px; color: var(--muted); }
+
+    .game-board { display: grid; gap: 10px; margin: 14px 0; }
+    .cell { aspect-ratio: 1; border-radius: var(--radius-sm); background: var(--bg); display: grid; place-items: center; font-size: 24px; cursor: pointer; user-select: none; border: 1px solid var(--line); }
+    .cell.flip { background: var(--primary-soft); }
+
+    .chart { width: 100%; height: 150px; }
+
+    .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 80; display: grid; place-items: center; padding: 20px; }
+    .modal { background: var(--panel); border-radius: var(--radius); padding: 22px; width: 100%; max-width: 440px; max-height: 86vh; overflow: auto; box-shadow: var(--shadow); }
+    .modal h3 { margin-bottom: 14px; font-size: 18px; }
+    .modal .field { margin-bottom: 14px; }
+    .modal label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+    .opt { padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); margin-bottom: 8px; cursor: pointer; font-size: 14px; }
+    .opt.sel { border-color: var(--primary); background: var(--primary-soft); }
+
+    .empty { text-align: center; color: var(--muted); padding: 36px 18px; }
+    .empty .big { font-size: 34px; display: block; margin-bottom: 8px; }
+    .center { text-align: center; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <button class="icon-btn" id="menuBtn">☰</button>
+      <h1 id="pageTitle" title="点击重命名工作台">我的工作台</h1>
+      <span class="date" id="topDate"></span>
+    </header>
+
+    <nav class="drawer" id="drawer">
+      <div class="drawer-header">
+        <div class="avatar">🎯</div>
+        <div>
+          <div class="name" id="drawerName" title="点击重命名">我的工作台</div>
+          <div class="sub">Personal Growth OS</div>
+        </div>
+      </div>
+      <div class="drawer-nav" id="drawerNav">
+        <button data-view="home" class="active">🏠 首页</button>
+        <button data-view="daily">📝 每日计划</button>
+        <button data-view="study">📚 学习中心</button>
+        <button data-view="sport">🏊 运动计划</button>
+        <button data-view="health">❤️ 健康档案</button>
+        <button data-view="topic">💡 选题灵感</button>
+        <button data-view="book">📖 读书计划</button>
+        <button data-view="shoot">📷 拍摄计划</button>
+        <button data-view="game">🎮 益智游戏</button>
+        <button data-view="piano">🎹 钢琴练习</button>
+      </div>
+      <div style="padding:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
+        <button class="btn sm outline" data-action="export" style="width:100%">⬇️ 导出数据（备份/传手机）</button>
+        <button class="btn sm outline" data-action="import" style="width:100%">⬆️ 导入数据</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden />
+        <div class="card-sub" style="margin:2px 0 0;font-size:11px">数据存在本机浏览器，换设备/清缓存会丢，记得常导出。</div>
+      </div>
+    </nav>
+    <div class="overlay" id="overlay"></div>
+
+    <main id="main"></main>
+  </div>
+
+  <script>
+    const KEY = 'growth-os-v1';
+
+    // ===================== 数据 =====================
+    const LANG = {
+      english: {
+        name: '英语', flag: '🇬🇧', tts: 'en-US',
+        intro: '以「可理解输入 + 朗读模仿」为核心，参考 CEFR 欧洲语言框架分级。',
+        levels: ['A1 入门','A2 基础','B1 进阶','B2 流利','C1 精通'],
+        plan: [
+          { t:'A1 入门', g:'掌握 1000 核心词、基础语法与日常对话', s:'能自我介绍、点餐、问路；看懂简短通知', items:['发音与音标','be 动词与一般现在时','50 个高频动词','数字/时间/购物对话'] },
+          { t:'A2 基础', g:'扩展至 2000 词，简单过去/将来时', s:'能描述经历、计划与喜好', items:['过去时/将来时','比较级','情态动词','旅行与爱好话题'] },
+          { t:'B1 进阶', g:'3000+ 词，复合句与观点表达', s:'能写短文、参与熟悉话题讨论', items:['从句入门','阅读新闻简讯','写作：邮件/日记','听力：播客慢速'] },
+          { t:'B2 流利', g:'5000+ 词，地道表达与学术/职场语体', s:'能就多数话题流畅交流、读懂原版书', items:['长难句拆解','原版书精读','影子跟读','写作：议论文'] },
+          { t:'C1 精通', g:'8000+ 词，近母语表达', s:'能读懂专业文献、做正式演讲', items:['学术/商务写作','同义替换与修辞','辩论与演讲','文学赏析'] }
+        ],
+        assessment: [
+          { q:'你能用英语做自我介绍吗？', o:['完全不能','能说几句单词','能说 3-5 句','能流利说 1 分钟'], s:[0,1,2,3] },
+          { q:'看无字幕英文视频（如 YouTube）能懂多少？', o:['几乎听不懂','能抓个别词','懂大概意思','基本全懂'], s:[0,1,2,3] },
+          { q:'读写能力更接近？', o:['ABC 水平','能读短句','能读新闻','能读原版书'], s:[0,1,2,3] },
+          { q:'你的词汇量大约？', o:['<500','500-1500','1500-4000','>4000'], s:[0,1,2,3] }
+        ],
+        resources: [
+          { title:'BBC Learning English（免费听力口语）', url:'https://www.bbc.co.uk/learningenglish/' },
+          { title:'B站：英语母语者沉浸式听力', url:'https://search.bilibili.com/all?keyword=英语听力沉浸式' },
+          { title:'多邻国 / 不背单词（APP 背词）', url:'https://www.duolingo.com/' }
+        ],
+        articles: [
+          { title:'Why 15 Minutes a Day Beats Cramming', zh:'为什么每天15分钟胜过临时抱佛脚',
+            paras:[
+              {en:'Learning a language is like building a muscle: short, regular sessions beat one long, exhausting cram.', zh:'学语言就像练肌肉：短暂而规律的练习，胜过一次漫长又累人的突击。'},
+              {en:'When you practice a little every day, your brain has time to consolidate what it learned overnight.', zh:'当你每天练一点，大脑才有时间在夜间把学到的东西巩固下来。'},
+              {en:'Consistency also lowers the mental cost of starting, because the habit is already in motion.', zh:'坚持还能降低「开始」的心理成本，因为习惯已经在运转了。'},
+              {en:'So set a tiny daily goal—one sentence, one song, one page—and protect it like an appointment.', zh:'所以给自己定一个微小的每日目标：一句话、一首歌、一页书，并像约会一样守护它。'},
+              {en:'Over a year, those fifteen minutes compound into something no cram session can match.', zh:'一年下来，这十五分钟会积累成任何突击都难以企及的成果。'}
+            ] },
+          { title:'How Music Trains Your Brain', zh:'音乐如何训练你的大脑',
+            paras:[
+              {en:'Listening to music can change the way your brain processes sound and emotion.', zh:'听音乐能改变大脑处理声音与情绪的方式。'},
+              {en:'Playing an instrument goes further: it engages memory, coordination and creativity at once.', zh:'演奏乐器更进一步：它同时调动记忆、协调与创造力。'},
+              {en:'Studies show that daily practice, even for fifteen minutes, improves focus and mood.', zh:'研究表明，每天练习，即便只有十五分钟，也能提升专注力与情绪。'},
+              {en:'That is why pairing piano practice with language study works so well.', zh:'这就是为什么把钢琴练习和语言学习搭配起来，效果会这么好。'},
+              {en:'Both ask your brain to build new pathways—and consistency is the key that locks them in.', zh:'两者都在让大脑建立新通路，而坚持，正是把这些通路锁定的钥匙。'}
+            ] }
+        ]
+      },
+      korean: {
+        name: '韩语', flag: '🇰🇷', tts: 'ko-KR',
+        intro: '采用延世大学《延世韩国语》体系（1-6 册，对应 TOPIK），从发音到语法系统进阶。',
+        levels: ['发音入门','初级1','初级2','中级','高级'],
+        plan: [
+          { t:'发音入门', g:'掌握 40 个字母（19 辅音+21 元音）与基本拼读', s:'能拼读任意韩文、念出自己的名字', items:['19 个辅音','21 个元音','收音(받침)','发音规则：连音/送气'] },
+          { t:'初级1（延世1）', g:'基础语法与日常表达，约 800 词', s:'能自我介绍、购物、点餐、问路', items:['입니다/예요 是','있다/없다 有/无',' past: 았/었','数字与日期'] },
+          { t:'初级2（延世2）', g:'约 1500 词，复合句与敬语体系', s:'能描述经历、计划、做简单演讲', items:['敬语 평서/존댓','连接词尾','建议/命令','电话与约会'] },
+          { t:'中级（延世3-4）', g:'约 3000 词，书面与口语分化', s:'能看懂韩剧无字幕、写短文', items:['间接引语','被动/使动','惯用语','新闻简读'] },
+          { t:'高级（延世5-6）', g:'约 5000+ 词，近母语表达', s:'能参与讨论、准备 TOPIK 中高级', items:['高级语法','写作论证','同义替换','TOPIK 真题'] }
+        ],
+        assessment: [
+          { q:'你认识韩文字母吗？', o:['完全不认识','认识部分','基本都认识','能拼读'], s:[0,1,2,3] },
+          { q:'能听懂韩剧/韩综多少？', o:['几乎不懂','个别词','大概意思','大部分'], s:[0,1,2,3] },
+          { q:'你的韩语目标更接近？', o:['旅游够用','追星追剧','留学/工作','母语水平'], s:[0,1,2,3] },
+          { q:'系统学习时长？', o:['0','<3个月','3-12个月','>1年'], s:[0,1,2,3] }
+        ],
+        resources: [
+          { title:'延世韩国语（官方教材，含原声MP3）', url:'https://www.jd.com/chanpin/142327.html' },
+          { title:'B站：延世韩国语1-6册讲解', url:'https://search.bilibili.com/all?keyword=延世韩国语教程' },
+          { title:'韩语发音与拼读入门', url:'https://search.bilibili.com/all?keyword=韩语零基础发音' }
+        ],
+        dialogues: [
+          { ko:'안녕하세요, 처음 뵙겠습니다.', zh:'您好，初次见面。', mp:'annyeonghaseyo, cheoeum boepgetseumnida' },
+          { ko:'제 이름은 ___ 입니다.', zh:'我的名字是___。', mp:'je ireumeun ___ imnida' },
+          { ko:'한국어를 배우고 있어요.', zh:'我正在学韩语。', mp:'hangugeoreul baeugo isseoyo' },
+          { ko:'오늘 날씨가 참 좋아요.', zh:'今天天气真好。', mp:'oneul nalssiga cham joayo' },
+          { ko:'잘 부탁드립니다.', zh:'请多指教。', mp:'jal butakdeureumnida' }
+        ]
+      },
+      cantonese: {
+        name: '粤语', flag: '🇭🇰', tts: 'zh-HK',
+        intro: '以粤拼 Jyutping（香港语言学学会方案，九声六调）为正音基础，从日常会话到港剧无字幕。',
+        levels: ['拼音正音','基础会话','生活场景','地道表达','港剧自由'],
+        plan: [
+          { t:'拼音正音', g:'掌握粤拼声母/韵母与九声六调', s:'能拼读粤拼、区分六声', items:['声母 b p m f','韵母 aa o e','九声六调','入声 -p -t -k'] },
+          { t:'基础会话', g:'300 核心词 + 问候/礼貌用语', s:'能打招呼、道谢、问价钱', items:['早晨/唔該/多謝','数字与时间','买嘢讲价','食饭饮茶'] },
+          { t:'生活场景', g:'500 词，覆盖茶餐厅/交通/上班', s:'能在港式生活场景对话', items:['茶餐厅点单','港铁问路','电话用语','约朋友'] },
+          { t:'地道表达', g:'俗语/语气词(啦喎咩㗎)', s:'说话有「港味」', items:['语气词','常用俗语','反问句式','粵語歇後語'] },
+          { t:'港剧自由', g:'无字幕看懂港剧新闻', s:'能跟住剧情、学角色台词', items:['新闻跟读','港剧跟读','主持语调','即兴对话'] }
+        ],
+        assessment: [
+          { q:'你能区分粤语「三 / 九 / 五」的声调吗？', o:['完全不能','大概能','基本能','完全能'], s:[0,1,2,3] },
+          { q:'听过粤拼 Jyutping 吗？', o:['没听过','听过不会','会拼读','很熟'], s:[0,1,2,3] },
+          { q:'看港剧无字幕能懂多少？', o:['几乎不懂','个别词','大概','大部分'], s:[0,1,2,3] },
+          { q:'学习目标？', o:['旅游','看剧听歌','在粤语环境生活','母语级'], s:[0,1,2,3] }
+        ],
+        resources: [
+          { title:'粤语拼音完整入门指南（Jyutping）', url:'https://cantonesepinyin.com/zh-CN/guide' },
+          { title:'B站：粤语零基础到港剧自由', url:'https://search.bilibili.com/all?keyword=粤语零基础教学' },
+          { title:'粤语会话日常跟读', url:'https://search.bilibili.com/all?keyword=粤语会话跟读' }
+        ],
+        dialogues: [
+          { ko:'早晨，食咗飯未？', zh:'早上好，吃饭了吗？', mp:'zou2san4, sik6zo2 faan6 mei6' },
+          { ko:'唔該，畀杯凍檸茶。', zh:'麻烦给我一杯冰柠檬茶。', mp:'m4goi1, bei2 bui1 dung3 ning4 caa4' },
+          { ko:'呢度點去地鐵站？', zh:'这里怎么去地铁站？', mp:'ni1dou6 dim2 heoi3 dei6 tit3 zaam6' },
+          { ko:'幾多錢？', zh:'多少钱？', mp:'gei2do1 cin2' },
+          { ko:'多謝晒，拜拜！', zh:'多谢啦，拜拜！', mp:'do1ze6 saai3, baai1baai3' }
+        ]
+      }
+    };
+
+    const SPORTS = [
+      { id:'tennis', name:'网球', icon:'🎾', goal:'3 个月能底线对拉 20 拍、发上手球进区',
+        plan:[
+          { phase:'第1月·球感', items:['握拍与站位','颠球/拍球 100 次','正手定点喂球','教练或多球练习'] },
+          { phase:'第2月·正反手', items:['正手完整挥拍','反手单/双手','小场地对拉','发球抛球节奏'] },
+          { phase:'第3月·实战', items:['上手发球进区','底线对拉 20 拍','简单截击','打一局计分赛'] }
+        ],
+        videos:[
+          { t:'B站：网球零基础正反手教学', url:'https://search.bilibili.com/all?keyword=网球零基础教学正反手' },
+          { t:'B站：网球发球动作分解', url:'https://search.bilibili.com/all?keyword=网球发球教学' },
+          { t:'B站：网球步伐与体能', url:'https://search.bilibili.com/all?keyword=网球步伐训练' }
+        ] },
+      { id:'swim', name:'游泳', icon:'🏊', goal:'自由泳连续 500 米、换气顺畅不呛水',
+        plan:[
+          { phase:'第1月·水性', items:['呼吸练习（水中吐气）','漂浮与蹬墙滑行','扶板打腿','蛙泳腿'] },
+          { phase:'第2月·动作', items:['自由泳划手','自由泳换气','蛙泳完整配合','水下视频纠错'] },
+          { phase:'第3月·耐力', items:['连续自由泳 200m','混合泳 400m','提速与节奏','开放水域适应'] }
+        ],
+        videos:[
+          { t:'B站：自由泳零基础换气', url:'https://search.bilibili.com/all?keyword=自由泳换气教学' },
+          { t:'B站：蛙泳腿动作分解', url:'https://search.bilibili.com/all?keyword=蛙泳腿教学' },
+          { t:'B站：自由泳划手与打腿', url:'https://search.bilibili.com/all?keyword=自由泳划手打腿' }
+        ] },
+      { id:'barre', name:'欧阳春晓芭杆', icon:'🩰', goal:'每周 3-4 次，改善体态、练出沙漏腰/薄背',
+        note:'Barre 芭杆运动 = 芭蕾 + 普拉提，精准训练深层肌群，不跑不跳、零基础友好。',
+        plan:[
+          { phase:'适应期', items:['上肢芭杆（薄背）','足弓重建','全程站立不跑不跳','跟练 20 分钟×3/周'] },
+          { phase:'塑形期', items:['沙漏腰芭杆版','臀腿芭杆','核心控制','跟练 30 分钟×4/周'] },
+          { phase:'进阶期', items:['全套芭杆串联','加入小哑铃','体态薄背巩固','拍照记录对比'] }
+        ],
+        videos:[
+          { t:'B站：欧阳春晓芭杆运动全集', url:'https://search.bilibili.com/all?keyword=欧阳春晓芭杆运动' },
+          { t:'抖音：欧阳春晓沙漏腰芭杆', url:'https://www.douyin.com/search/%E6%AC%A7%E9%98%B3%E6%98%A5%E6%99%93%E8%8A%AD%E6%9D%86%E8%BF%90%E5%8A%A8' },
+          { t:'B站：Barre 芭杆上肢雕刻', url:'https://search.bilibili.com/all?keyword=Barre芭杆上肢雕刻' }
+        ] }
+    ];
+
+    const TOPIC_NEWBIE = [
+      { t:'「第一次做__」系列', a:'你是新人，真实感最动人。记录你第一次录歌/弹琴/健身的笨拙与进步', tags:['抖音','小红书'] },
+      { t:'30 天挑战打卡', a:'「30天学一首钢琴曲」「30天早C晚A」，系列化天然涨粉', tags:['抖音','小红书'] },
+      { t:'一个技巧 30 秒讲清', a:'把专业拆成小白能懂的短知识，收藏率高', tags:['B站','视频号'] },
+      { t:'前后对比（Before/After）', a:'练琴/运动/穿搭的前后变化，视觉冲击强', tags:['小红书','抖音'] },
+      { t:'我的翻车现场', a:'展示失败与搞笑瞬间，拉近距离、引发评论', tags:['抖音'] },
+      { t:'「普通人视角」测评', a:'你真实用过的好物/课程测评，比硬广可信', tags:['小红书'] },
+      { t:'每日一句/一曲', a:'低门槛日更，培养粉丝追更习惯', tags:['抖音','小红书'] },
+      { t:'幕后 vlog', a:'展示练习、拍摄、剪辑过程，增强陪伴感', tags:['小红书','B站'] }
+    ];
+    const TOPIC_GROWTH = [
+      '明确定位：选一个你真心擅长且能持续输出的垂直领域（如钢琴/运动/语言学习），不要什么都发。',
+      '人设一致：头像、昵称、简介、内容风格统一，让用户一眼记住你。',
+      '前 30 条是「样本测试」：不同形式都试，看哪类完播/互动高，再All in。',
+      '钩子前置：前 3 秒必须抛问题/冲突/结果，否则用户划走。',
+      '评论区运营：每条都回复，置顶提问引导互动，算法会推更多流量。',
+      '固定更新节奏：比爆款更重要的是稳定，让算法知道你是「活账号」。',
+      '借势热点：把你的领域和当下热点结合（如节日、梗、热门BGM）。',
+      '从「利他」出发：用户为什么关注你？能学到/笑到/省到/暖到，占其一即可。',
+      '数据复盘：每周看完播率、涨粉来源，淘汰低质、放大高质。',
+      '长期主义：千万账号是 1000 条内容堆出来的，不是一条爆款。'
+    ];
+    const TOPIC_HOT = [
+      { t:'#钢琴版热门BGM 挑战', cat:'弹琴', url:'https://www.douyin.com/search/%E9%92%A2%E7%90%B4%E7%89%88%E7%83%AD%E9%97%A8BGM' },
+      { t:'#30天学会一首歌', cat:'挑战', url:'https://www.douyin.com/search/30天学会一首歌' },
+      { t:'#普通人学琴第N天', cat:'成长', url:'https://www.xiaohongshu.com/search_result?keyword=普通人学琴' },
+      { t:'#Barre芭杆塑形', cat:'运动', url:'https://www.douyin.com/search/Barre芭杆塑形' },
+      { t:'#零基础学韩语', cat:'学习', url:'https://www.xiaohongshu.com/search_result?keyword=零基础学韩语' },
+      { t:'#粤语港剧打卡', cat:'语言', url:'https://www.douyin.com/search/粤语港剧' }
+    ];
+
+    const BOOKS = [
+      { m:'2026-07', t:'《被讨厌的勇气》', a:'岸见一郎/古贺史健', q:['「自由就是被别人讨厌。」——真正的自由，是有勇气不讨好所有人。','人生不是与他人的比赛，而是与「理想的自己」的比赛。'] },
+      { m:'2026-07', t:'《人类简史》', a:'尤瓦尔·赫拉利', q:['我们以为驯化了小麦，其实是小麦驯化了我们。','想象的共同体，让陌生人也能大规模协作。'] },
+      { m:'2026-08', t:'《活着》', a:'余华', q:['人是为活着本身而活着，而不是为了活着之外的任何事物。','苦难不值得赞美，但承受苦难的勇气值得。'] },
+      { m:'2026-08', t:'《思考，快与慢》', a:'丹尼尔·卡尼曼', q:['我们不是理性的机器，而是被直觉与偏见驱动的故事讲述者。','放慢系统2，才能躲开系统1的陷阱。'] },
+      { m:'2026-09', t:'《百年孤独》', a:'加西亚·马尔克斯', q:['过去都是假的，回忆没有归路。','生命中所有的灿烂，终要用寂寞偿还。'] },
+      { m:'2026-09', t:'《原子习惯》', a:'詹姆斯·克利尔', q:['你并非要达到目标，而是成为那个能持续做到的人。','每天进步1%，一年后是37倍。'] },
+      { m:'2026-10', t:'《小王子》', a:'圣埃克苏佩里', q:['真正重要的东西，用眼睛是看不见的。','你为你的玫瑰花费的时间，使你的玫瑰变得重要。'] },
+      { m:'2026-10', t:'《非暴力沟通》', a:'马歇尔·卢森堡', q:['观察、感受、需要、请求——沟通的四步。','批评的背后，是一个未被满足的需要。'] },
+      { m:'2026-11', t:'《自控力》', a:'凯利·麦格尼格尔', q:['意志力像肌肉，会疲劳，也能锻炼。','承认冲动，而不是压抑它，反而更容易放下。'] },
+      { m:'2026-11', t:'《国富论》', a:'亚当·斯密', q:['分工是财富增长的源头。','看不见的手，让私利成就公益。'] },
+      { m:'2026-12', t:'《小王子之外：夜航西飞》', a:'柏瑞尔·马卡姆', q:['非洲的星空下，孤独让人清醒。','你飞得越高，越能原谅地面。'] },
+      { m:'2026-12', t:'《心流》', a:'米哈里·契克森米哈赖', q:['幸福不是拥有，而是全神贯注时的忘我。','最佳体验，发生在挑战与能力恰好匹配时。'] }
+    ];
+
+    const SHOOT_PLAN = [
+      { t:'拍完即导出', d:'相机/手机拍完，当天连电脑/云盘导出，绝不「等有空」', tag:'防拖延' },
+      { t:'当日粗剪 1 条', d:'哪怕只剪 15 秒，先出一条，避免素材积压', tag:'日更' },
+      { t:'建立素材文件夹', d:'按日期+主题命名，如 0724_钢琴练习，找素材不再翻半天', tag:'整理' },
+      { t:'每周固定发布 3 条', d:'周一到周日排期，设手机提醒，到点就发', tag:'节奏' },
+      { t:'周末 30 分钟复盘', d:'看哪条数据好，记一句原因，下周复用', tag:'复盘' },
+      { t:'设置「导出日」闹钟', d:'每天 21:00 闹钟：导出+备份，形成肌肉记忆', tag:'提醒' }
+    ];
+
+    const PIANO_VIDEO = [
+      { t:'B站：钢琴零基础入门（手型/认键）', url:'https://search.bilibili.com/all?keyword=钢琴零基础入门手型' },
+      { t:'B站：哈农/音阶基本功', url:'https://search.bilibili.com/all?keyword=哈农钢琴音阶练习' },
+      { t:'B站：钢琴即兴伴奏万能和弦', url:'https://search.bilibili.com/all?keyword=钢琴即兴伴奏万能和弦' }
+    ];
+
+    // ===================== 状态 =====================
+    function defaultState() {
+      return {
+        wbName: '我的工作台',
+        daily: { routine:[
+          { id:'r1', title:'语言学习 30 分钟', tag:'每日必做', done:false },
+          { id:'r2', title:'钢琴练习 1 小时', tag:'每日必做', done:false },
+          { id:'r3', title:'运动（网球/游泳/芭杆）', tag:'每日必做', done:false },
+          { id:'r4', title:'阅读 20 分钟', tag:'每日必做', done:false }
+        ], tasks:[
+          { id:'t1', title:'内容拍摄/剪辑', tag:'创作任务', done:false },
+          { id:'t2', title:'选题与复盘', tag:'创作任务', done:false }
+        ] },
+        lang: { english:{ level:null, progress:{} }, korean:{ level:null, progress:{} }, cantonese:{ level:null, progress:{} } },
+        sport: { done:{}, weekPlan:{1:'tennis',2:'barre',3:'swim',4:'tennis',5:'barre',6:'swim',7:'tennis'}, log:{} },
+        health: { profile:{}, records:{} },   // records[date]={sleep,mood,exercise,weight,note}
+        topicSaved: [], bookNotes: [], bookSaved: [], bookApi: null,
+        shoot: SHOOT_PLAN.map((s,i)=>({ id:'s'+i, ...s, done:false })),
+        gameHistory: {},
+        pianoUnlocked: 1, pianoMastered: [],
+        memos: []
+      };
+    }
+    let state = load();
+    function load() {
+      try {
+        const s = JSON.parse(localStorage.getItem(KEY));
+        if (s && typeof s === 'object') {
+          const ds = defaultState();
+          const merged = Object.assign(ds, s);
+          // 智能合并：保证 defaultState 的所有顶层+一层字段都存在于 merged（修老数据缺失字段导致整页崩溃）
+          for (const k in ds) {
+            if (merged[k] === undefined || merged[k] === null) {
+              merged[k] = ds[k];
+            } else if (ds[k] !== null && typeof ds[k] === 'object' && !Array.isArray(ds[k])) {
+              for (const sk in ds[k]) {
+                if (merged[k][sk] === undefined) merged[k][sk] = ds[k][sk];
+              }
+            }
+          }
+          return merged;
+        }
+      } catch(e){}
+      return defaultState();
+    }
+    function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+
+    const $ = id => document.getElementById(id);
+    const dateStr = d => { const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`; };
+    const today = () => dateStr(new Date());
+    const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+    function warmVoices() {
+      if (!('speechSynthesis' in window)) return;
+      try { speechSynthesis.getVoices(); } catch(e){}
+      speechSynthesis.onvoiceschanged = () => { try { speechSynthesis.getVoices(); } catch(e){} };
+    }
+    function speak(text, lang) {
+      if (!('speechSynthesis' in window)) { toast('当前浏览器不支持朗读，请用 Chrome / Edge / Safari'); return; }
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang || 'en-US';
+      u.rate = 0.9; u.pitch = 1;
+      try {
+        const vs = speechSynthesis.getVoices();
+        let v = vs.find(x => x.lang === u.lang);
+        if (!v) v = vs.find(x => x.lang && x.lang.toLowerCase().startsWith(u.lang.split('-')[0].toLowerCase()));
+        if (v) u.voice = v;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+        if (!vs.length) {
+          setTimeout(()=>{ toast('语音包尚未加载完，请再点一次或在系统设置安装对应语言语音'); }, 600);
+        } else if (!v && lang && lang.startsWith('zh')) {
+          toast('当前设备没有粤语语音包（zh-HK），可尝试 zh-CN 或到系统设置安装');
+        }
+      } catch(e) { toast('朗读失败：' + e.message); }
+    }
+    function toast(msg) {
+      let t = document.getElementById('toast');
+      if (!t) {
+        t = document.createElement('div'); t.id = 'toast';
+        t.style.cssText = 'position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;padding:10px 18px;border-radius:24px;font-size:14px;z-index:100;max-width:85%;text-align:center;transition:opacity .25s;opacity:0';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg; t.style.opacity = '1';
+      clearTimeout(t._tm); t._tm = setTimeout(()=>{ t.style.opacity='0'; }, 2600);
+    }
+
+    // ===================== 导航 =====================
+    const VIEWS = { home:renderHome, daily:renderDaily, study:renderStudy, sport:renderSport, health:renderHealth,
+      topic:renderTopic, book:renderBook, shoot:renderShoot, game:renderGame, piano:renderPiano };
+    let currentView = 'home';
+    const TITLES = { home:'首页', daily:'每日计划', study:'学习中心', sport:'运动计划', health:'健康档案',
+      topic:'选题灵感', book:'读书计划', shoot:'拍摄计划', game:'益智游戏', piano:'钢琴练习' };
+
+    function navigate(view) {
+      currentView = view;
+      $('pageTitle').textContent = state.wbName && view==='home' ? state.wbName : TITLES[view];
+      document.querySelectorAll('#drawerNav button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+      closeDrawer();
+      VIEWS[view]();
+    }
+    function openDrawer() { $('drawer').classList.add('open'); $('overlay').classList.add('show'); }
+    function closeDrawer() { $('drawer').classList.remove('open'); $('overlay').classList.remove('show'); }
+
+    // ===================== 首页 =====================
+    function renderHome() {
+      const r = [...state.daily.routine, ...state.daily.tasks];
+      const done = r.filter(i=>i.done).length;
+      const mastered = state.pianoMastered.length;
+      const todayBook = BOOKS.find(b => b.m === '2026-' + String(new Date().getMonth()+1).padStart(2,'0')) || BOOKS[0];
+      const quote = (todayBook.q[new Date().getDate() % todayBook.q.length]);
+      $('main').innerHTML = `
+        <div class="stat-grid">
+          <div class="stat-card"><div class="num">${done}/${r.length}</div><div class="lbl">今日计划完成</div></div>
+          <div class="stat-card"><div class="num">${mastered}/5</div><div class="lbl">钢琴阶段掌握</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">📖 今日书摘</div>
+          <div class="quote">「${quote}」<span class="by">— 《${todayBook.t}》</span></div>
+          <div class="item-actions" style="margin-top:12px"><button class="btn sm outline" data-action="go" data-v="book">去读书</button></div>
+        </div>
+        <div class="card">
+          <div class="card-title">🎯 今日建议</div>
+          <div class="card-sub">语言 · 钢琴 · 运动 · 阅读，四件事每天推进一点点。</div>
+          <div class="row">
+            <button class="btn sm" data-action="go" data-v="study">📚 学习</button>
+            <button class="btn sm" data-action="go" data-v="piano">🎹 钢琴</button>
+            <button class="btn sm" data-action="go" data-v="sport">🏊 运动</button>
+            <button class="btn sm" data-action="go" data-v="game">🎮 游戏</button>
+          </div>
+        </div>`;
+    }
+
+    // ===================== 每日计划 =====================
+    function renderDaily() {
+      const remaining = [...state.daily.routine, ...state.daily.tasks].filter(i=>!i.done).length;
+      const rate = completion();
+      $('main').innerHTML = `
+        <div class="card">
+          <div class="card-title">${remaining} 待完成</div>
+          <div class="card-sub">完成率 ${rate}%</div>
+          <div class="progress-wrap"><div class="progress"><span style="width:${rate}%"></span></div>${rate}%</div>
+        </div>
+        <div class="section-title">个人日常</div>
+        <div class="card">${state.daily.routine.map(i=>taskItem(i,'routine')).join('')}</div>
+        <div class="section-title">创作任务</div>
+        <div class="card">${state.daily.tasks.map(i=>taskItem(i,'tasks')).join('')}</div>
+        <div class="card">
+          <div class="card-title">添加任务</div>
+          <div class="row" style="margin-top:8px">
+            <input class="input" id="newTask" placeholder="任务名称…" />
+            <select class="input" id="newType" style="width:110px;flex-shrink:0;font-size:15px"><option value="routine">日常</option><option value="tasks">创作</option></select>
+            <button class="btn" data-action="add-task">+</button>
+          </div>
+        </div>`;
+    }
+    function taskItem(i,g){ return `<div class="item ${i.done?'done':''}">
+      <div class="check" data-action="toggle-task" data-g="${g}" data-id="${i.id}">${i.done?'✓':''}</div>
+      <div class="item-body"><div class="item-title">${i.title}</div>
+        <div class="item-desc"><span class="tag ${g==='routine'?'primary':'accent'}">${i.tag}</span></div></div>
+      <button class="icon-btn inline" data-action="del-task" data-g="${g}" data-id="${i.id}">✕</button></div>`; }
+    function completion(){ const all=[...state.daily.routine,...state.daily.tasks]; return all.length?Math.round(all.filter(i=>i.done).length/all.length*100):0; }
+
+    // ===================== 学习中心 =====================
+    let curLang = 'english';
+    function renderStudy() {
+      const langs = Object.keys(LANG);
+      $('main').innerHTML = `
+        <div class="tabs">${langs.map(k=>`<button class="${curLang===k?'active':''}" data-action="lang" data-k="${k}">${LANG[k].flag} ${LANG[k].name}</button>`).join('')}</div>
+        <div id="langBody"></div>`;
+      renderLangBody();
+    }
+    function renderLangBody() {
+      const L = LANG[curLang];
+      const st = state.lang[curLang];
+      const lvIdx = st.level;
+      $('langBody').innerHTML = `
+        <div class="card">
+          <div class="card-title">${L.flag} ${L.name} · 学习路径</div>
+          <div class="card-sub">${L.intro}</div>
+          ${lvIdx===null ? `<button class="btn" data-action="assess">📝 开始水平测评</button>`
+            : `<div class="tag primary">当前阶段：${L.levels[lvIdx]}</div> <button class="btn sm outline" data-action="assess" style="margin-left:8px">重测</button>`}
+        </div>
+        ${lvIdx!==null ? `
+        <div class="section-title">阶段计划</div>
+        ${L.plan.map((p,idx)=>`
+          <div class="card ${idx===lvIdx?'stage-card':''}">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="card-title" style="margin:0">${p.t} ${idx<lvIdx?'✅':idx===lvIdx?'🎯':''}</div>
+              ${idx===lvIdx?`<button class="btn sm" data-action="lang-done" data-i="${idx}">本阶段完成</button>`:''}
+            </div>
+            <div class="card-sub" style="margin:6px 0">目标：${p.g}<br>过关：${p.s}</div>
+            ${p.items.map(it=>`<div class="item" style="padding:8px 0"><span class="tag gray" style="margin-right:8px">${idx+1}.${p.items.indexOf(it)+1}</span>${it}</div>`).join('')}
+          </div>`).join('')}
+        `:''}
+        <div class="section-title">学习材料</div>
+        <div class="card">
+          ${curLang==='english' ? L.articles.map((a,ai)=>`
+            <div style="margin-bottom:14px">
+              <div class="card-title" style="font-size:15px">${a.title}</div>
+              <div class="card-sub">${a.zh}</div>
+              ${a.paras.map(p=>`<div class="sentence"><div class="en">${p.en} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(p.en)}" data-l="${L.tts}">🔊</button></div><div class="zh">${p.zh}</div></div>`).join('')}
+              <button class="btn sm outline" data-action="speak" data-t="${encodeURIComponent(a.paras.map(p=>p.en).join(' '))}" data-l="${L.tts}">🔊 朗读全文</button>
+            </div>`).join('')
+          : L.dialogues.map(d=>`<div class="sentence">
+              <div class="en">${d.ko} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(d.ko)}" data-l="${L.tts}">🔊</button></div>
+              <div class="zh">${d.zh}　<small style="color:var(--muted)">[${d.mp}]</small></div></div>`).join('')}
+        </div>
+        <div class="section-title">推荐资源</div>
+        <div class="card">${L.resources.map(r=>`<div class="video-card"><div class="play">🔗</div><div><div style="font-weight:600;font-size:14px">${r.title}</div><a href="${r.url}" target="_blank" rel="noopener">${r.url}</a></div></div>`).join('')}</div>`;
+    }
+    function startAssess() {
+      const L = LANG[curLang];
+      let step = 0; let score = 0;
+      const q = L.assessment;
+      openModal(`<h3>📝 ${L.name} 水平测评</h3><div id="aq"></div>
+        <div class="modal-actions"><button class="btn" id="anext">下一题</button></div>`);
+      renderQ();
+      function renderQ(){
+        const item = q[step];
+        $('aq').innerHTML = `<p style="margin-bottom:12px;font-weight:600">${step+1}/${q.length}. ${item.q}</p>` +
+          item.o.map((o,i)=>`<div class="opt" data-s="${item.s[i]}" data-o="${o}">${o}</div>`).join('');
+        $('aq').querySelectorAll('.opt').forEach(el=>el.onclick=()=>{
+          $('aq').querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
+          el.classList.add('sel');
+        });
+        $('anext').textContent = step===q.length-1 ? '查看结果' : '下一题';
+      }
+      $('anext').onclick = () => {
+        const sel = $('aq').querySelector('.opt.sel');
+        if (!sel) { alert('请选择一个答案'); return; }
+        score += +sel.dataset.s;
+        if (step < q.length-1) { step++; renderQ(); }
+        else {
+          const max = q.length*3; const ratio = score/max;
+          const idx = Math.min(L.levels.length-1, Math.floor(ratio * L.levels.length));
+          state.lang[curLang].level = idx; save();
+          openModal(`<h3>🎯 测评结果</h3>
+            <p style="margin-bottom:10px">你的 ${L.name} 水平约为：</p>
+            <div class="card-title" style="font-size:20px;color:var(--primary)">${L.levels[idx]}</div>
+            <p class="card-sub" style="margin-top:10px">${L.plan[idx].g}</p>
+            <div class="modal-actions"><button class="btn" data-action="modal-close">开始学习</button></div>`);
+          renderLangBody();
+        }
+      };
+    }
+
+    // ===================== 运动 =====================
+    function renderSport() {
+      // 老数据兼容：缺字段时自动补齐（防止之前用过的用户数据缺失导致整页空白）
+      if (!state.sport.weekPlan) {
+        state.sport.weekPlan = {1:'tennis',2:'barre',3:'swim',4:'tennis',5:'barre',6:'swim',7:'tennis'};
+        save();
+      }
+      if (!state.sport.log) { state.sport.log = {}; save(); }
+      if (!state.sport.done) { state.sport.done = {}; save(); }
+      const dow = (new Date().getDay() + 6) % 7 + 1;
+      const dayNames = ['一','二','三','四','五','六','日'];
+      const wp = state.sport.weekPlan;
+      const todayLog = state.sport.log[today()] || {};
+
+      const weekHtml = dayNames.map((dn, i) => {
+        const day = i + 1;
+        const sp = SPORTS.find(s => s.id === wp[day]);
+        const isToday = day === dow;
+        return `<div class="day-cell ${isToday?'today':''}" data-action="day-sport" data-day="${day}">
+          <div style="font-size:11px;color:var(--muted)">周${dn}</div>
+          <div style="font-size:22px;margin:4px 0">${sp?sp.icon:'💤'}</div>
+          <div style="font-size:11px">${sp?sp.name:'休息'}</div>
+        </div>`;
+      }).join('');
+
+      const todaySport = SPORTS.find(s => s.id === wp[dow]);
+      const todayTags = Object.entries(todayLog).map(([id,m])=>{ const sp=SPORTS.find(s=>s.id===id); return sp?`<span class="tag primary" style="margin-right:6px">${sp.icon} ${sp.name} ${m}分钟</span>`:''; }).join('');
+      const todayCard = todaySport ? `
+        <div style="font-size:18px;margin-bottom:6px">${todaySport.icon} ${todaySport.name}</div>
+        <div class="card-sub">${todaySport.goal}</div>
+        <div style="margin-top:10px"><button class="btn sm" data-action="log-sport" data-id="${todaySport.id}">✅ 记录今日时长</button></div>
+        ${todayTags ? `<div style="margin-top:10px">${todayTags}</div>` : ''}
+      ` : '<div class="card-sub">今天安排为休息日 ☕</div>';
+
+      $('main').innerHTML = `
+        <div class="card">
+          <div class="card-title">📅 每周排期</div>
+          <div class="card-sub">点任意一天可切换当日运动项目；可自由调整</div>
+          <div class="week-grid">${weekHtml}</div>
+        </div>
+        <div class="card">
+          <div class="card-title">🏃 今日打卡（周${dayNames[dow-1]}）</div>
+          ${todayCard}
+        </div>
+        <div class="section-title">本周已记录</div>
+        <div class="card">${renderWeekLog()}</div>
+        <div class="section-title">三项运动详情</div>
+        ${SPORTS.map(s=>`
+          <div class="card">
+            <div class="card-title">${s.icon} ${s.name}</div>
+            ${s.goal?`<div class="card-sub">目标：${s.goal}</div>`:''}
+            ${s.note?`<div class="card-sub" style="color:var(--accent)">💡 ${s.note}</div>`:''}
+            ${s.plan.map(p=>`
+              <div style="margin:10px 0">
+                <strong style="font-size:14px">${p.phase}</strong>
+                ${p.items.map(it=>`<div class="item" style="padding:7px 0"><span class="tag gray" style="margin-right:8px">▪</span>${it}</div>`).join('')}
+              </div>`).join('')}
+            <div class="card-sub" style="margin-top:6px">教学视频：</div>
+            ${s.videos.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}
+          </div>
+        `).join('')}
+      `;
+    }
+    function renderWeekLog() {
+      const start = new Date(); start.setDate(start.getDate() - ((start.getDay()+6)%7)); start.setHours(0,0,0,0);
+      const days = [];
+      for (let i=0;i<7;i++){ const d=new Date(start); d.setDate(d.getDate()+i); const k=dateStr(d); days.push({k, log:state.sport.log[k], label:(d.getMonth()+1)+'/'+d.getDate()}); }
+      if (!days.some(d=>d.log && Object.keys(d.log).length)) return '<div class="empty">本周还没有运动记录</div>';
+      return days.map(d=>{
+        if (!d.log || !Object.keys(d.log).length) return `<div class="item" style="padding:8px 0;opacity:.5"><span class="tag gray" style="margin-right:8px">${d.label}</span>休息</div>`;
+        const tags = Object.entries(d.log).map(([id,m])=>{ const sp=SPORTS.find(s=>s.id===id); return sp?`<span class="tag primary" style="margin-right:6px">${sp.icon} ${sp.name} ${m}分</span>`:''; }).join('');
+        return `<div class="item" style="padding:8px 0"><span class="tag primary" style="margin-right:8px">${d.label}</span>${tags}</div>`;
+      }).join('');
+    }
+
+    // ===================== 健康 =====================
+    function renderHealth() {
+      // 防御性初始化
+      if (!state.health || !state.health.profile) { state.health = { profile: {}, records: {} }; save(); }
+      if (!state.health.records) { state.health.records = {}; save(); }
+      const p = state.health.profile;
+      const rec = state.health.records[today()] || {};
+      const days = [];
+      for (let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); const k=dateStr(d); const v=state.health.records[k]; days.push({k, sleep:v?+v.sleep||0:0, weight:v?+v.weight||0:0, mood:v?v.mood||0:0}); }
+      $('main').innerHTML = `
+        <div class="card">
+          <div class="card-title">📐 身体基础数据</div>
+          <div class="row" style="gap:10px;margin-bottom:10px">
+            <input class="input" id="hHeight" placeholder="身高 cm" value="${p.height||''}" style="flex:1" />
+            <input class="input" id="hGoal" placeholder="目标体重 kg" value="${p.goalWeight||''}" style="flex:1" />
+            <button class="btn sm" data-action="save-profile">保存</button>
+          </div>
+          <div class="card-sub">账号无法自动读取体重秤，请在下方每日手动记录（或连接蓝牙秤 App 后手动补录）。</div>
+        </div>
+        <div class="card">
+          <div class="card-title">🌙 今日记录</div>
+          <div class="row" style="gap:10px;margin-bottom:8px">
+            <input class="input" id="recSleep" type="number" step="0.1" placeholder="睡眠 h" value="${rec.sleep??''}" style="flex:1" />
+            <input class="input" id="recWeight" type="number" step="0.1" placeholder="体重 kg" value="${rec.weight??''}" style="flex:1" />
+          </div>
+          <div class="row" style="gap:10px;margin-bottom:8px">
+            <select class="input" id="recMood" style="flex:1;font-size:15px">${[1,2,3,4,5].map(m=>`<option value="${m}" ${rec.mood===m?'selected':''}>${['😞','🙁','😐','🙂','😄'][m-1]}</option>`).join('')}</select>
+            <input class="input" id="recEx" type="number" placeholder="运动 min" value="${rec.exercise??''}" style="flex:1" />
+          </div>
+          <input class="input" id="recNote" placeholder="备注（如：今天芭杆+游泳）" value="${rec.note||''}" style="margin-bottom:8px" />
+          <button class="btn" data-action="save-record">保存今日</button>
+        </div>
+        <div class="section-title">近 7 天趋势</div>
+        <div class="card">${svgBars(days.map(d=>({label:d.k.slice(5),value:d.sleep})), 'var(--primary)')}
+          <div class="card-sub" style="margin:8px 0 4px">睡眠（小时）</div></div>
+        <div class="card">${svgBars(days.map(d=>({label:d.k.slice(5),value:d.weight})), 'var(--blue)')}
+          <div class="card-sub" style="margin:8px 0 4px">体重（kg）</div></div>`;
+    }
+    function svgBars(data, color) {
+      const w=600,h=150,pad=20,n=data.length; if(!n) return '';
+      const max=Math.max(...data.map(d=>d.value),1);
+      const slot=(w-2*pad)/n, bw=slot*0.55;
+      const bars=data.map((d,i)=>{ const v=+d.value; const bh=max?(h-2*pad)*(v/max):0; const x=pad+slot*i+(slot-bw)/2; const y=h-pad-bh;
+        return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(bh,0).toFixed(1)}" rx="4" fill="${color}"/>
+        <text x="${(x+bw/2).toFixed(1)}" y="${h-5}" font-size="10" fill="#9a9a92" text-anchor="middle">${d.label}</text>`;}).join('');
+      return `<svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet"><line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#e7e8e2"/>${bars}</svg>`;
+    }
+
+    // ===================== 选题 =====================
+    function renderTopic() {
+      // 防御性初始化
+      if (!Array.isArray(state.topicSaved)) { state.topicSaved = []; save(); }
+      $('main').innerHTML = `
+        <div class="card">
+          <div class="card-title">🐣 新人简易灵感</div>
+          <div class="card-sub">抖音 / 小红书新人，挑简单易上手、真实感强的方向。</div>
+          ${TOPIC_NEWBIE.map(t=>`<div class="item" style="flex-direction:column;align-items:flex-start">
+            <strong style="font-size:15px">${t.t}</strong>
+            <div class="item-desc" style="margin:6px 0 8px">${t.a}</div>
+            <div class="item-actions">${t.tags.map(x=>`<span class="tag gray">${x}</span>`).join('')}
+              <button class="btn sm outline" data-action="save-topic" data-t="${t.t}">⭐ 存灵感</button></div>
+          </div>`).join('')}
+        </div>
+        <div class="card">
+          <div class="card-title">🚀 从 0 做千万账号</div>
+          <div class="card-sub">10 条核心方法论（基于公开增长方法论整理）</div>
+          ${TOPIC_GROWTH.map((g,i)=>`<div class="item" style="padding:9px 0"><span class="tag primary" style="margin-right:8px">${i+1}</span>${g}</div>`).join('')}
+        </div>
+        <div class="card">
+          <div class="card-title">🔥 可点击热点</div>
+          <div class="card-sub">点链接直接跳到抖音 / 小红书查看相关视频。</div>
+          ${TOPIC_HOT.map(h=>`<div class="video-card"><div class="play">🔥</div><div><div style="font-weight:600;font-size:14px">${h.t} <span class="tag accent">${h.cat}</span></div><a href="${h.url}" target="_blank" rel="noopener">${h.url}</a></div></div>`).join('')}
+        </div>`;
+    }
+
+    // ===================== 读书 =====================
+    function renderBook() {
+      // 防御性初始化：老数据缺失字段时自动补齐
+      if (!Array.isArray(state.bookSaved)) { state.bookSaved = []; save(); }
+      if (!Array.isArray(state.bookNotes)) { state.bookNotes = []; save(); }
+      if (state.bookApi === undefined) { state.bookApi = null; save(); }
+      const month = '2026-' + String(new Date().getMonth()+1).padStart(2,'0');
+      const list = BOOKS.filter(b=>b.m===month);
+      const all = BOOKS;
+      const api = state.bookApi;
+      $('main').innerHTML = `
+        <div class="card">
+          <div class="card-title">📚 本月推荐（${month}）</div>
+          <div class="card-sub">每月 2 本公认好书，每天打开会推送其中一本的经典语录。</div>
+          ${list.map(b=>bookCard(b)).join('') || '<div class="empty">本月书单待定</div>'}
+        </div>
+        <div class="section-title">真实书单（Open Library 公开 API）</div>
+        <div class="card">
+          <div class="card-sub">从 Open Library 实时拉取的真实书籍（含封面/作者/出版年），下方链接可直达阅读或试读。</div>
+          <div class="row" style="margin-bottom:10px"><button class="btn sm" data-action="fetch-books">🌐 获取/刷新真实书单</button>${api&&api.books?`<span class="muted" style="font-size:12px">关键词：${esc(api.q)} · ${api.books.length} 本</span>`:''}</div>
+          ${api && api.books && api.books.length ? api.books.map(apiBookCard).join('') : '<div class="empty">还没获取，点上面按钮搜索（如「经典」「成长」「心理」）</div>'}
+        </div>
+        <div class="section-title">全部精选书单（离线兜底）</div>
+        <div class="card">${all.map(b=>bookCard(b)).join('')}</div>
+        <div class="section-title">我的阅读笔记</div>
+        <div class="card">
+          <div class="row" style="margin-bottom:10px">
+            <input class="input" id="bnBook" placeholder="书名" style="flex:1" />
+            <input class="input" id="bnText" placeholder="笔记内容…" style="flex:2" />
+            <button class="btn" data-action="add-note">+</button>
+          </div>
+          ${state.bookNotes.length?state.bookNotes.slice().reverse().map(n=>`<div class="memo-item"><div>${n.text}</div><div class="memo-date">📖 ${n.book} · ${n.date} <button data-action="del-note" data-id="${n.id}" style="background:none;border:none;color:inherit;text-decoration:underline;float:right">删除</button></div></div>`).join(''):'<div class="empty">还没有笔记</div>'}
+        </div>`;
+    }
+    function apiBookCard(b){
+      const cover = b.cover_i ? `https://covers.openlibrary.org/b/id/${b.cover_i}-M.jpg` : '';
+      const authors = (b.author_name||[]).slice(0,2).join(' / ') || '佚名';
+      const year = b.first_publish_year || '';
+      const olink = 'https://openlibrary.org' + b.key;
+      const alink = (b.ia && b.ia[0]) ? `https://archive.org/details/${b.ia[0]}` : '';
+      const glink = `https://books.google.com/books?q=${encodeURIComponent(b.title + ' ' + ((b.author_name||[])[0]||''))}`;
+      return `<div style="display:flex;gap:10px;padding:12px;border:1px solid var(--line);border-radius:var(--radius-sm);margin-bottom:10px;background:var(--bg)">
+        ${cover ? `<img src="${cover}" style="width:56px;height:80px;object-fit:cover;border-radius:4px;flex-shrink:0">` : '<div style="width:56px;height:80px;background:var(--line);border-radius:4px;flex-shrink:0;display:grid;place-items:center;font-size:20px">📖</div>'}
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(authors)} · ${year}</div>
+          <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+            <a href="${olink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">📖 Open Library</a>
+            ${alink ? `<a href="${alink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">📚 Archive 阅读</a>` : ''}
+            <a href="${glink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">🔍 Google Books</a>
+          </div>
+        </div>
+      </div>`;
+    }
+    async function fetchOpenLibrary(q){
+      try {
+        const r = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=12&fields=title,author_name,first_publish_year,cover_i,key,ia`);
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        const d = await r.json();
+        return d.docs || [];
+      } catch (e) { toast('获取失败：' + (e.message||'网络问题')); return []; }
+    }
+    function bookCard(b){
+      const saved = state.bookSaved.includes(b.t);
+      const quote = b.q[0];
+      return `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px">
+        <div style="font-weight:700">${b.t}</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">${b.a} · ${b.m}</div>
+        <div class="quote" style="font-size:14px">「${quote}」</div>
+        <div class="item-actions" style="margin-top:8px">
+          <button class="btn sm ${saved?'outline':'accent'}" data-action="save-book" data-t="${b.t}">${saved?'已收藏':'收藏'}</button>
+        </div></div>`;
+    }
+
+    // ===================== 拍摄计划 =====================
+    function renderShoot() {
+      // 防御性初始化
+      if (!Array.isArray(state.shoot)) { state.shoot = SHOOT_PLAN.map((s,i)=>({ id:'s'+i, ...s, done:false })); save(); }
+      $('main').innerHTML = `
+        <div class="card">
+          <div class="card-title">📷 改善「拍完不导出/不发布」</div>
+          <div class="card-sub">把动作拆小、设提醒，让「导出—剪辑—发布」变成每天自动发生的事。</div>
+          ${state.shoot.map(s=>`<div class="item ${s.done?'done':''}">
+            <div class="check" data-action="shoot-done" data-id="${s.id}">${s.done?'✓':''}</div>
+            <div class="item-body"><div class="item-title">${s.t}</div><div class="item-desc">${s.d}</div>
+              <span class="tag accent">${s.tag}</span></div></div>`).join('')}
+        </div>`;
+    }
+
+    // ===================== 益智游戏 =====================
+    let gameType = null;
+    function dailyGameType() { const types=['memory','guess','match']; const seed=new Date().getDate(); return types[seed%types.length]; }
+    function renderGame() {
+      // 防御性初始化
+      if (!state.gameHistory || typeof state.gameHistory !== 'object') { state.gameHistory = {}; save(); }
+      gameType = dailyGameType();
+      const names={memory:'🃏 记忆翻牌', guess:'🔢 猜数字', match:'🔤 词语接龙'};
+      const todayKey = today();
+      const his = state.gameHistory[todayKey] || {};
+      $('main').innerHTML = `
+        <div class="card">
+          <div class="card-title">🎮 今日游戏：${names[gameType]}</div>
+          <div class="card-sub">每天自动更换一种；下方可切换尝试其他游戏。</div>
+          <div class="row">
+            <button class="btn sm ${gameType==='memory'?'':'outline'}" data-action="gtype" data-t="memory">记忆翻牌</button>
+            <button class="btn sm ${gameType==='guess'?'':'outline'}" data-action="gtype" data-t="guess">猜数字</button>
+            <button class="btn sm ${gameType==='match'?'':'outline'}" data-action="gtype" data-t="match">词语接龙</button>
+          </div>
+        </div>
+        <div class="card" id="gameArea"></div>
+        <div class="section-title">今日历史记录</div>
+        <div class="card">${Object.keys(his).length?Object.entries(his).map(([k,v])=>`<div class="item" style="padding:8px 0"><span class="tag primary" style="margin-right:8px">${k}</span>${v}</div>`).join(''):'<div class="empty">今天还没玩过</div>'}</div>`;
+      renderGameArea();
+    }
+    function logGame(name, result){ const k=today(); (state.gameHistory[k]=state.gameHistory[k]||{})[name]=result; save(); }
+    function renderGameArea() {
+      const area = $('gameArea'); if(!area) return;
+      if (gameType==='memory') return renderMemory(area);
+      if (gameType==='guess') return renderGuess(area);
+      if (gameType==='match') return renderMatch(area);
+    }
+    function renderMemory(area){
+      const emo=['🍎','🎹','🏊','🌟','📚','🍊','🌸','🐱'];
+      let cards = emo.concat(emo).map((e,i)=>({e,i})).sort(()=>Math.random()-0.5);
+      let flipped=[], matched=0;
+      area.innerHTML = `<div class="game-board" style="grid-template-columns:repeat(4,1fr)">${cards.map(c=>`<div class="cell" data-i="${c.i}" data-e="${c.e}">？</div>`).join('')}</div><p class="muted" style="font-size:13px;text-align:center" id="mstat">点击翻开两张配对</p>`;
+      area.querySelectorAll('.cell').forEach(c=>c.onclick=()=>{
+        if(c.classList.contains('flip')||flipped.length===2) return;
+        c.classList.add('flip'); c.textContent=c.dataset.e; flipped.push(c);
+        if(flipped.length===2){
+          if(flipped[0].dataset.e===flipped[1].dataset.e){ matched++; flipped=[]; if(matched===emo.length){ $('mstat').textContent='🎉 全部配对完成！'; logGame('记忆翻牌','完成'); } }
+          else { setTimeout(()=>{ flipped.forEach(x=>{x.classList.remove('flip');x.textContent='？';}); flipped=[]; },700); }
+        }
+      });
+    }
+    function renderGuess(area){
+      const target = Math.floor(Math.random()*100)+1; let tries=0;
+      area.innerHTML = `<p class="muted" style="font-size:13px;margin-bottom:8px">我已想好 1-100 的数字，猜猜看（${new Date().getDate()%2? '7':'8'} 次内）。</p>
+        <div class="row"><input class="input" id="gnum" type="number" placeholder="你的猜测" style="flex:1"/><button class="btn" id="gbtn">猜</button></div>
+        <p id="gmsg" class="muted" style="font-size:13px;margin-top:8px"></p>`;
+      $('gbtn').onclick=()=>{ const v=+$('gnum').value; if(!v)return; tries++;
+        if(v===target){ $('gmsg').textContent=`🎉 猜对了！用了 ${tries} 次`; logGame('猜数字',`${tries}次猜中`); }
+        else { $('gmsg').textContent = v>target?'大了 ↓':'小了 ↑'; if(tries>=8){ $('gmsg').textContent=`次数用完，答案是 ${target}`; logGame('猜数字','未猜中'); } }
+      };
+    }
+    function renderMatch(area){
+      const words=['坚持','习惯','钢琴','努力','梦想','成长','学习','阳光','未来','勇气','热爱','自律'];
+      let cur = words[Math.floor(Math.random()*words.length)]; let ok=0;
+      area.innerHTML = `<p class="muted" style="font-size:13px;margin-bottom:8px">用上一个词的<strong>最后一个字</strong>开头接词（如 坚持→持久）。</p>
+        <div class="card-title" style="font-size:18px;color:var(--primary)">当前词：${cur}</div>
+        <div class="row"><input class="input" id="mword" placeholder="接一个词…" style="flex:1"/><button class="btn" id="mbtn">接</button></div>
+        <p id="mmsg" class="muted" style="font-size:13px;margin-top:8px"></p>`;
+      $('mbtn').onclick=()=>{ const v=$('mword').value.trim(); if(!v)return;
+        const last=cur[cur.length-1];
+        if(v[0]===last){ ok++; cur=v; $('mmsg').textContent=`✅ 接得好！新词：${cur}（已连 ${ok} 个）`; area.querySelector('.card-title').textContent=`当前词：${cur}`; $('mword').value=''; if(ok>=5){ logGame('词语接龙',`连${ok}个`); } }
+        else { $('mmsg').textContent=`❌ 要用「${last}」开头哦`; }
+      };
+    }
+
+    // ===================== 钢琴 =====================
+    const PIANO_STAGES = [
+      { id:1, title:'第1阶段 · 入门·识谱与基本手型', goal:'熟悉琴键、坐姿手型与基本识谱。', standard:'能正确弹奏哈农 No.1-5、拜厄 No.1-10、《小星星》单手。',
+        ex:[
+          {id:'a', title:'哈农《钢琴练指法》No.1-5', desc:'基础五指独立性，慢速高抬指'},
+          {id:'b', title:'拜厄《钢琴基本教程》No.1-10', desc:'识谱入门，双手单音'},
+          {id:'c', title:'《小星星》单手（右手）', desc:'C大调旋律，C-C-G-G-A-A-G'},
+          {id:'d', title:'汤普森《现代钢琴教程》第一册', desc:'认音与节奏入门'}
+        ] },
+      { id:2, title:'第2阶段 · 简单旋律与双手配合', goal:'掌握双手配合与常见调性。', standard:'完整弹奏《小星星》双手版、《欢乐颂》、《致爱丽丝》前段。',
+        ex:[
+          {id:'a', title:'《小星星》双手完整版', desc:'右手旋律 + 左手伴奏'},
+          {id:'b', title:'莫扎特《欢乐颂》', desc:'C大调简单变奏'},
+          {id:'c', title:'贝多芬《致爱丽丝》前段（简化）', desc:'A小调慢板主题'},
+          {id:'d', title:'拜厄 No.30-50', desc:'双手配合与流畅度'}
+        ] },
+      { id:3, title:'第3阶段 · 双手配合与和弦伴奏', goal:'加入柱式/分解和弦，双手协调。', standard:'能为简单旋律加和弦伴奏，双手慢速不断。',
+        ex:[
+          {id:'a', title:'《天空之城》简化版', desc:'C大调分解和弦伴奏'},
+          {id:'b', title:'《River Flows in You》片段', desc:'主旋律 + 柱式和弦'},
+          {id:'c', title:'《卡农》简化', desc:'D大调轮指练习'},
+          {id:'d', title:'万能和弦 C-G-Am-F 连接', desc:'流行歌曲伴奏基础'}
+        ] },
+      { id:4, title:'第4阶段 · 流行与古典进阶曲', goal:'完整弹奏流行/古典曲目，加入强弱。', standard:'能连贯弹《梦中的婚礼》《菊次郎的夏天》或《月光》第一乐章选段。',
+        ex:[
+          {id:'a', title:'《梦中的婚礼》', desc:'保罗·塞内维尔，降A大调'},
+          {id:'b', title:'《菊次郎的夏天》', desc:'久石让，A小调主旋律 + 伴奏'},
+          {id:'c', title:'贝多芬《月光奏鸣曲》第一乐章', desc:'升c小调，三连音伴奏'},
+          {id:'d', title:'车尔尼 599 No.50-80', desc:'进阶技巧与流畅度'}
+        ] },
+      { id:5, title:'第5阶段 · 即兴与原创', goal:'为短视频/歌曲即兴伴奏并自制BGM。', standard:'能即兴弹奏流行歌伴奏，并为自己录 15 秒原创 BGM。',
+        ex:[
+          {id:'a', title:'万能和弦 15634145 伴奏', desc:'C-G-Am-Em-F-C-F-G 循环'},
+          {id:'b', title:'为流行歌配和弦', desc:'选一首喜欢的歌，自标和弦'},
+          {id:'c', title:'分解和弦织体', desc:'八分音符分解，节奏感'},
+          {id:'d', title:'录制 15 秒原创 BGM', desc:'为自己的短视频配原创钢琴背景音乐'}
+        ] }
+    ];
+    function renderPiano() {
+      // 防御性初始化
+      if (typeof state.pianoUnlocked !== 'number' || state.pianoUnlocked < 1) { state.pianoUnlocked = 1; save(); }
+      if (!Array.isArray(state.pianoMastered)) { state.pianoMastered = []; save(); }
+      if (!state.pianoEx) {
+        state.pianoEx = {};
+        PIANO_STAGES.forEach(s => { state.pianoEx[s.id] = s.ex.map(e => ({ id: uid(), title: e.title, desc: e.desc })); });
+        save();
+      }
+      const cur = PIANO_STAGES[state.pianoUnlocked-1];
+      $('main').innerHTML = `
+        <div class="card">
+          <div class="card-title">🎹 钢琴练习 · 进阶路线</div>
+          <div class="card-sub">从认识琴键到即兴伴奏，5 阶段循序渐进；练到「过关标准」点「标记掌握」解锁下一阶段。</div>
+          <div class="progress-wrap"><div class="progress"><span style="width:${state.pianoMastered.length/5*100}%"></span></div>${Math.round(state.pianoMastered.length/5*100)}%</div>
+        </div>
+        <div class="section-title">当前阶段</div>
+        ${cur?stageCard(cur,false):'<div class="card"><div class="empty">🎉 全部阶段已掌握</div></div>'}
+        <div class="section-title">全部阶段</div>
+        ${PIANO_STAGES.map(s=>stageCard(s, s.id>state.pianoUnlocked)).join('')}
+        <div class="section-title">教学视频</div>
+        <div class="card">${PIANO_VIDEO.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}</div>`;
+    }
+    function stageCard(s, locked){
+      const mastered = state.pianoMastered.includes(s.id);
+      const isCur = s.id===state.pianoUnlocked && !mastered;
+      const exs = (state.pianoEx && state.pianoEx[s.id]) || s.ex;
+      const exHtml = exs.map((e,i)=>`<div class="exercise">
+        <div class="exercise-title">${e.title}</div>
+        <div class="exercise-desc">${e.desc}</div>
+        ${!locked ? `<div style="margin-top:6px"><button class="icon-btn inline" data-action="piano-edit" data-s="${s.id}" data-i="${i}" title="编辑">✎</button> <button class="icon-btn inline" data-action="piano-del" data-s="${s.id}" data-i="${i}" title="删除">✕</button></div>` : ''}
+      </div>`).join('');
+      const addBtn = !locked ? `<button class="btn sm outline" data-action="piano-add" data-s="${s.id}" style="margin-top:10px">+ 添加你真实在练的曲目</button>` : '';
+      return `<div class="card ${isCur?'stage-card':''} ${locked?'locked':''}">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="card-title" style="margin:0">${s.title}</div>
+          ${!locked&&!mastered?`<button class="btn sm" data-action="master" data-id="${s.id}">标记掌握</button>`:(mastered?'<span class="tag primary">已掌握</span>':'<span class="tag gray">🔒</span>')}
+        </div>
+        <div class="card-sub" style="margin:6px 0">目标：${s.goal}<br>过关：${s.standard}</div>
+        ${!locked?exHtml+addBtn:''}
+      </div>`;
+    }
+
+    // ===================== 弹窗 =====================
+    function openModal(html){ const m=document.createElement('div'); m.className='modal-mask'; m.id='mask'; m.innerHTML=`<div class="modal">${html}</div>`;
+      m.addEventListener('click',e=>{ if(e.target===m) closeModal(); }); document.body.appendChild(m); }
+    function closeModal(){ const m=$('mask'); if(m) m.remove(); }
+
+    // ===================== 事件 =====================
+    document.addEventListener('click', e => {
+      const t = e.target.closest('[data-action], [data-view]');
+      if (!t) return;
+      const a = t.dataset.action;
+      if (t.dataset.view) { navigate(t.dataset.view); return; }
+      switch(a){
+        case 'go': navigate(t.dataset.v); break;
+        case 'toggle-task': { const g=t.dataset.g,id=t.dataset.id; const it=state.daily[g].find(x=>x.id===id); if(it){it.done=!it.done;save();renderDaily();} break; }
+        case 'del-task': { const g=t.dataset.g,id=t.dataset.id; state.daily[g]=state.daily[g].filter(x=>x.id!==id); save(); renderDaily(); break; }
+        case 'add-task': { const v=$('newTask').value.trim(); if(!v)break; const ty=$('newType').value; state.daily[ty].push({id:uid(),title:v,tag:ty==='routine'?'每日必做':'创作任务',done:false}); save(); renderDaily(); break; }
+        case 'lang': curLang=t.dataset.k; renderLangBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.k===curLang)); break;
+        case 'assess': startAssess(); break;
+        case 'lang-done': { const i=+t.dataset.i; const L=LANG[curLang]; if(state.lang[curLang].level===i && i<L.plan.length-1){ state.lang[curLang].level=i+1; } save(); renderLangBody(); break; }
+        case 'speak': speak(decodeURIComponent(t.dataset.t), t.dataset.l); break;
+        case 'sport-done': { const id=t.dataset.id; state.sport.done[id]=(state.sport.done[id]||0)+1; save(); toast('已记录 ' + SPORTS.find(s=>s.id===id).name + ' 打卡'); break; }
+        case 'day-sport': { const day=+t.dataset.day; const dn=['一','二','三','四','五','六','日'][day-1]; const opts=SPORTS.map(s=>`<button class="btn sm outline" data-action="set-day-sport" data-day="${day}" data-id="${s.id}" style="margin:4px">${s.icon} ${s.name}</button>`).join('')+`<button class="btn sm outline" data-action="set-day-sport" data-day="${day}" data-id="rest" style="margin:4px">💤 休息</button>`; openModal(`<h3>周${dn} 安排哪个项目？</h3><div style="display:flex;flex-wrap:wrap">${opts}</div><div class="modal-actions"><button class="btn ghost" data-action="modal-close">取消</button></div>`); break; }
+        case 'set-day-sport': { const day=+t.dataset.day, id=t.dataset.id; state.sport.weekPlan[day]=id==='rest'?null:id; save(); closeModal(); renderSport(); toast('周排期已更新'); break; }
+        case 'log-sport': { const id=t.dataset.id; const sp=SPORTS.find(s=>s.id===id); const v=prompt(`今天 ${sp.name} 练了多少分钟？`, '30'); const m=+v; if(!v||isNaN(m)||m<=0){ if(v!==null) toast('请输入有效分钟数'); break; } state.sport.log[today()]=state.sport.log[today()]||{}; state.sport.log[today()][id]=(state.sport.log[today()][id]||0)+m; save(); toast(`✅ ${sp.icon} 已记录 ${m} 分钟`); renderSport(); break; }
+        case 'save-profile': { state.health.profile.height=$('hHeight').value; state.health.profile.goalWeight=$('hGoal').value; save(); toast('已保存基础数据'); break; }
+        case 'save-record': { const d=today(); state.health.records[d]={ sleep:$('recSleep').value, weight:$('recWeight').value, mood:+$('recMood').value, exercise:$('recEx').value, note:$('recNote').value }; save(); toast('✅ 今日健康记录已保存'); break; }
+        case 'save-topic': { const tt=t.dataset.t; if(state.topicSaved.includes(tt)) state.topicSaved=state.topicSaved.filter(x=>x!==tt); else state.topicSaved.push(tt); save(); renderTopic(); break; }
+        case 'save-book': { const tt=t.dataset.t; if(state.bookSaved.includes(tt)) state.bookSaved=state.bookSaved.filter(x=>x!==tt); else state.bookSaved.push(tt); save(); renderBook(); break; }
+        case 'add-note': { const b=$('bnBook').value.trim(), x=$('bnText').value.trim(); if(!b||!x)break; state.bookNotes.push({id:uid(),book:b,text:x,date:today()}); save(); toast('笔记已添加'); renderBook(); break; }
+        case 'fetch-books': {
+          const q = prompt('搜索关键词（如：经典 / 成长 / 心理 / 小说）', state.bookApi && state.bookApi.q || '经典');
+          if (!q || !q.trim()) break;
+          toast('正在获取真实书单…');
+          fetchOpenLibrary(q.trim()).then(books => {
+            state.bookApi = { q: q.trim(), books: books, ts: Date.now() };
+            save(); renderBook();
+            if (!books.length) toast('没搜到结果，换个关键词试试');
+            else toast(`✅ 已获取 ${books.length} 本真实书籍`);
+          });
+          break;
+        }
+        case 'del-note': state.bookNotes=state.bookNotes.filter(n=>n.id!==t.dataset.id); save(); renderBook(); break;
+        case 'shoot-done': { const id=t.dataset.id; const it=state.shoot.find(s=>s.id===id); if(it){it.done=!it.done;save();renderShoot();} break; }
+        case 'gtype': gameType=t.dataset.t; renderGameArea(); document.querySelectorAll('.row .btn.sm').forEach(b=>{}); break;
+        case 'master': { const id=+t.dataset.id; if(!state.pianoMastered.includes(id))state.pianoMastered.push(id); if(state.pianoUnlocked===id&&state.pianoUnlocked<5)state.pianoUnlocked++; save(); renderPiano(); break; }
+        case 'piano-edit': {
+          const sId=t.dataset.s, idx=+t.dataset.i;
+          if(!state.pianoEx[sId]) state.pianoEx[sId] = PIANO_STAGES.find(s=>s.id==sId).ex.map(e=>({id:uid(), title:e.title, desc:e.desc}));
+          const cur = state.pianoEx[sId][idx]; if(!cur) break;
+          const title = prompt('修改曲目名称', cur.title); if(title===null) break;
+          const desc = prompt('修改说明/要点', cur.desc); if(desc===null) break;
+          if(title.trim()) cur.title = title.trim();
+          if(desc.trim()!==undefined) cur.desc = desc.trim();
+          save(); renderPiano(); toast('已修改'); break;
+        }
+        case 'piano-del': {
+          const sId=t.dataset.s, idx=+t.dataset.i;
+          if(!state.pianoEx[sId]) state.pianoEx[sId] = PIANO_STAGES.find(s=>s.id==sId).ex.map(e=>({id:uid(), title:e.title, desc:e.desc}));
+          state.pianoEx[sId].splice(idx, 1);
+          save(); renderPiano(); toast('已删除'); break;
+        }
+        case 'piano-add': {
+          const sId=t.dataset.s;
+          const title = prompt('添加你想练的真实曲目名称');
+          if(!title || !title.trim()) break;
+          const desc = prompt('说明/要点（可留空）', '') || '';
+          if(!state.pianoEx[sId]) state.pianoEx[sId] = PIANO_STAGES.find(s=>s.id==sId).ex.map(e=>({id:uid(), title:e.title, desc:e.desc}));
+          state.pianoEx[sId].push({ id: uid(), title: title.trim(), desc: desc.trim() });
+          save(); renderPiano(); toast('已添加'); break;
+        }
+        case 'export': exportData(); break;
+        case 'import': $('importFile').click(); break;
+        case 'modal-close': closeModal(); break;
+      }
+    });
+
+    function exportData(){
+      const data = JSON.stringify(state);
+      try {
+        const blob = new Blob([data], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = '我的工作台数据.json';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url), 1000);
+      } catch(e) {
+        // file:// 下 download 可能受限，退化为复制文本
+        const ta = document.createElement('textarea'); ta.value = data; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); alert('数据已复制到剪贴板，可粘贴保存为 .json 文件'); } catch(_) { alert('导出失败，请用桌面浏览器操作'); }
+        ta.remove();
+      }
+    }
+    function importData(file){
+      const r = new FileReader();
+      r.onload = () => { try {
+        const s = JSON.parse(r.result);
+        if (!s || typeof s !== 'object') throw new Error('格式错误');
+        Object.assign(state, s); save(); alert('导入成功！'); navigate(currentView);
+      } catch(e){ alert('文件格式错误，导入失败'); } };
+      r.readAsText(file);
+    }
+
+    function rename(){ const n=prompt('给工作台起个名字：', state.wbName); if(n&&n.trim()){ state.wbName=n.trim(); save(); $('pageTitle').textContent=state.wbName; $('drawerName').textContent=state.wbName; } }
+    $('pageTitle').addEventListener('click', rename);
+    $('drawerName').addEventListener('click', rename);
+
+    // ===================== 初始化 =====================
+    warmVoices();
+    $('menuBtn').addEventListener('click', openDrawer);
+    $('overlay').addEventListener('click', closeDrawer);
+    $('importFile').addEventListener('change', e => { if (e.target.files[0]) importData(e.target.files[0]); e.target.value=''; });
+    $('topDate').textContent = new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});
+    $('pageTitle').textContent = state.wbName;
+    $('drawerName').textContent = state.wbName;
+    // 初始化用户钢琴练习曲目（用默认真实经典曲目填充，之后可自由编辑/添加）
+    if (!state.pianoEx) {
+      state.pianoEx = {};
+      PIANO_STAGES.forEach(s => { state.pianoEx[s.id] = s.ex.map(e => ({ id: uid(), title: e.title, desc: e.desc })); });
+      save();
+    }
+    window.state = state;
+    // 启动时根据 URL hash 直接跳到对应模块（修打开 #book 还是首页的 bug）
+    const startView = (location.hash || '#home').slice(1);
+    navigate(VIEWS[startView] ? startView : 'home');
+  </script>
+</body>
+</html>
