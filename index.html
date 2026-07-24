@@ -349,6 +349,7 @@
       <button class="icon-btn" id="menuBtn">☰</button>
       <h1 id="pageTitle" title="点击重命名工作台">我的工作台</h1>
       <span class="date" id="topDate"></span>
+      <span id="appVer" style="font-size:10px;color:var(--muted);background:var(--line-2);padding:2px 6px;border-radius:8px;margin-left:4px" title="当前代码版本,如不是v9请长按桌面图标→删除→重新添加">v9</span>
     </header>
 
     <nav class="drawer" id="drawer">
@@ -372,10 +373,11 @@
         <button data-view="piano">🎹 钢琴练习</button>
       </div>
       <div style="padding:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
-        <button class="btn sm outline" data-action="export" style="width:100%">⬇️ 导出数据（备份/传手机）</button>
+        <button class="btn sm outline" data-action="export" style="width:100%">⬇️ 导出数据(备份/传手机)</button>
         <button class="btn sm outline" data-action="import" style="width:100%">⬆️ 导入数据</button>
         <input type="file" id="importFile" accept="application/json,.json" hidden />
-        <div class="card-sub" style="margin:2px 0 0;font-size:11px">数据存在本机浏览器，换设备/清缓存会丢，记得常导出。</div>
+        <button class="btn sm outline" data-action="help-update" style="width:100%;margin-top:6px">🔄 PWA 没更新?点这里</button>
+        <div class="card-sub" style="margin:2px 0 0;font-size:11px">数据存在本机浏览器,换设备/清缓存会丢,记得常导出。当前版本:v9</div>
       </div>
     </nav>
     <div class="overlay" id="overlay"></div>
@@ -1973,6 +1975,25 @@
         }
         case 'export': exportData(); break;
         case 'import': $('importFile').click(); break;
+        case 'help-update': {
+          openModal(`<h3>🔄 如何让 PWA 加载最新版</h3>
+            <div class="card-sub" style="margin-bottom:14px">iOS PWA 会永久缓存之前的版本,所以即使代码更新了,你的桌面图标打开的还是旧版。</div>
+            <div style="line-height:1.8;font-size:14px">
+              <strong>步骤:</strong><br>
+              1. <strong>长按桌面</strong>"我的工作台"图标 → 选「移除 App」<br>
+              2. <strong>打开 Safari</strong>(不是点桌面图标)<br>
+              3. 访问 <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-size:12px">essie-lee.github.io/my-workbench</code><br>
+              4. <strong>分享按钮</strong> → 「添加到主屏幕」<br>
+              5. 用新的桌面图标打开,功能就都正常了
+            </div>
+            <div style="margin-top:14px;padding:12px;background:var(--accent-soft);border-radius:8px;font-size:13px;color:var(--accent)">
+              <strong>检查当前版本</strong>:顶部右上角应显示 <code style="background:#fff;padding:2px 6px;border-radius:4px">v9</code>,如果是旧版本(如 v8、v7),需要重新添加
+            </div>
+            <div class="modal-actions">
+              <button class="btn subtle" data-action="modal-close">关闭</button>
+            </div>`);
+          break;
+        }
         case 'open-link': {
           // PWA 中 target=_blank 不一定工作,用 location.href 强制跳转
           const url = t.dataset.url;
@@ -1996,6 +2017,7 @@
           }
           break;
         }
+        case 'close-avatar': closeAvatarModal(); break;
         case 'modal-close': closeModal(); break;
       }
     });
@@ -2040,7 +2062,7 @@
       mask.className = 'modal-mask';
       mask.id = 'avatarModalMask';
       mask.innerHTML = `
-        <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal">
           <h3>选一只小动物陪你</h3>
           <div class="card-sub" style="margin-bottom:14px">点一下切换,会出现在抽屉头像和顶部 banner 上</div>
           <div class="av-picker">
@@ -2051,12 +2073,11 @@
               </div>`).join('')}
           </div>
           <div class="modal-actions">
-            <button class="btn subtle" id="closeAvModal">取消</button>
+            <button class="btn subtle" data-action="close-avatar">取消</button>
           </div>
         </div>`;
       document.body.appendChild(mask);
       mask.addEventListener('click', e => { if (e.target === mask) closeAvatarModal(); });
-      $('closeAvModal').addEventListener('click', closeAvatarModal);
     }
     function closeAvatarModal(){
       const m = $('avatarModalMask');
