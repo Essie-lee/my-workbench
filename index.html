@@ -1513,7 +1513,7 @@
           <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.title)}</div>
           <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;align-items:center">
             <span class="tag gray">🔥 ${(it.hot/10000).toFixed(0)} 万</span>
-            <a href="${esc(it.url)}" data-url="${esc(it.url)}" data-action="open-link" style="color:var(--blue);font-size:12px;text-decoration:none;font-weight:600">查看 →</a>
+            <button class="btn sm outline" data-action="open-link" data-url="${esc(it.url)}" style="padding:3px 10px;font-size:12px">查看 →</button>
             <button class="btn sm outline" data-action="save-topic" data-t="${esc(it.title)}" style="padding:3px 10px;font-size:12px">⭐ 存灵感</button>
           </div>
         </div>
@@ -1557,7 +1557,7 @@
         <div class="card">
           <div class="card-title">🔥 可点击热点</div>
           <div class="card-sub">点链接直接跳到抖音 / 小红书查看相关视频。</div>
-          ${TOPIC_HOT.map(h=>`<div class="video-card"><div class="play">🔥</div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">${h.t} <span class="tag accent">${h.cat}</span></div><a href="${h.url}" data-url="${h.url}" data-action="open-link" style="color:var(--blue);font-size:12px;text-decoration:none;word-break:break-all;font-weight:600">${h.url} →</a></div></div>`).join('')}
+          ${TOPIC_HOT.map(h=>`<div class="video-card"><div class="play">🔥</div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">${h.t} <span class="tag accent">${h.cat}</span></div><button class="btn sm outline" data-action="open-link" data-url="${h.url}" style="margin-top:6px;padding:3px 10px;font-size:12px">查看 → ${h.url.slice(0,30)}${h.url.length>30?'...':''}</button></div></div>`).join('')}
         </div>`;
     }
 
@@ -1843,6 +1843,8 @@
     document.addEventListener('click', e => {
       const t = e.target.closest('[data-action], [data-view]');
       if (!t) return;
+      // 如果是 <a> 标签,阻止默认跳转(由我们的 handler 自己处理,避免冲突)
+      if (t.tagName === 'A') e.preventDefault();
       const a = t.dataset.action;
       if (t.dataset.view) { navigate(t.dataset.view); return; }
       switch(a){
@@ -1995,9 +1997,15 @@
           break;
         }
         case 'open-link': {
-          // PWA 中 target=_blank 不一定工作,用 location.href 强制跳转
+          // 跳外部链接:PWA 模式要特殊处理,iOS 不允许 PWA 直接跳外部域,改用打开新窗口
           const url = t.dataset.url;
-          if (url) { window.location.href = url; }
+          if (!url) break;
+          try {
+            // 尝试直接跳转(PWA 会拒绝并提示);如果失败,弹一个新窗口
+            window.location.href = url;
+          } catch(e) {
+            window.open(url, '_blank');
+          }
           break;
         }
         case 'open-platform': {
