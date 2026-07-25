@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-24T07:43:06.011Z",
+  "updatedAt": "2026-07-25T07:33:53.088Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -31,51 +31,51 @@
     "weibo": [],
     "bilibili": [
       {
-        "title": "树恨你",
-        "url": "https://b23.tv/BV1h4KU66ENd",
-        "hot": 7817221,
-        "rank": 1
-      },
-      {
-        "title": "《梦战：剑之海》首支实机预告片丨全球首测招募开启",
-        "url": "https://b23.tv/BV1AnKs6tE2n",
-        "hot": 4666969,
-        "rank": 2
-      },
-      {
         "title": "世界上五种特色调式音阶。#几何图形 #解压",
         "url": "https://b23.tv/BV1KLg66DEi2",
-        "hot": 3344926,
-        "rank": 3
-      },
-      {
-        "title": "差点被烟管单杀了",
-        "url": "https://b23.tv/BV11oK16pEEz",
-        "hot": 4676698,
-        "rank": 4
-      },
-      {
-        "title": "一条老奶奶",
-        "url": "https://b23.tv/BV17rKb68EQ7",
-        "hot": 6471208,
-        "rank": 5
+        "hot": 4012990,
+        "rank": 1
       },
       {
         "title": "我婚礼上要放这个",
         "url": "https://b23.tv/BV1n9gC6HEzP",
-        "hot": 4319851,
-        "rank": 6
+        "hot": 5364090,
+        "rank": 2
+      },
+      {
+        "title": "《下一个是谁》第七季（2）",
+        "url": "https://b23.tv/BV1KRg462E53",
+        "hot": 2046315,
+        "rank": 3
       },
       {
         "title": "《崩坏：星穹铁道》× Fate[UBW] 联动PV——「别来无恙」",
         "url": "https://b23.tv/BV1ThgD6nEie",
-        "hot": 3257623,
+        "hot": 3448294,
+        "rank": 4
+      },
+      {
+        "title": "《梦战：剑之海》首支实机预告片丨全球首测招募开启",
+        "url": "https://b23.tv/BV1AnKs6tE2n",
+        "hot": 4683173,
+        "rank": 5
+      },
+      {
+        "title": "【陶笛】The other side of paradise.抱歉哪位小盆友点的，找不到截图了。。。哈哈哈哈哈",
+        "url": "https://b23.tv/BV1naK46ZEpJ",
+        "hot": 2080769,
+        "rank": 6
+      },
+      {
+        "title": "今天花2万包5000斤的鱼塘，塘主的举动让人暖心",
+        "url": "https://b23.tv/BV1YbgC6qE76",
+        "hot": 2835214,
         "rank": 7
       },
       {
-        "title": "非AI生成！网友分享自家鹦鹉学唱《说唱脸谱》成果，网友：这转音太丝滑了！",
-        "url": "https://b23.tv/BV1ygKa67Eay",
-        "hot": 2598592,
+        "title": "袜学导论：从脚踝到大腿，袜子如何成就二次元的顶级暗示！【泛式/次元论战】",
+        "url": "https://b23.tv/BV1Tdgh6aESA",
+        "hot": 1484555,
         "rank": 8
       }
     ],
