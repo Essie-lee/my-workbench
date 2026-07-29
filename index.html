@@ -22005,28 +22005,6 @@
               <button class="sl-play" data-action="speak" data-t="${encodeURIComponent(ln.f||ln.ko)}" data-l="${L.tts}">🔊</button>
             </div>`).join('')}
         </div>`).join('');
-      const planHtml = lvIdx!==null ? `
-        <div class="sec-body">
-          ${L.plan.map((p,idx)=>`
-            <div class="card ${idx===lvIdx?'stage-card':''}" style="margin-bottom:10px">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div class="card-title" style="margin:0">${esc(p.t)} ${idx<lvIdx?'✅':idx===lvIdx?'🎯':''}</div>
-                ${idx===lvIdx?`<button class="btn sm" data-action="lang-done" data-i="${idx}">本阶段完成</button>`:''}
-              </div>
-              <div class="card-sub" style="margin:6px 0">目标：${esc(p.g)}<br>过关：${esc(p.s)}</div>
-              ${p.items.map(it=>`<div class="item" style="padding:8px 0"><span class="tag gray" style="margin-right:8px">${idx+1}.${p.items.indexOf(it)+1}</span>${esc(it)}</div>`).join('')}
-            </div>`).join('')}
-        </div>` : `<div class="sec-body"><div class="card-sub">完成「水平测评」后，会按你的当前阶段展示专属路线。点上方「📝 测评」开始。</div></div>`;
-      const drillHtml = (curLang==='english' ? L.articles.map((a)=>`
-            <div style="margin-bottom:14px">
-              <div class="card-title" style="font-size:15px">${esc(a.title)}</div>
-              <div class="card-sub">${esc(a.zh)}</div>
-              ${a.paras.map(p=>`<div class="sentence"><div class="en">${esc(p.en)} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(p.en)}" data-l="${L.tts}">🔊</button></div><div class="zh">${esc(p.zh)}</div></div>`).join('')}
-              <button class="btn sm outline" data-action="speak" data-t="${encodeURIComponent(a.paras.map(p=>p.en).join(' '))}" data-l="${L.tts}">🔊 朗读全文</button>
-            </div>`).join('')
-          : L.dialogues.map(d=>`<div class="sentence">
-              <div class="en">${esc(d.ko)} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(d.ko)}" data-l="${L.tts}">🔊</button></div>
-              <div class="zh">${esc(d.zh)}　<small style="color:var(--muted)">[${esc(d.mp)}]</small></div></div>`).join(''));
       const fullTextHtml = (curLang==='english' && L.fullTexts) ? `
         <div class="sec-body">
           ${L.fullTexts.map(t=>`<div class="card" style="margin-bottom:10px"><div class="card-title">${esc(t.title)}</div><div class="card-sub">⏱ ${t.minutes} 分钟阅读</div>
@@ -22096,14 +22074,6 @@
         <details class="lang-sec" open>
           <summary><span class="sec-count">${sceneCnt} 场景</span>🗣 情景对话脚本（按真实生活场景）<span class="chev">▶</span></summary>
           <div class="sec-body">${sceneHtml}</div>
-        </details>
-        <details class="lang-sec">
-          <summary><span class="sec-count">${lvTotal} 阶段</span>🧭 学习路径与阶段计划<span class="chev">▶</span></summary>
-          ${planHtml}
-        </details>
-        <details class="lang-sec">
-          <summary><span class="sec-count">${L.dialogues?L.dialogues.length:0} 句</span>🔁 随机对话跟读（单句 drill）<span class="chev">▶</span></summary>
-          <div class="sec-body">${drillHtml}</div>
         </details>
         ${curLang==='english'&&L.fullTexts?`<details class="lang-sec"><summary><span class="sec-count">${L.fullTexts.length} 篇</span>📖 英文全文阅读<span class="chev">▶</span></summary>${fullTextHtml}</details>`:''}
         ${L.news?`<details class="lang-sec"><summary><span class="sec-count">${L.news.length} 篇</span>📰 新闻精读 · 当地时政（对标 BBC News）<span class="chev">▶</span></summary>${newsHtml}</details>`:''}
