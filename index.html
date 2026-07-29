@@ -315,6 +315,39 @@
     [data-theme="dark"] .exercise { background: rgba(45,45,45,.6); }
     .locked { opacity: .55; }
 
+    /* ===== 3D 肌肉模型 ===== */
+    .muscle-canvas-wrap { position:relative; width:100%; height:320px; border-radius:var(--radius); overflow:hidden; background:radial-gradient(circle at 50% 40%, rgba(0,120,212,.08), transparent 70%); }
+    [data-theme="dark"] .muscle-canvas-wrap { background:radial-gradient(circle at 50% 40%, rgba(76,194,255,.06), transparent 70%); }
+    .muscle-canvas-wrap canvas { width:100%; height:100%; display:block; touch-action:none; }
+    .muscle-toolbar { position:absolute; top:8px; right:8px; display:flex; gap:6px; z-index:2; }
+    .muscle-toolbar button { padding:4px 10px; font-size:12px; border-radius:var(--radius-sm); background:rgba(255,255,255,.85); border:1px solid var(--line-1); color:var(--ink-2); cursor:pointer; backdrop-filter:blur(8px); }
+    [data-theme="dark"] .muscle-toolbar button { background:rgba(45,45,45,.85); color:var(--ink-2); }
+    .muscle-toolbar button.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+    .muscle-info { position:absolute; bottom:8px; left:8px; right:8px; background:rgba(255,255,255,.92); border-radius:var(--radius-sm); padding:10px 12px; backdrop-filter:blur(12px); border:1px solid var(--line-2); min-height:48px; z-index:2; }
+    [data-theme="dark"] .muscle-info { background:rgba(31,31,31,.92); }
+    .muscle-info .m-name { font-weight:600; font-size:14px; color:var(--primary); margin-bottom:4px; }
+    .muscle-info .m-ex { font-size:12px; color:var(--ink-3); line-height:1.5; }
+    .muscle-fallback { width:100%; height:320px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; color:var(--muted); font-size:13px; }
+
+    /* ===== 肌肉热力点 ===== */
+    .muscle-heatmap { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+    .heat-dot { width:26px; height:26px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:transform .1s; display:grid; place-items:center; font-size:9px; color:#fff; font-weight:600; }
+    .heat-dot:active { transform:scale(1.15); }
+
+    /* ===== 训练记录表 ===== */
+    .ex-set-row { display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid var(--line-3); flex-wrap:wrap; }
+    .ex-set-row:last-child { border-bottom:none; }
+    .ex-set-input { width:54px; padding:6px 8px; border:1px solid var(--line-1); border-radius:var(--radius-sm); font-size:13px; text-align:center; background:rgba(255,255,255,.7); color:var(--ink-1); }
+    [data-theme="dark"] .ex-set-input { background:rgba(45,45,45,.7); color:var(--ink-1); }
+    .ex-pr-badge { font-size:11px; padding:2px 6px; border-radius:4px; background:var(--accent-soft); color:var(--accent); font-weight:600; }
+    .ex-set-log { font-size:12px; color:var(--muted); }
+    .sport-tabs { display:flex; gap:0; border-bottom:2px solid var(--line-2); margin-bottom:12px; }
+    .sport-tab { padding:8px 16px; font-size:14px; font-weight:600; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .15s; }
+    .sport-tab.active { color:var(--primary); border-bottom-color:var(--primary); }
+
+    /* ===== 周历颜色条 ===== */
+    .day-cell .day-bar { height:3px; border-radius:2px; margin-bottom:4px; }
+
     /* ===== 备忘(Mica 琥珀) ===== */
     .memo-item { background: var(--accent-soft); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px; color: var(--accent); }
     .memo-date { font-size: 12px; opacity: .7; margin-top: 6px; }
@@ -566,6 +599,14 @@
     .vt-ex { margin-top: 8px; font-size: 12.5px; color: var(--muted); line-height: 1.55; }
     .vt-hint { margin-top: 12px; font-size: 11px; color: var(--muted); text-align: right; }
   </style>
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+  import * as THREE from 'three';
+  window.THREE = THREE;
+  window.dispatchEvent(new Event('three-ready'));
+</script>
 </head>
 <body>
   <div id="app">
@@ -21363,7 +21404,8 @@
     };
 
     const SPORTS = [
-      { id:'tennis', name:'网球', icon:'🎾', goal:'3 个月能底线对拉 20 拍、发上手球进区',
+      { id:'tennis', name:'网球', icon:'🎾', type:'cardio',
+        goal:'3 个月能底线对拉 20 拍、发上手球进区',
         plan:[
           { phase:'第1月·球感', items:['握拍与站位','颠球/拍球 100 次','正手定点喂球','教练或多球练习'] },
           { phase:'第2月·正反手', items:['正手完整挥拍','反手单/双手','小场地对拉','发球抛球节奏'] },
@@ -21374,7 +21416,8 @@
           { t:'B站：网球发球动作分解', url:'https://search.bilibili.com/all?keyword=网球发球教学' },
           { t:'B站：网球步伐与体能', url:'https://search.bilibili.com/all?keyword=网球步伐训练' }
         ] },
-      { id:'swim', name:'游泳', icon:'🏊', goal:'自由泳连续 500 米、换气顺畅不呛水',
+      { id:'swim', name:'游泳', icon:'🏊', type:'cardio',
+        goal:'自由泳连续 500 米、换气顺畅不呛水',
         plan:[
           { phase:'第1月·水性', items:['呼吸练习（水中吐气）','漂浮与蹬墙滑行','扶板打腿','蛙泳腿'] },
           { phase:'第2月·动作', items:['自由泳划手','自由泳换气','蛙泳完整配合','水下视频纠错'] },
@@ -21385,7 +21428,8 @@
           { t:'B站：蛙泳腿动作分解', url:'https://search.bilibili.com/all?keyword=蛙泳腿教学' },
           { t:'B站：自由泳划手与打腿', url:'https://search.bilibili.com/all?keyword=自由泳划手打腿' }
         ] },
-      { id:'barre', name:'欧阳春晓芭杆', icon:'🩰', goal:'每周 3-4 次，改善体态、练出沙漏腰/薄背',
+      { id:'barre', name:'欧阳春晓芭杆', icon:'🩰', type:'cardio',
+        goal:'每周 3-4 次，改善体态、练出沙漏腰/薄背',
         note:'Barre 芭杆运动 = 芭蕾 + 普拉提，精准训练深层肌群，不跑不跳、零基础友好。',
         plan:[
           { phase:'适应期', items:['上肢芭杆（薄背）','足弓重建','全程站立不跑不跳','跟练 20 分钟×3/周'] },
@@ -21396,8 +21440,85 @@
           { t:'B站：欧阳春晓芭杆运动全集', url:'https://search.bilibili.com/all?keyword=欧阳春晓芭杆运动' },
           { t:'抖音：欧阳春晓沙漏腰芭杆', url:'https://www.douyin.com/search?keyword=%E6%AC%A7%E9%98%B3%E6%98%A5%E6%99%93%E8%8A%AD%E6%9D%86%E8%BF%90%E5%8A%A8' },
           { t:'B站：Barre 芭杆上肢雕刻', url:'https://search.bilibili.com/all?keyword=Barre芭杆上肢雕刻' }
-        ] }
+        ] },
+      { id:'push', name:'推日', icon:'💪', type:'strength', muscles:['chest','shoulder','triceps'],
+        goal:'卧推达体重、推举达体重60%',
+        plan:[
+          { phase:'热身', items:['肩袖激活 5min','空杆卧推 2×10','弹力带外旋'] },
+          { phase:'主项', items:['杠铃卧推 4×8','哑铃肩推 3×10','双杠臂屈伸 3×力竭'] },
+          { phase:'辅助', items:['侧平举 4×12','绳索下压 3×12','俯身飞鸟 3×15'] }
+        ],
+        exercises:[
+          { name:'杠铃卧推', muscle:'chest', sets:4, reps:'8', rest:'90s' },
+          { name:'哑铃肩推', muscle:'shoulder', sets:3, reps:'10', rest:'60s' },
+          { name:'双杠臂屈伸', muscle:'triceps', sets:3, reps:'力竭', rest:'90s' },
+          { name:'侧平举', muscle:'shoulder', sets:4, reps:'12', rest:'45s' },
+          { name:'绳索下压', muscle:'triceps', sets:3, reps:'12', rest:'45s' }
+        ],
+        videos:[{ t:'B站：卧推标准动作', url:'https://search.bilibili.com/all?keyword=卧推教学' }] },
+      { id:'pull', name:'拉日', icon:'🏋️', type:'strength', muscles:['back','biceps','forearm'],
+        goal:'引体向上 10 个、杠铃划船体重×0.8',
+        plan:[
+          { phase:'热身', items:['肩胛引体 3×5','弹力带划船 2×15'] },
+          { phase:'主项', items:['引体向上 4×力竭','杠铃划船 4×8','高位下拉 3×10'] },
+          { phase:'辅助', items:['杠铃弯举 3×10','锤式弯举 3×12','农夫走 3×30s'] }
+        ],
+        exercises:[
+          { name:'引体向上', muscle:'back', sets:4, reps:'力竭', rest:'120s' },
+          { name:'杠铃划船', muscle:'back', sets:4, reps:'8', rest:'90s' },
+          { name:'高位下拉', muscle:'back', sets:3, reps:'10', rest:'60s' },
+          { name:'杠铃弯举', muscle:'biceps', sets:3, reps:'10', rest:'60s' },
+          { name:'锤式弯举', muscle:'biceps', sets:3, reps:'12', rest:'45s' },
+          { name:'农夫走', muscle:'forearm', sets:3, reps:'30s', rest:'60s' }
+        ],
+        videos:[{ t:'B站：引体向上教学', url:'https://search.bilibili.com/all?keyword=引体向上教学' }] },
+      { id:'leg', name:'腿日', icon:'🦵', type:'strength', muscles:['quad','hamstring','glute','calf'],
+        goal:'深蹲达体重、硬拉达体重1.5倍',
+        plan:[
+          { phase:'热身', items:['踝关节激活','空杆深蹲 2×10','髋部打开'] },
+          { phase:'主项', items:['杠铃深蹲 4×8','罗马尼亚硬拉 4×8','腿举 3×12'] },
+          { phase:'辅助', items:['保加利亚分腿蹲 3×10','提踵 4×15','臀推 3×12'] }
+        ],
+        exercises:[
+          { name:'杠铃深蹲', muscle:'quad', sets:4, reps:'8', rest:'120s' },
+          { name:'罗马尼亚硬拉', muscle:'hamstring', sets:4, reps:'8', rest:'90s' },
+          { name:'腿举', muscle:'quad', sets:3, reps:'12', rest:'90s' },
+          { name:'保加利亚分腿蹲', muscle:'glute', sets:3, reps:'10', rest:'60s' },
+          { name:'提踵', muscle:'calf', sets:4, reps:'15', rest:'45s' },
+          { name:'臀推', muscle:'glute', sets:3, reps:'12', rest:'90s' }
+        ],
+        videos:[{ t:'B站：深蹲动作详解', url:'https://search.bilibili.com/all?keyword=深蹲教学' }] },
+      { id:'core', name:'核心日', icon:'🔥', type:'strength', muscles:['abs','oblique'],
+        goal:'平板支撑 3min、悬垂举腿 15 个',
+        plan:[
+          { phase:'激活', items:['死虫子 2×10','猫牛式'] },
+          { phase:'主项', items:['平板支撑 4×60s','悬垂举腿 4×12','俄罗斯转体 4×20'] },
+          { phase:'辅助', items:['侧平板 3×30s','卷腹 3×20','登山者 3×30s'] }
+        ],
+        exercises:[
+          { name:'平板支撑', muscle:'abs', sets:4, reps:'60s', rest:'45s' },
+          { name:'悬垂举腿', muscle:'abs', sets:4, reps:'12', rest:'60s' },
+          { name:'俄罗斯转体', muscle:'oblique', sets:4, reps:'20', rest:'45s' },
+          { name:'侧平板', muscle:'oblique', sets:3, reps:'30s', rest:'30s' },
+          { name:'卷腹', muscle:'abs', sets:3, reps:'20', rest:'45s' }
+        ],
+        videos:[{ t:'B站：核心训练合集', url:'https://search.bilibili.com/all?keyword=核心训练' }] }
     ];
+
+    const MUSCLES = {
+      chest:    { name:'胸肌',     short:'胸', color:'#e8745b', exercises:['卧推','俯卧撑','哑铃飞鸟','双杠臂屈伸'] },
+      back:     { name:'背阔肌',   short:'背', color:'#5b8def', exercises:['引体向上','杠铃划船','高位下拉','坐姿划船'] },
+      shoulder: { name:'三角肌',   short:'肩', color:'#4caf84', exercises:['推举','侧平举','前平举','俯身飞鸟'] },
+      biceps:   { name:'肱二头肌', short:'二头', color:'#b07bd6', exercises:['杠铃弯举','锤式弯举','集中弯举'] },
+      triceps:  { name:'肱三头肌', short:'三头', color:'#e6a23c', exercises:['绳索下压','窄距卧推','双杠臂屈伸'] },
+      forearm:  { name:'前臂',     short:'前臂', color:'#3aa6b9', exercises:['腕弯举','农夫走','反握弯举'] },
+      abs:      { name:'腹直肌',   short:'腹', color:'#e8745b', exercises:['卷腹','平板支撑','悬垂举腿','登山者'] },
+      oblique:  { name:'腹斜肌',   short:'腹斜', color:'#5b8def', exercises:['俄罗斯转体','侧平板','单边农夫走'] },
+      quad:     { name:'股四头肌', short:'股四', color:'#4caf84', exercises:['深蹲','腿举','弓步','前蹲'] },
+      hamstring:{ name:'腘绳肌',   short:'腘绳', color:'#b07bd6', exercises:['罗马尼亚硬拉','腿弯举','早安动作'] },
+      glute:    { name:'臀大肌',   short:'臀', color:'#e6a23c', exercises:['臀推','保加利亚分腿蹲','髋推'] },
+      calf:     { name:'小腿肌',   short:'小腿', color:'#3aa6b9', exercises:['提踵','坐姿提踵','跳绳'] }
+    };
 
     const TOPIC_NEWBIE = [
       { t:'「第一次做__」系列', a:'你是新人，真实感最动人。记录你第一次录歌/弹琴/健身的笨拙与进步', tags:['抖音','小红书'] },
@@ -21476,7 +21597,7 @@
           { id:'t2', title:'选题与复盘', tag:'创作任务', done:false }
         ] },
         lang: { english:{ level:null, progress:{} }, korean:{ level:null, progress:{} }, cantonese:{ level:null, progress:{} } },
-        sport: { done:{}, weekPlan:{1:'tennis',2:'barre',3:'swim',4:'tennis',5:'barre',6:'swim',7:'tennis'}, log:{} },
+        sport: { done:{}, weekPlan:{1:'tennis',2:'push',3:'swim',4:'pull',5:'barre',6:'leg',7:'core'}, log:{}, setsLog:{}, pr:{} },
         health: { profile:{}, records:{} },   // records[date]={sleep,mood,exercise,weight,note}
         topicSaved: [], bookNotes: [], bookSaved: [], bookApi: null,
         shoot: SHOOT_PLAN.map((s,i)=>({ id:'s'+i, ...s, done:false })),
@@ -21653,6 +21774,8 @@
       document.querySelectorAll('#tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     }
     function navigate(view) {
+      // 离开运动页时清理 3D 模型，防止 WebGL 上下文泄漏
+      if (currentView === 'sport' && view !== 'sport') disposeMuscleModel();
       currentView = view;
       $('pageTitle').textContent = state.wbName && view==='home' ? state.wbName : TITLES[view];
       document.querySelectorAll('#drawerNav button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
@@ -22264,78 +22387,556 @@
     }
 
     // ===================== 运动 =====================
+
+    // ---- 3D 肌肉模型 ----
+    let muscleScene=null, muscleRenderer=null, muscleCamera=null, muscleMeshes={}, muscleSelected=null, muscleAnimId=null;
+    let muscleDragging=false, muscleRotY=0, muscleRotX=-0.15, muscleTargetRotY=0, muscleTargetRotX=-0.15, muscleZoom=5;
+    let musclePinching=false, musclePinchDist=0;
+    let muscleViewSide='front';
+    let threeReady = typeof window.THREE !== 'undefined';
+    if (threeReady) { /* 已加载 */ } else {
+      window.addEventListener('three-ready', ()=>{ threeReady=true; });
+    }
+
+    function initMuscleModel(container) {
+      if (!threeReady || !window.THREE) {
+        container.innerHTML = '<div class="muscle-fallback">💪<span>3D 模型加载中…<br>若长时间无显示，可能是网络问题</span></div>';
+        // 5秒后重试
+        setTimeout(()=>{ if(threeReady && currentView==='sport') initMuscleModel(container); }, 2000);
+        return;
+      }
+      // 清理旧的
+      disposeMuscleModel();
+      const THREE = window.THREE;
+      muscleScene = new THREE.Scene();
+      muscleCamera = new THREE.PerspectiveCamera(35, container.clientWidth/container.clientHeight, 0.1, 100);
+      muscleCamera.position.set(0, 0.3, 5);
+      muscleRenderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+      muscleRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      muscleRenderer.setSize(container.clientWidth, container.clientHeight);
+      container.appendChild(muscleRenderer.domElement);
+
+      // 光源
+      const amb = new THREE.AmbientLight(0xffffff, 0.7);
+      muscleScene.add(amb);
+      const dir = new THREE.DirectionalLight(0xffffff, 0.6);
+      dir.position.set(2, 3, 4);
+      muscleScene.add(dir);
+      const dir2 = new THREE.DirectionalLight(0xffffff, 0.3);
+      dir2.position.set(-2, 1, -3);
+      muscleScene.add(dir2);
+
+      const muscleGroup = new THREE.Group();
+      muscleScene.add(muscleGroup);
+
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const flesh = isDark ? 0x8a6a52 : 0xc9a07a;
+      const neutral = isDark ? 0x4a4a4a : 0x999999;
+      const matMuscle = ()=> new THREE.MeshLambertMaterial({ color:flesh, emissive:0x000000, transparent:true, opacity:0.92 });
+      const matNeutral = ()=> new THREE.MeshLambertMaterial({ color:neutral, transparent:true, opacity:0.6 });
+
+      // 辅助：创建肌肉 Mesh
+      function mkMuscle(geo, x, y, z, id, ry=0) {
+        const m = new THREE.Mesh(geo, matMuscle());
+        m.position.set(x, y, z);
+        if (ry) m.rotation.y = ry;
+        m.userData.muscleId = id;
+        muscleMeshes[id] = m;
+        muscleGroup.add(m);
+        return m;
+      }
+      function mkNeutral(geo, x, y, z) {
+        const m = new THREE.Mesh(geo, matNeutral());
+        m.position.set(x, y, z);
+        muscleGroup.add(m);
+        return m;
+      }
+
+      const Seg = 12; // 低分段
+
+      // 头部
+      mkNeutral(new THREE.SphereGeometry(0.22, Seg, Seg), 0, 2.15, 0);
+      // 颈部
+      mkNeutral(new THREE.CylinderGeometry(0.08, 0.1, 0.15, Seg), 0, 1.92, 0);
+
+      // 胸肌 chest
+      mkMuscle(new THREE.BoxGeometry(0.52, 0.38, 0.2), 0, 1.55, 0.12, 'chest');
+      // 背阔肌 back
+      mkMuscle(new THREE.BoxGeometry(0.52, 0.45, 0.2), 0, 1.5, -0.12, 'back');
+
+      // 三角肌 shoulder (左右)
+      mkMuscle(new THREE.SphereGeometry(0.16, Seg, Seg), 0.33, 1.72, 0.05, 'shoulder');
+      mkMuscle(new THREE.SphereGeometry(0.16, Seg, Seg), -0.33, 1.72, 0.05, 'shoulder', 0); // 同 id
+
+      // 肱二头肌 biceps (左右臂前方)
+      mkMuscle(new THREE.CapsuleGeometry(0.07, 0.28, Seg, Seg), 0.42, 1.4, 0.08, 'biceps');
+      mkMuscle(new THREE.CapsuleGeometry(0.07, 0.28, Seg, Seg), -0.42, 1.4, 0.08, 'biceps');
+      // 肱三头肌 triceps (左右臂后方)
+      mkMuscle(new THREE.CapsuleGeometry(0.07, 0.28, Seg, Seg), 0.42, 1.4, -0.08, 'triceps');
+      mkMuscle(new THREE.CapsuleGeometry(0.07, 0.28, Seg, Seg), -0.42, 1.4, -0.08, 'triceps');
+
+      // 前臂 forearm (左右)
+      mkMuscle(new THREE.CapsuleGeometry(0.055, 0.25, Seg, Seg), 0.46, 0.95, 0.04, 'forearm');
+      mkMuscle(new THREE.CapsuleGeometry(0.055, 0.25, Seg, Seg), -0.46, 0.95, 0.04, 'forearm');
+
+      // 腹直肌 abs
+      mkMuscle(new THREE.BoxGeometry(0.32, 0.5, 0.16), 0, 1.0, 0.1, 'abs');
+      // 腹斜肌 oblique (左右侧)
+      mkMuscle(new THREE.BoxGeometry(0.1, 0.4, 0.16), 0.22, 1.0, 0.08, 'oblique');
+      mkMuscle(new THREE.BoxGeometry(0.1, 0.4, 0.16), -0.22, 1.0, 0.08, 'oblique');
+
+      // 臀大肌 glute
+      mkMuscle(new THREE.SphereGeometry(0.18, Seg, Seg), 0.13, 0.55, -0.1, 'glute');
+      mkMuscle(new THREE.SphereGeometry(0.18, Seg, Seg), -0.13, 0.55, -0.1, 'glute');
+
+      // 股四头肌 quad (左右腿前方)
+      mkMuscle(new THREE.CapsuleGeometry(0.1, 0.5, Seg, Seg), 0.13, 0.05, 0.06, 'quad');
+      mkMuscle(new THREE.CapsuleGeometry(0.1, 0.5, Seg, Seg), -0.13, 0.05, 0.06, 'quad');
+      // 腘绳肌 hamstring (左右腿后方)
+      mkMuscle(new THREE.CapsuleGeometry(0.09, 0.45, Seg, Seg), 0.13, 0.05, -0.06, 'hamstring');
+      mkMuscle(new THREE.CapsuleGeometry(0.09, 0.45, Seg, Seg), -0.13, 0.05, -0.06, 'hamstring');
+
+      // 小腿肌 calf (左右)
+      mkMuscle(new THREE.CapsuleGeometry(0.07, 0.25, Seg, Seg), 0.13, -0.75, -0.03, 'calf');
+      mkMuscle(new THREE.CapsuleGeometry(0.07, 0.25, Seg, Seg), -0.13, -0.75, -0.03, 'calf');
+
+      // 脚、手等中性填充
+      mkNeutral(new THREE.BoxGeometry(0.08, 0.15, 0.2), 0.46, 0.72, 0.08);  // 手
+      mkNeutral(new THREE.BoxGeometry(0.08, 0.15, 0.2), -0.46, 0.72, 0.08);
+      mkNeutral(new THREE.BoxGeometry(0.12, 0.05, 0.22), 0.13, -1.2, 0.02);  // 脚
+      mkNeutral(new THREE.BoxGeometry(0.12, 0.05, 0.22), -0.13, -1.2, 0.02);
+
+      // 交互事件
+      const canvas = muscleRenderer.domElement;
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+
+      function getNDC(e) {
+        const rect = canvas.getBoundingClientRect();
+        const isTouch = e.touches && e.touches.length;
+        const cx = isTouch ? e.touches[0].clientX : e.clientX;
+        const cy = isTouch ? e.touches[0].clientY : e.clientY;
+        return { x: ((cx-rect.left)/rect.width)*2-1, y: -((cy-rect.top)/rect.height)*2+1, cx, cy };
+      }
+
+      let dragStartX=0, dragStartY=0, dragMoved=false;
+
+      function onPointerDown(e) {
+        const p = getNDC(e);
+        dragStartX = p.cx; dragStartY = p.cy; dragMoved = false;
+        if (e.touches && e.touches.length===2) {
+          musclePinching = true;
+          musclePinchDist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+        } else {
+          muscleDragging = true;
+        }
+        e.preventDefault();
+      }
+
+      function onPointerMove(e) {
+        if (musclePinching && e.touches && e.touches.length===2) {
+          const d = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+          const delta = d - musclePinchDist;
+          muscleZoom = Math.max(2.5, Math.min(8, muscleZoom - delta * 0.01));
+          musclePinchDist = d;
+          e.preventDefault();
+          return;
+        }
+        if (muscleDragging) {
+          const p = getNDC(e);
+          const dx = p.cx - dragStartX, dy = p.cy - dragStartY;
+          if (Math.abs(dx)+Math.abs(dy) > 4) dragMoved = true;
+          muscleTargetRotY += dx * 0.008;
+          muscleTargetRotX = Math.max(-1.2, Math.min(1.2, muscleTargetRotX + dy * 0.008));
+          dragStartX = p.cx; dragStartY = p.cy;
+          e.preventDefault();
+        }
+      }
+
+      function onPointerUp(e) {
+        if (!dragMoved && !musclePinching) {
+          // 点击：Raycaster 检测
+          const p = getNDC(e.changedTouches ? { clientX:e.changedTouches[0].clientX, clientY:e.changedTouches[0].clientY } : e);
+          const rect = canvas.getBoundingClientRect();
+          mouse.x = ((p.cx-rect.left)/rect.width)*2-1;
+          mouse.y = -((p.cy-rect.top)/rect.height)*2+1;
+          raycaster.setFromCamera(mouse, muscleCamera);
+          const meshes = Object.values(muscleMeshes);
+          const hits = raycaster.intersectObjects(meshes, false);
+          if (hits.length > 0) {
+            const id = hits[0].object.userData.muscleId;
+            if (id) { highlightMuscle(id); updateMuscleInfo(id); }
+          }
+        }
+        muscleDragging = false; musclePinching = false;
+      }
+
+      function onWheel(e) {
+        muscleZoom = Math.max(2.5, Math.min(8, muscleZoom + e.deltaY * 0.003));
+        e.preventDefault();
+      }
+
+      canvas.addEventListener('touchstart', onPointerDown, { passive:false });
+      canvas.addEventListener('touchmove', onPointerMove, { passive:false });
+      canvas.addEventListener('touchend', onPointerUp, { passive:false });
+      canvas.addEventListener('mousedown', onPointerDown);
+      canvas.addEventListener('mousemove', (e)=>{ if(muscleDragging) onPointerMove(e); });
+      canvas.addEventListener('mouseup', onPointerUp);
+      canvas.addEventListener('mouseleave', ()=>{ muscleDragging=false; musclePinching=false; });
+      canvas.addEventListener('wheel', onWheel, { passive:false });
+
+      // 渲染循环
+      function animate() {
+        muscleAnimId = requestAnimationFrame(animate);
+        // 平滑过渡
+        muscleRotY += (muscleTargetRotY - muscleRotY) * 0.15;
+        muscleRotX += (muscleTargetRotX - muscleRotX) * 0.15;
+        const group = muscleScene.children.find(c=>c.type==='Group');
+        if (group) { group.rotation.y = muscleRotY; group.rotation.x = muscleRotX; }
+        muscleCamera.position.z += (muscleZoom - muscleCamera.position.z) * 0.15;
+        muscleRenderer.render(muscleScene, muscleCamera);
+      }
+      animate();
+
+      // 响应式
+      function onResize() {
+        if (!muscleRenderer || !muscleCamera || !container) return;
+        const w = container.clientWidth, h = container.clientHeight;
+        muscleCamera.aspect = w/h;
+        muscleCamera.updateProjectionMatrix();
+        muscleRenderer.setSize(w, h);
+      }
+      window.addEventListener('resize', onResize);
+      // 存储引用以便 dispose
+      muscleScene.userData.onResize = onResize;
+    }
+
+    function highlightMuscle(id) {
+      const THREE = window.THREE;
+      if (!THREE) return;
+      // 清除所有高亮
+      Object.values(muscleMeshes).forEach(m => {
+        m.material.emissive.setHex(0x000000);
+        m.material.opacity = 0.92;
+      });
+      if (muscleSelected === id) { muscleSelected = null; return; }
+      muscleSelected = id;
+      // 高亮所有同 id 的 mesh
+      Object.values(muscleMeshes).forEach(m => {
+        if (m.userData.muscleId === id) {
+          const c = MUSCLES[id] ? MUSCLES[id].color : '#ff6600';
+          m.material.emissive.setStyle(c);
+          m.material.emissiveIntensity = 0.5;
+          m.material.opacity = 1.0;
+        }
+      });
+    }
+
+    function updateMuscleInfo(id) {
+      const info = $('muscleInfo');
+      if (!info) return;
+      const m = MUSCLES[id];
+      if (!m) { info.innerHTML = '<div class="m-name">点击肌肉查看详情</div><div class="m-ex">点击 3D 模型上的肌肉部位，查看名称和锻炼动作</div>'; return; }
+      info.innerHTML = `<div class="m-name">📌 ${m.name}</div><div class="m-ex">常见锻炼动作：${m.exercises.join(' · ')}</div>`;
+    }
+
+    function setMuscleView(side) {
+      muscleViewSide = side;
+      if (side==='back') { muscleTargetRotY = Math.PI; }
+      else { muscleTargetRotY = 0; }
+      // 更新按钮状态
+      document.querySelectorAll('.muscle-toolbar button').forEach(b=>b.classList.toggle('active', b.dataset.side===side));
+    }
+
+    function disposeMuscleModel() {
+      if (muscleAnimId) { cancelAnimationFrame(muscleAnimId); muscleAnimId = null; }
+      if (muscleScene && muscleScene.userData.onResize) {
+        window.removeEventListener('resize', muscleScene.userData.onResize);
+      }
+      if (muscleRenderer) {
+        const canvas = muscleRenderer.domElement;
+        if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
+        muscleRenderer.dispose();
+        muscleRenderer = null;
+      }
+      if (muscleScene) {
+        muscleScene.traverse(o=>{ if(o.geometry) o.geometry.dispose(); if(o.material) o.material.dispose(); });
+        muscleScene = null;
+      }
+      muscleMeshes = {}; muscleSelected = null;
+      muscleDragging = false; musclePinching = false;
+    }
+
+    // ---- 训练记录 ----
+    function calc1RM(weight, reps) {
+      const r = +reps;
+      if (!r || r <= 0) return weight;
+      return Math.round(weight * (1 + r / 30) * 10) / 10;
+    }
+
+    function getTodaySets(sportId, exName) {
+      const d = today();
+      if (!state.sport.setsLog[d] || !state.sport.setsLog[d][sportId]) return [];
+      const exData = state.sport.setsLog[d][sportId].find(e => e.exName === exName);
+      return exData ? exData.sets : [];
+    }
+
+    function getLastSetWeight(sportId, exName) {
+      // 找最近一次记录的重量
+      const dates = Object.keys(state.sport.setsLog).sort().reverse();
+      for (const d of dates) {
+        if (!state.sport.setsLog[d][sportId]) continue;
+        const ex = state.sport.setsLog[d][sportId].find(e => e.exName === exName);
+        if (ex && ex.sets && ex.sets.length) return ex.sets[ex.sets.length - 1].weight;
+      }
+      return 20; // 默认建议重量
+    }
+
+    function saveSet(date, sportId, exName, weight, reps) {
+      if (!state.sport.setsLog[date]) state.sport.setsLog[date] = {};
+      if (!state.sport.setsLog[date][sportId]) state.sport.setsLog[date][sportId] = [];
+      let ex = state.sport.setsLog[date][sportId].find(e => e.exName === exName);
+      if (!ex) { ex = { exName, sets: [] }; state.sport.setsLog[date][sportId].push(ex); }
+      ex.sets.push({ weight, reps, ts: Date.now() });
+      save();
+
+      // PR 检测
+      const est1RM = calc1RM(weight, reps);
+      if (!state.sport.pr[exName] || est1RM > state.sport.pr[exName]) {
+        state.sport.pr[exName] = est1RM;
+        save();
+        toast(`🏆 PR！${exName} 估算 1RM = ${est1RM}kg`);
+      }
+    }
+
+    function renderStrengthLog(sport) {
+      const todaySets = state.sport.setsLog[today()]?.[sport.id] || [];
+      const html = sport.exercises.map((ex, ei) => {
+        const sets = todaySets.find(s => s.exName === ex.name)?.sets || [];
+        const lastW = getLastSetWeight(sport.id, ex.name);
+        const pr = state.sport.pr[ex.name];
+        const m = MUSCLES[ex.muscle];
+        const setsHtml = sets.map((s, si) => `<span class="tag gray" style="margin:2px">${si+1}. ${s.weight}kg×${s.reps}</span>`).join('');
+        return `<div class="ex-set-row" id="exRow${ei}">
+          <div style="flex:1;min-width:120px">
+            <div style="font-weight:600;font-size:14px">${ex.name} ${pr?`<span class="ex-pr-badge">PR ${pr}kg</span>`:''}</div>
+            <div style="font-size:11px;color:var(--muted)">${m?m.name:''} · ${ex.sets}×${ex.reps} · 休${ex.rest}</div>
+          </div>
+          <div class="ex-set-log" style="flex:1;min-width:100px">${setsHtml || '<span style="color:var(--muted)">尚未记录</span>'}</div>
+          <div id="setInput${ei}" style="display:none;gap:6px;align-items:center;flex-wrap:wrap">
+            <input class="ex-set-input" id="setW${ei}" type="number" placeholder="重量kg" value="${lastW}" />
+            <span style="color:var(--muted)">×</span>
+            <input class="ex-set-input" id="setR${ei}" type="number" placeholder="次数" />
+            <button class="btn sm" data-action="save-set" data-sid="${sport.id}" data-ex="${encodeURIComponent(ex.name)}" data-ei="${ei}">✅</button>
+            <button class="btn sm ghost" data-action="cancel-set" data-ei="${ei}">取消</button>
+          </div>
+          <button class="btn sm outline" data-action="add-set" data-ei="${ei}" id="addBtn${ei}">➕ 记录</button>
+        </div>`;
+      }).join('');
+      return `<div style="margin:8px 0">${html}</div>`;
+    }
+
+    function renderHeatmap() {
+      // 近7天每个肌肉群训练组数
+      const muscleCounts = {};
+      Object.keys(MUSCLES).forEach(k => muscleCounts[k] = 0);
+      const days = [];
+      for (let i = 0; i < 7; i++) { const d = new Date(); d.setDate(d.getDate()-i); days.push(dateStr(d)); }
+      days.forEach(d => {
+        const log = state.sport.setsLog[d];
+        if (!log) return;
+        Object.entries(log).forEach(([sid, exs]) => {
+          const sport = SPORTS.find(s => s.id === sid);
+          if (!sport || !sport.exercises) return;
+          exs.forEach(ex => {
+            const def = sport.exercises.find(e => e.name === ex.exName);
+            if (def && muscleCounts[def.muscle] !== undefined) {
+              muscleCounts[def.muscle] += (ex.sets?.length || 0);
+            }
+          });
+        });
+      });
+      const max = Math.max(...Object.values(muscleCounts), 1);
+      return Object.entries(MUSCLES).map(([id, m]) => {
+        const cnt = muscleCounts[id];
+        const intensity = cnt / max;
+        const opacity = cnt === 0 ? 0.2 : 0.3 + intensity * 0.7;
+        return `<div class="heat-dot" data-action="heat-muscle" data-id="${id}" style="background:${m.color};opacity:${opacity}" title="${m.name}: ${cnt}组">${m.short}</div>`;
+      }).join('');
+    }
+
+    function renderWeekLogV2() {
+      const start = new Date(); start.setDate(start.getDate() - ((start.getDay()+6)%7)); start.setHours(0,0,0,0);
+      const days = [];
+      for (let i=0;i<7;i++){ const d=new Date(start); d.setDate(d.getDate()+i); const k=dateStr(d); days.push({k, log:state.sport.log[k], setsLog:state.sport.setsLog[k], label:(d.getMonth()+1)+'/'+d.getDate()}); }
+      if (!days.some(d=>(d.log && Object.keys(d.log).length) || (d.setsLog && Object.keys(d.setsLog).length))) return '<div class="empty">本周还没有运动记录</div>';
+      return days.map(d=>{
+        const items = [];
+        if (d.log) Object.entries(d.log).forEach(([id,m])=>{ const sp=SPORTS.find(s=>s.id===id); if(sp) items.push(`${sp.icon} ${sp.name} ${m}分`); });
+        if (d.setsLog) Object.entries(d.setsLog).forEach(([sid, exs])=>{
+          const sp = SPORTS.find(s=>s.id===sid); if(!sp) return;
+          const totalSets = exs.reduce((sum, e) => sum + (e.sets?.length||0), 0);
+          if (totalSets) items.push(`${sp.icon} ${sp.name} ${totalSets}组`);
+        });
+        if (!items.length) return `<div class="item" style="padding:8px 0;opacity:.5"><span class="tag gray" style="margin-right:8px">${d.label}</span>休息</div>`;
+        return `<div class="item" style="padding:8px 0"><span class="tag primary" style="margin-right:8px">${d.label}</span>${items.join(' · ')}</div>`;
+      }).join('');
+    }
+
+    function getWeekVolumeData() {
+      const start = new Date(); start.setDate(start.getDate() - ((start.getDay()+6)%7)); start.setHours(0,0,0,0);
+      const days = [];
+      for (let i=0;i<7;i++){
+        const d=new Date(start); d.setDate(d.getDate()+i); const k=dateStr(d);
+        let vol = 0;
+        if (state.sport.log[k]) vol += Object.values(state.sport.log[k]).reduce((a,b)=>a+(+b||0),0)/10; // 有氧分钟/10 做 scale
+        if (state.sport.setsLog[k]) Object.values(state.sport.setsLog[k]).forEach(exs=>exs.forEach(e=>vol += (e.sets?.length||0)));
+        days.push({ label: k.slice(5), value: Math.round(vol*10)/10 });
+      }
+      return days;
+    }
     function renderSport() {
       // 老数据兼容：缺字段时自动补齐（防止之前用过的用户数据缺失导致整页空白）
       if (!state.sport.weekPlan) {
-        state.sport.weekPlan = {1:'tennis',2:'barre',3:'swim',4:'tennis',5:'barre',6:'swim',7:'tennis'};
+        state.sport.weekPlan = {1:'tennis',2:'push',3:'swim',4:'pull',5:'barre',6:'leg',7:'core'};
         save();
       }
       if (!state.sport.log) { state.sport.log = {}; save(); }
       if (!state.sport.done) { state.sport.done = {}; save(); }
+      if (!state.sport.setsLog) { state.sport.setsLog = {}; save(); }
+      if (!state.sport.pr) { state.sport.pr = {}; save(); }
+      if (state.sport.weekPlan && state.sport.weekPlan[2]==='barre' && state.sport.weekPlan[4]==='tennis') {
+        // 检测老版 weekPlan（全有氧无力量训练），自动升级
+        state.sport.weekPlan = {1:'tennis',2:'push',3:'swim',4:'pull',5:'barre',6:'leg',7:'core'};
+        save();
+      }
       const dow = (new Date().getDay() + 6) % 7 + 1;
       const dayNames = ['一','二','三','四','五','六','日'];
       const wp = state.sport.weekPlan;
       const todayLog = state.sport.log[today()] || {};
+
+      const typeColor = (sp) => sp ? (sp.type==='strength' ? 'var(--green)' : 'var(--blue, #3b82f6)') : 'var(--line-2)';
 
       const weekHtml = dayNames.map((dn, i) => {
         const day = i + 1;
         const sp = SPORTS.find(s => s.id === wp[day]);
         const isToday = day === dow;
         return `<div class="day-cell ${isToday?'today':''}" data-action="day-sport" data-day="${day}">
+          <div class="day-bar" style="background:${typeColor(sp)}"></div>
           <div style="font-size:11px;color:var(--muted)">周${dn}</div>
           <div style="font-size:22px;margin:4px 0">${sp?sp.icon:'💤'}</div>
-          <div style="font-size:11px">${sp?sp.name:'休息'}</div>
+          <div style="font-size:10px">${sp?sp.name:'休息'}</div>
         </div>`;
       }).join('');
 
       const todaySport = SPORTS.find(s => s.id === wp[dow]);
       const todayTags = Object.entries(todayLog).map(([id,m])=>{ const sp=SPORTS.find(s=>s.id===id); return sp?`<span class="tag primary" style="margin-right:6px">${sp.icon} ${sp.name} ${m}分钟</span>`:''; }).join('');
-      const todayCard = todaySport ? `
-        <div style="font-size:18px;margin-bottom:6px">${todaySport.icon} ${todaySport.name}</div>
-        <div class="card-sub">${todaySport.goal}</div>
-        <div style="margin-top:10px"><button class="btn sm" data-action="log-sport" data-id="${todaySport.id}">✅ 记录今日时长</button></div>
-        ${todayTags ? `<div style="margin-top:10px">${todayTags}</div>` : ''}
-      ` : '<div class="card-sub">今天安排为休息日 ☕</div>';
+
+      let todayCard;
+      if (!todaySport) {
+        todayCard = '<div class="card-sub">今天安排为休息日 ☕</div>';
+      } else if (todaySport.type === 'strength' && todaySport.exercises) {
+        // 力量训练：显示动作记录表
+        todayCard = `
+          <div style="font-size:18px;margin-bottom:6px">${todaySport.icon} ${todaySport.name}</div>
+          <div class="card-sub">${todaySport.goal}</div>
+          ${todaySport.muscles ? `<div style="margin:6px 0">${todaySport.muscles.map(m=>`<span class="tag" style="background:${(MUSCLES[m]||{}).color||'var(--gray)'};color:#fff;margin-right:4px">${(MUSCLES[m]||{}).short||m}</span>`).join('')}</div>`:''}
+          ${renderStrengthLog(todaySport)}
+          ${todayTags ? `<div style="margin-top:10px">${todayTags}</div>` : ''}
+        `;
+      } else {
+        // 有氧：分钟数记录
+        todayCard = `
+          <div style="font-size:18px;margin-bottom:6px">${todaySport.icon} ${todaySport.name}</div>
+          <div class="card-sub">${todaySport.goal}</div>
+          <div style="margin-top:10px"><button class="btn sm" data-action="log-sport" data-id="${todaySport.id}">✅ 记录今日时长</button></div>
+          ${todayTags ? `<div style="margin-top:10px">${todayTags}</div>` : ''}
+        `;
+      }
+
+      const cardioSports = SPORTS.filter(s => s.type !== 'strength');
+      const strengthSports = SPORTS.filter(s => s.type === 'strength');
+      const activeTab = state._sportTab || 'cardio';
+
+      const detailHtml = activeTab === 'cardio' ? cardioSports.map(s => `
+        <div class="card">
+          <div class="card-title">${s.icon} ${s.name}</div>
+          ${s.goal?`<div class="card-sub">目标：${s.goal}</div>`:''}
+          ${s.note?`<div class="card-sub" style="color:var(--accent)">💡 ${s.note}</div>`:''}
+          ${s.plan.map(p=>`
+            <div style="margin:10px 0">
+              <strong style="font-size:14px">${p.phase}</strong>
+              ${p.items.map(it=>`<div class="item" style="padding:7px 0"><span class="tag gray" style="margin-right:8px">▪</span>${it}</div>`).join('')}
+            </div>`).join('')}
+          <div class="card-sub" style="margin-top:6px">教学视频：</div>
+          ${s.videos.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" data-action="open-link" data-url="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}
+        </div>`).join('') : strengthSports.map(s => `
+        <div class="card">
+          <div class="card-title">${s.icon} ${s.name} <span style="font-size:12px;color:var(--muted);font-weight:400">${s.muscles?.map(m=>MUSCLES[m]?.short||m).join('/')||''}</span></div>
+          ${s.goal?`<div class="card-sub">目标：${s.goal}</div>`:''}
+          ${s.exercises ? `<div style="margin:8px 0">${s.exercises.map(e=>`<div class="exercise"><div style="font-weight:600;font-size:13px">${e.name}</div><div class="item-desc" style="margin-top:2px">${(MUSCLES[e.muscle]||{}).name||e.muscle} · ${e.sets}×${e.reps} · 休${e.rest}</div></div>`).join('')}</div>`:''}
+          ${s.plan ? s.plan.map(p=>`
+            <div style="margin:10px 0">
+              <strong style="font-size:14px">${p.phase}</strong>
+              ${p.items.map(it=>`<div class="item" style="padding:7px 0"><span class="tag gray" style="margin-right:8px">▪</span>${it}</div>`).join('')}
+            </div>`).join('') : ''}
+          ${s.videos?s.videos.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" data-action="open-link" data-url="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join(''):''}
+        </div>`).join('');
+
+      // PR 列表
+      const prList = Object.entries(state.sport.pr||{});
+      const prHtml = prList.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${prList.map(([n,w])=>`<span class="ex-pr-badge">🏆 ${n}: ${w}kg</span>`).join('')}</div>` : '';
 
       $('main').innerHTML = `
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="card-title" style="padding:14px 16px 0">💪 3D 肌肉模型</div>
+          <div class="card-sub" style="padding:0 16px">点击肌肉部位高亮，查看名称和锻炼动作 · 拖拽旋转 · 双指缩放</div>
+          <div class="muscle-canvas-wrap" id="muscleCanvas" style="margin:8px;border-radius:var(--radius-sm)">
+            <div class="muscle-toolbar">
+              <button class="${muscleViewSide==='front'?'active':''}" data-action="muscle-tab" data-side="front">正面</button>
+              <button class="${muscleViewSide==='back'?'active':''}" data-action="muscle-tab" data-side="back">背面</button>
+            </div>
+            <div class="muscle-info" id="muscleInfo">
+              <div class="m-name">点击肌肉查看详情</div>
+              <div class="m-ex">点击 3D 模型上的肌肉部位，查看名称和锻炼动作</div>
+            </div>
+          </div>
+          <div style="padding:0 16px 14px">
+            <div class="card-sub" style="margin-bottom:4px">🔥 肌肉恢复热力图（近7天训练组数）</div>
+            <div class="muscle-heatmap">${renderHeatmap()}</div>
+          </div>
+        </div>
         <div class="card">
           <div class="card-title">📅 每周排期</div>
-          <div class="card-sub">点任意一天可切换当日运动项目；可自由调整</div>
+          <div class="card-sub">点任意一天可切换当日运动项目 · <span style="color:var(--blue,#3b82f6)">■</span>有氧 <span style="color:var(--green)">■</span>力量</div>
           <div class="week-grid">${weekHtml}</div>
         </div>
         <div class="card">
           <div class="card-title">🏃 今日打卡（周${dayNames[dow-1]}）</div>
           ${todayCard}
         </div>
+        <div class="section-title">📊 本周训练量</div>
+        <div class="card">${svgBars(getWeekVolumeData(), 'var(--primary)')}
+          <div class="card-sub" style="margin:8px 0 4px">每日训练量（综合组数+有氧时长）</div>
+        </div>
+        ${prHtml ? `<div class="card"><div class="card-title">🏆 个人记录 (PR)</div>${prHtml}</div>` : ''}
         <div class="section-title">本周已记录</div>
-        <div class="card">${renderWeekLog()}</div>
-        <div class="section-title">三项运动详情</div>
-        ${SPORTS.map(s=>`
-          <div class="card">
-            <div class="card-title">${s.icon} ${s.name}</div>
-            ${s.goal?`<div class="card-sub">目标：${s.goal}</div>`:''}
-            ${s.note?`<div class="card-sub" style="color:var(--accent)">💡 ${s.note}</div>`:''}
-            ${s.plan.map(p=>`
-              <div style="margin:10px 0">
-                <strong style="font-size:14px">${p.phase}</strong>
-                ${p.items.map(it=>`<div class="item" style="padding:7px 0"><span class="tag gray" style="margin-right:8px">▪</span>${it}</div>`).join('')}
-              </div>`).join('')}
-            <div class="card-sub" style="margin-top:6px">教学视频：</div>
-            ${s.videos.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" data-action="open-link" data-url="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}
-          </div>
-        `).join('')}
+        <div class="card">${renderWeekLogV2()}</div>
+        <div class="sport-tabs">
+          <div class="sport-tab ${activeTab==='cardio'?'active':''}" data-action="sport-tabs" data-tab="cardio">🏃 有氧运动</div>
+          <div class="sport-tab ${activeTab==='strength'?'active':''}" data-action="sport-tabs" data-tab="strength">💪 力量训练</div>
+        </div>
+        ${detailHtml}
       `;
-    }
-    function renderWeekLog() {
-      const start = new Date(); start.setDate(start.getDate() - ((start.getDay()+6)%7)); start.setHours(0,0,0,0);
-      const days = [];
-      for (let i=0;i<7;i++){ const d=new Date(start); d.setDate(d.getDate()+i); const k=dateStr(d); days.push({k, log:state.sport.log[k], label:(d.getMonth()+1)+'/'+d.getDate()}); }
-      if (!days.some(d=>d.log && Object.keys(d.log).length)) return '<div class="empty">本周还没有运动记录</div>';
-      return days.map(d=>{
-        if (!d.log || !Object.keys(d.log).length) return `<div class="item" style="padding:8px 0;opacity:.5"><span class="tag gray" style="margin-right:8px">${d.label}</span>休息</div>`;
-        const tags = Object.entries(d.log).map(([id,m])=>{ const sp=SPORTS.find(s=>s.id===id); return sp?`<span class="tag primary" style="margin-right:6px">${sp.icon} ${sp.name} ${m}分</span>`:''; }).join('');
-        return `<div class="item" style="padding:8px 0"><span class="tag primary" style="margin-right:8px">${d.label}</span>${tags}</div>`;
-      }).join('');
+
+      // 初始化 3D 模型
+      if (threeReady && window.THREE) {
+        setTimeout(()=>{ initMuscleModel($('muscleCanvas')); }, 50);
+      } else {
+        window.addEventListener('three-ready', ()=>{
+          if (currentView === 'sport') initMuscleModel($('muscleCanvas'));
+        }, { once:true });
+      }
     }
 
     // ===================== 健康 =====================
@@ -22976,6 +23577,12 @@
         case 'day-sport': { const day=+t.dataset.day; const dn=['一','二','三','四','五','六','日'][day-1]; const opts=SPORTS.map(s=>`<button class="btn sm outline" data-action="set-day-sport" data-day="${day}" data-id="${s.id}" style="margin:4px">${s.icon} ${s.name}</button>`).join('')+`<button class="btn sm outline" data-action="set-day-sport" data-day="${day}" data-id="rest" style="margin:4px">💤 休息</button>`; openModal(`<h3>周${dn} 安排哪个项目？</h3><div style="display:flex;flex-wrap:wrap">${opts}</div><div class="modal-actions"><button class="btn ghost" data-action="modal-close">取消</button></div>`); break; }
         case 'set-day-sport': { const day=+t.dataset.day, id=t.dataset.id; state.sport.weekPlan[day]=id==='rest'?null:id; save(); closeModal(); renderSport(); toast('周排期已更新'); break; }
         case 'log-sport': { const id=t.dataset.id; const sp=SPORTS.find(s=>s.id===id); const v=prompt(`今天 ${sp.name} 练了多少分钟？`, '30'); const m=+v; if(!v||isNaN(m)||m<=0){ if(v!==null) toast('请输入有效分钟数'); break; } state.sport.log[today()]=state.sport.log[today()]||{}; state.sport.log[today()][id]=(state.sport.log[today()][id]||0)+m; save(); toast(`✅ ${sp.icon} 已记录 ${m} 分钟`); renderSport(); break; }
+        case 'muscle-tab': { setMuscleView(t.dataset.side); break; }
+        case 'sport-tabs': { state._sportTab = t.dataset.tab; renderSport(); break; }
+        case 'heat-muscle': { const id=t.dataset.id; highlightMuscle(id); updateMuscleInfo(id); break; }
+        case 'add-set': { const ei=t.dataset.ei; const row=document.getElementById('setInput'+ei); const btn=document.getElementById('addBtn'+ei); if(row){ row.style.display='flex'; btn.style.display='none'; setTimeout(()=>{ const inp=document.getElementById('setR'+ei); if(inp) inp.focus(); },50);} break; }
+        case 'cancel-set': { const ei=t.dataset.ei; const row=document.getElementById('setInput'+ei); const btn=document.getElementById('addBtn'+ei); if(row){ row.style.display='none'; btn.style.display=''; } break; }
+        case 'save-set': { const sid=t.dataset.sid, ex=decodeURIComponent(t.dataset.ex), ei=t.dataset.ei; const w=+document.getElementById('setW'+ei).value, r=+document.getElementById('setR'+ei).value; if(!w||w<=0||!r||r<=0){ toast('请输入有效的重量和次数'); break; } saveSet(today(), sid, ex, w, r); toast(`✅ ${ex}: ${w}kg×${r} 已记录`); renderSport(); break; }
         case 'save-profile': { state.health.profile.height=$('hHeight').value; state.health.profile.goalWeight=$('hGoal').value; save(); toast('已保存基础数据'); break; }
         case 'save-record': { const d=today(); state.health.records[d]={ sleep:$('recSleep').value, weight:$('recWeight').value, mood:+$('recMood').value, exercise:$('recEx').value, note:$('recNote').value, bedtime:$('recBedtime').value, wake:$('recWake').value, quality:+$('recQuality').value||0, awake:+$('recAwake').value||0 }; save(); toast('✅ 今日健康记录已保存'); break; }
         case 'save-topic': { const tt=t.dataset.t; if(state.topicSaved.includes(tt)) state.topicSaved=state.topicSaved.filter(x=>x!==tt); else state.topicSaved.push(tt); save(); renderTopic(); break; }
