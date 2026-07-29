@@ -1464,7 +1464,7 @@
       const langs = Object.keys(LANG);
       const tabsHtml = `<button class="${!curLang?'active':''}" data-action="lang-all">全部</button>` +
         langs.map(k=>`<button class="${curLang===k?'active':''}" data-action="lang" data-k="${k}">${LANG[k].flag} ${LANG[k].name}</button>`).join('');
-      const modes = [['overview','📚 总览'],['quiz','🎯 闯关练习'],['flash','🔤 单词卡'],['listen','👂 精听跟读']];
+      const modes = [['overview','📚 总览'],['quiz','🎯 闯关练习'],['flash','🔤 单词卡'],['listen','👂 精听跟读'],['dialog','🗣 情景对话']];
       const modeHtml = `<div class="tabs" style="margin-bottom:10px">${modes.map(m=>`<button class="${studyMode===m[0]?'active':''}" data-action="study-mode" data-m="${m[0]}">${m[1]}</button>`).join('')}</div>`;
       $('main').innerHTML = `
         <div class="card" style="border:1px solid var(--primary);background:var(--primary-soft)">
@@ -1487,6 +1487,7 @@
       if (studyMode==='quiz') return renderStudyQuiz();
       if (studyMode==='flash') return renderStudyFlash();
       if (studyMode==='listen') return renderStudyListen();
+      if (studyMode==='dialog') return renderStudyDialog();
       return renderLangBody();
     }
 
@@ -1742,6 +1743,36 @@
           <button class="btn sm outline" data-action="listen-next" style="margin-top:10px;width:100%;justify-content:center">下一句 →</button>
         </div>
         <div class="card-sub" style="text-align:center;margin-top:6px">跟读使用浏览器语音识别，部分手机/PWA 可能不支持；不支持时可用「显示原文 + 跟读示范」替代练习。</div>`;
+    }
+    // ============ 情景对话（吃 dialogues 数据：韩/粤最有价值的真实语料）============
+    let dialogState = null;
+    function renderStudyDialog() {
+      const L = LANG[curLang || 'english'];
+      const list = (L.dialogues||[]);
+      if (!list.length) { $('langBody').innerHTML = '<div class="card"><div class="empty">该语言暂无对话语料</div></div>'; return; }
+      if (!dialogState || dialogState.done) {
+        const day = Math.floor(Date.now()/86400000);
+        const pick = [];
+        for (let i=0;i<6;i++) pick.push(list[(day+i*5)%list.length]);
+        dialogState = { pick, idx:0, revealed:false, result:null, done:false };
+      }
+      const st = dialogState, d = st.pick[st.idx];
+      const isHan = curLang==='korean';
+      $('langBody').innerHTML = `
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted)"><span>情景对话 ${st.idx+1}/${st.pick.length}</span><span>${isHan?'🇰🇷 韩语':'🇭🇰 粤语'}</span></div>
+          <div style="margin:14px 0;font-size:20px;font-weight:700;text-align:center;line-height:1.5">${esc(d.ko)}</div>
+          ${st.revealed?`<div style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:6px">${esc(d.mp||'')}</div>
+          <div style="text-align:center;font-size:15px;color:var(--primary);margin-bottom:10px">${esc(d.zh)}</div>`:''}
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <button class="btn sm" data-action="dialog-play" style="flex:1;justify-content:center">🔊 听原声</button>
+            ${st.revealed?'':'<button class="btn sm outline" data-action="dialog-reveal" style="flex:1;justify-content:center">显示拼音/含义</button>'}
+          </div>
+          ${st.revealed?`<button class="btn sm" data-action="dialog-record" style="width:100%;justify-content:center;margin-bottom:8px">🎤 我跟读这句</button>`:''}
+          ${st.result?`<div style="padding:10px;background:var(--bg);border-radius:8px;font-size:13px;line-height:1.5">${st.result}</div>`:''}
+          <button class="btn sm outline" data-action="dialog-next" style="margin-top:8px;width:100%;justify-content:center">下一句 →</button>
+        </div>
+        <div class="card-sub" style="text-align:center;margin-top:6px">${isHan?'罗马音参考，跟读练语感':'粤拼 Jyutping 参考，跟读练九声六调'}</div>`;
     }
     function startAssess() {
       const L = LANG[curLang];
@@ -2484,7 +2515,7 @@
         case 'del-task': { const g=t.dataset.g,id=t.dataset.id; state.daily[g]=state.daily[g].filter(x=>x.id!==id); save(); renderDaily(); break; }
         case 'add-task': { const v=$('newTask').value.trim(); if(!v)break; const ty=$('newType').value; state.daily[ty].push({id:uid(),title:v,tag:ty==='routine'?'每日必做':'创作任务',done:false}); save(); renderDaily(); break; }
         case 'lang-all': curLang=null; studyRenderBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.action==='lang-all')); break;
-        case 'lang': curLang=t.dataset.k; quizState=null; flashState=null; listenState=null; studyRenderBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.k===curLang)); break;
+        case 'lang': curLang=t.dataset.k; quizState=null; flashState=null; listenState=null; dialogState=null; studyRenderBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.k===curLang)); break;
         case 'assess': startAssess(); break;
         case 'lang-done': { const i=+t.dataset.i; const L=LANG[curLang]; if(state.lang[curLang].level===i && i<L.plan.length-1){ state.lang[curLang].level=i+1; } save(); renderLangBody(); break; }
         case 'speak': speak(decodeURIComponent(t.dataset.t), t.dataset.l); break;
@@ -2663,6 +2694,45 @@
             rec.onerror = () => { listenState.result = '⚠️ 没听清或浏览器不支持，请重试，或用示范对照练习。'; renderStudyListen(); };
             rec.start();
           } catch(_) { listenState.result = '⚠️ 语音识别启动失败，请用示范对照练习。'; renderStudyListen(); }
+          break;
+        }
+        // ===== 情景对话模式（韩/粤 dialogues）=====
+        case 'dialog-play': { if(dialogState){ const d=dialogState.pick[dialogState.idx]; speak(d.ko, LANG[curLang||'english'].tts); } break; }
+        case 'dialog-reveal': { if(dialogState) dialogState.revealed = true; renderStudyDialog(); break; }
+        case 'dialog-next': {
+          if (!dialogState) break;
+          dialogState.idx++; dialogState.revealed = false; dialogState.result = null;
+          if (dialogState.idx >= dialogState.pick.length) dialogState.done = true;
+          renderStudyDialog();
+          break;
+        }
+        case 'dialog-record': {
+          if (!dialogState) break;
+          const target = dialogState.pick[dialogState.idx];
+          const L = LANG[curLang || 'english'];
+          if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            dialogState.result = '⚠️ 当前浏览器不支持语音识别。可点「显示拼音/含义 + 听原声」对照练习。';
+            renderStudyDialog(); break;
+          }
+          const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+          const rec = new SR();
+          rec.lang = L.tts; rec.interimResults = false; rec.maxAlternatives = 1;
+          dialogState.result = '🎤 请跟读…（说完自动评分）';
+          renderStudyDialog();
+          try {
+            rec.onresult = (ev) => {
+              const said = ev.results[0][0].transcript.trim().toLowerCase();
+              const tgt = target.ko.toLowerCase().replace(/[.,!?;:，。！？]/g,'');
+              const sim = said.replace(/[.,!?;:，。！？]/g,'');
+              let score = 0; const tWords = tgt.split(/\s+/).filter(Boolean); const sWords = sim.split(/\s+/).filter(Boolean);
+              tWords.forEach(w=>{ if(sWords.includes(w)) score++; });
+              const pct = tWords.length? Math.round(score/tWords.length*100):0;
+              dialogState.result = `你说的：${said}<br>匹配度：<b style="color:${pct>=60?'var(--green)':'var(--red)'}">${pct}%</b><br>${pct>=60?'👍 很接近，语感不错！':'💡 再听一遍原声，注意声调/节奏。'}`;
+              renderStudyDialog();
+            };
+            rec.onerror = () => { dialogState.result = '⚠️ 没听清或浏览器不支持，请重试，或用原声对照。'; renderStudyDialog(); };
+            rec.start();
+          } catch(_) { dialogState.result = '⚠️ 语音识别启动失败，请用原声对照练习。'; renderStudyDialog(); }
           break;
         }
         case 'piano-edit': {
