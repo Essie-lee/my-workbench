@@ -348,6 +348,42 @@
     /* ===== 周历颜色条 ===== */
     .day-cell .day-bar { height:3px; border-radius:2px; margin-bottom:4px; }
 
+    /* ===== 运动卡片折叠 ===== */
+    details.sport-sec {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel, rgba(255,255,255,.7));
+      box-shadow: var(--shadow, 0 1px 3px rgba(0,0,0,.06));
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    [data-theme="dark"] details.sport-sec { background: rgba(45,45,45,.5); }
+    details.sport-sec > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      user-select: none;
+    }
+    details.sport-sec > summary::-webkit-details-marker { display: none; }
+    details.sport-sec > summary .ss-title {
+      font-weight: 600; font-size: 15px; color: var(--ink-1);
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    details.sport-sec > summary .ss-tag {
+      font-size: 11px; color: var(--muted); font-weight: 400;
+    }
+    details.sport-sec > summary .chev {
+      font-size: 13px; color: var(--muted);
+      transition: transform .2s ease; flex-shrink: 0; margin-left: 8px;
+    }
+    details.sport-sec[open] > summary .chev { transform: rotate(90deg); }
+    details.sport-sec > summary .ss-sub {
+      font-size: 12px; color: var(--muted); margin-top: 2px;
+    }
+    details.sport-sec .sec-body { padding: 4px 16px 16px; }
+    details.sport-sec .sec-body .card-sub { margin-bottom: 10px; }
+
     /* ===== 备忘(Mica 琥珀) ===== */
     .memo-item { background: var(--accent-soft); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px; color: var(--accent); }
     .memo-date { font-size: 12px; opacity: .7; margin-top: 6px; }
@@ -22859,29 +22895,43 @@
       const activeTab = state._sportTab || 'cardio';
 
       const detailHtml = activeTab === 'cardio' ? cardioSports.map(s => `
-        <div class="card">
-          <div class="card-title">${s.icon} ${s.name}</div>
-          ${s.goal?`<div class="card-sub">目标：${s.goal}</div>`:''}
-          ${s.note?`<div class="card-sub" style="color:var(--accent)">💡 ${s.note}</div>`:''}
-          ${s.plan.map(p=>`
-            <div style="margin:10px 0">
-              <strong style="font-size:14px">${p.phase}</strong>
-              ${p.items.map(it=>`<div class="item" style="padding:7px 0"><span class="tag gray" style="margin-right:8px">▪</span>${it}</div>`).join('')}
-            </div>`).join('')}
-          <div class="card-sub" style="margin-top:6px">教学视频：</div>
-          ${s.videos.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" data-action="open-link" data-url="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}
-        </div>`).join('') : strengthSports.map(s => `
-        <div class="card">
-          <div class="card-title">${s.icon} ${s.name} <span style="font-size:12px;color:var(--muted);font-weight:400">${s.muscles?.map(m=>MUSCLES[m]?.short||m).join('/')||''}</span></div>
-          ${s.goal?`<div class="card-sub">目标：${s.goal}</div>`:''}
-          ${s.exercises ? `<div style="margin:8px 0">${s.exercises.map(e=>`<div class="exercise"><div style="font-weight:600;font-size:13px">${e.name}</div><div class="item-desc" style="margin-top:2px">${(MUSCLES[e.muscle]||{}).name||e.muscle} · ${e.sets}×${e.reps} · 休${e.rest}</div></div>`).join('')}</div>`:''}
-          ${s.plan ? s.plan.map(p=>`
-            <div style="margin:10px 0">
-              <strong style="font-size:14px">${p.phase}</strong>
-              ${p.items.map(it=>`<div class="item" style="padding:7px 0"><span class="tag gray" style="margin-right:8px">▪</span>${it}</div>`).join('')}
-            </div>`).join('') : ''}
-          ${s.videos?s.videos.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" data-action="open-link" data-url="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join(''):''}
-        </div>`).join('');
+        <details class="sport-sec" open>
+          <summary>
+            <div>
+              <div class="ss-title">${s.icon} ${s.name}</div>
+              ${s.goal?`<div class="ss-sub">${s.goal}</div>`:''}
+            </div>
+            <span class="chev">▶</span>
+          </summary>
+          <div class="sec-body">
+            ${s.note?`<div class="card-sub" style="color:var(--accent)">💡 ${s.note}</div>`:''}
+            ${s.plan.map(p=>`
+              <div style="margin:10px 0">
+                <strong style="font-size:14px">${p.phase}</strong>
+                ${p.items.map(it=>`<div class="item" style="padding:7px 0"><span class="tag gray" style="margin-right:8px">▪</span>${it}</div>`).join('')}
+              </div>`).join('')}
+            <div class="card-sub" style="margin-top:6px">教学视频：</div>
+            ${s.videos.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" data-action="open-link" data-url="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}
+          </div>
+        </details>`).join('') : strengthSports.map(s => `
+        <details class="sport-sec" open>
+          <summary>
+            <div>
+              <div class="ss-title">${s.icon} ${s.name} <span class="ss-tag">${s.muscles?.map(m=>MUSCLES[m]?.short||m).join('/')||''}</span></div>
+              ${s.goal?`<div class="ss-sub">${s.goal}</div>`:''}
+            </div>
+            <span class="chev">▶</span>
+          </summary>
+          <div class="sec-body">
+            ${s.exercises ? `<div style="margin:8px 0">${s.exercises.map(e=>`<div class="exercise"><div style="font-weight:600;font-size:13px">${e.name}</div><div class="item-desc" style="margin-top:2px">${(MUSCLES[e.muscle]||{}).name||e.muscle} · ${e.sets}×${e.reps} · 休${e.rest}</div></div>`).join('')}</div>`:''}
+            ${s.plan ? s.plan.map(p=>`
+              <div style="margin:10px 0">
+                <strong style="font-size:14px">${p.phase}</strong>
+                ${p.items.map(it=>`<div class="item" style="padding:7px 0"><span class="tag gray" style="margin-right:8px">▪</span>${it}</div>`).join('')}
+              </div>`).join('') : ''}
+            ${s.videos?s.videos.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" data-action="open-link" data-url="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join(''):''}
+          </div>
+        </details>`).join('');
 
       // PR 列表
       const prList = Object.entries(state.sport.pr||{});
