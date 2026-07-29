@@ -152,7 +152,43 @@
     .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.32); z-index: 55; opacity: 0; pointer-events: none; transition: opacity .2s; }
     .overlay.show { opacity: 1; pointer-events: auto; }
 
-    #main { padding: 14px 16px calc(40px + env(safe-area-inset-bottom)); }
+    #main { padding: 14px 16px calc(74px + env(safe-area-inset-bottom)); }
+
+    /* ===== 底部常驻 Tab Bar（移动端单手导航）===== */
+    #tabbar {
+      position: absolute; left: 0; right: 0; bottom: 0; z-index: 50;
+      display: flex; gap: 2px; padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+      background: rgba(245,245,247,.86);
+      -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%);
+      border-top: 1px solid var(--line);
+    }
+    [data-theme="dark"] #tabbar { background: rgba(31,31,31,.82); border-top-color: rgba(255,255,255,.08); }
+    #tabbar button {
+      flex: 1; border: none; background: none; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding: 6px 2px; border-radius: 12px; color: var(--muted); font-size: 10px;
+      transition: color .18s, background .18s; -webkit-tap-highlight-color: transparent;
+    }
+    #tabbar button .ic { font-size: 20px; line-height: 1; transition: transform .18s; }
+    #tabbar button.active { color: var(--primary); background: var(--primary-soft); }
+    #tabbar button.active .ic { transform: translateY(-1px) scale(1.06); }
+    #tabbar button:active .ic { transform: scale(.9); }
+
+    /* ===== 首页模块进度驾驶舱（横向胶囊）===== */
+    .dash-row { display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 6px; margin: 2px -2px 0; scrollbar-width: none; }
+    .dash-row::-webkit-scrollbar { display: none; }
+    .dash-pill {
+      flex: 0 0 auto; min-width: 92px; text-align: left; cursor: pointer;
+      background: rgba(255,255,255,.75); border: 1px solid var(--line-2); border-radius: 14px;
+      padding: 10px 12px; transition: transform .15s, box-shadow .15s, border-color .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    [data-theme="dark"] .dash-pill { background: rgba(255,255,255,.05); }
+    .dash-pill:active { transform: scale(.96); }
+    .dash-pill .dp-top { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    .dash-pill .dp-num { font-size: 20px; font-weight: 700; color: var(--ink-1); margin-top: 4px; line-height: 1.1; }
+    .dash-pill .dp-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .dash-pill.done { border-color: var(--primary); background: var(--primary-soft); }
 
     /* ===== 卡片(Mica 半透) ===== */
     .card {
@@ -403,7 +439,7 @@
       <h1 id="pageTitle" title="点击重命名工作台">我的工作台</h1>
       <span class="date" id="topDate"></span>
       <button class="icon-btn" id="themeBtn" title="切换深色 / 浅色" aria-label="切换主题">🌗</button>
-      <span id="appVer" style="font-size:10px;color:var(--muted);background:var(--line-2);padding:2px 6px;border-radius:8px;margin-left:4px" title="当前代码版本">v14</span>
+      <span id="appVer" style="font-size:10px;color:var(--muted);background:var(--line-2);padding:2px 6px;border-radius:8px;margin-left:4px" title="当前代码版本">v15</span>
     </header>
 
     <nav class="drawer" id="drawer">
@@ -431,12 +467,20 @@
         <button class="btn sm outline" data-action="import" style="width:100%">⬆️ 导入数据</button>
         <input type="file" id="importFile" accept="application/json,.json" hidden />
         <button class="btn sm outline" data-action="help-update" style="width:100%;margin-top:6px">🔄 PWA 没更新?点这里</button>
-        <div class="card-sub" style="margin:2px 0 0;font-size:11px">数据存在本机浏览器,换设备/清缓存会丢,记得常导出。当前版本:v14</div>
+        <div class="card-sub" style="margin:2px 0 0;font-size:11px">数据存在本机浏览器,换设备/清缓存会丢,记得常导出。当前版本:v15</div>
       </div>
     </nav>
     <div class="overlay" id="overlay"></div>
 
     <main id="main"></main>
+
+    <nav id="tabbar">
+      <button data-tab="home" class="active"><span class="ic">🏠</span>首页</button>
+      <button data-tab="daily"><span class="ic">📝</span>每日</button>
+      <button data-tab="topic"><span class="ic">💡</span>选题</button>
+      <button data-tab="piano"><span class="ic">🎹</span>钢琴</button>
+      <button data-tab="more"><span class="ic">☰</span>更多</button>
+    </nav>
   </div>
 
   <script>
@@ -1154,10 +1198,17 @@
     const TITLES = { home:'首页', daily:'每日计划', study:'学习中心', sport:'运动计划', health:'健康档案',
       topic:'选题灵感', book:'读书计划', shoot:'拍摄计划', game:'益智游戏', piano:'钢琴练习' };
 
+    // 底部 Tab 与视图的映射（仅高频模块常驻，其余归到"更多"）
+    const TAB_OF_VIEW = { home:'home', daily:'daily', topic:'topic', piano:'piano' };
+    function syncTab(view) {
+      const tab = TAB_OF_VIEW[view] || 'more';
+      document.querySelectorAll('#tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    }
     function navigate(view) {
       currentView = view;
       $('pageTitle').textContent = state.wbName && view==='home' ? state.wbName : TITLES[view];
       document.querySelectorAll('#drawerNav button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+      syncTab(view);
       closeDrawer();
       try {
         if (VIEWS[view]) VIEWS[view]();
@@ -1213,6 +1264,27 @@
           <div class="card-sub">上次更新：${lastUpd}。已经停更多天了，今天让 AI 加点新内容吧 → 说 "帮我更新学习内容"。</div>
         </div>`;
       }
+      // 首页模块进度驾驶舱（v15：横向胶囊，一眼看全模块状态，点按直达）
+      const topicN = Array.isArray(state.topicSaved) ? state.topicSaved.length : 0;
+      const bookN = Array.isArray(state.bookNotes) ? state.bookNotes.length : 0;
+      const totalPiano = (PIANO_STAGES.find(s=>s.id===(state.pianoStage||'s1'))||PIANO_STAGES[0]).ex.length;
+      const learnActive = Object.values(state.lang||{}).filter(l=>l && l.level < (LANG[Object.keys(state.lang).find(k=>state.lang[k]===l)]?.plan?.length||99)).length;
+      const dashItems = [
+        { ic:'📝', num:`${done}/${r.length}`, lbl:'今日计划', v:'daily', ok: r.length>0 && done>=r.length },
+        { ic:'💡', num: topicN, lbl:'选题灵感', v:'topic' },
+        { ic:'🎹', num:`${mastered}/${totalPiano}`, lbl:'钢琴练习', v:'piano', ok: mastered>=totalPiano },
+        { ic:'📖', num: bookN, lbl:'读书笔记', v:'book' },
+        { ic:'📚', num: learnActive, lbl:'学习进行', v:'study' }
+      ];
+      const dashHtml = `
+        <div class="section-title">模块进度 · 今日一览</div>
+        <div class="dash-row">
+          ${dashItems.map(x=>`<div class="dash-pill ${x.ok?'done':''}" data-action="go" data-v="${x.v}">
+            <div class="dp-top"><span>${x.ic}</span><span>${x.lbl}</span></div>
+            <div class="dp-num">${x.num}</div>
+            <div class="dp-lbl">${x.ok?'已完成 ✓':'点击查看'}</div>
+          </div>`).join('')}
+        </div>`;
       // 今日学习内容一览（v14 新增：从现有数据源聚合，让首页成为真正的"今日一览"）
       const eng = (LANG.english.fullTexts && LANG.english.fullTexts[0]) || null;
       const kor = (LANG.korean && LANG.korean.dialogs && LANG.korean.dialogs[0]) || null;
@@ -1241,6 +1313,7 @@
         </div>` : '';
       $('main').innerHTML = `
         ${onboard}
+        ${dashHtml}
         ${learnReminder}
         ${learnPreviewHtml}
         <div class="section-title">今日进度</div>
@@ -2019,11 +2092,17 @@
 
     // ===================== 事件 =====================
     document.addEventListener('click', e => {
-      const t = e.target.closest('[data-action], [data-view]');
+      const t = e.target.closest('[data-action], [data-view], [data-tab]');
       if (!t) return;
       // 如果是 <a> 标签,阻止默认跳转(由我们的 handler 自己处理,避免冲突)
       if (t.tagName === 'A') e.preventDefault();
       const a = t.dataset.action;
+      if (t.dataset.tab) {
+        const tb = t.dataset.tab;
+        if (tb === 'more') { openDrawer(); }
+        else { navigate(tb); }
+        return;
+      }
       if (t.dataset.view) { navigate(t.dataset.view); return; }
       switch(a){
         case 'go': navigate(t.dataset.v); break;
