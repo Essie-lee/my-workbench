@@ -22923,8 +22923,8 @@
         <div class="section-title">本周已记录</div>
         <div class="card">${renderWeekLogV2()}</div>
         <div class="sport-tabs">
-          <div class="sport-tab ${activeTab==='cardio'?'active':''}" data-action="sport-tabs" data-tab="cardio">🏃 有氧运动</div>
-          <div class="sport-tab ${activeTab==='strength'?'active':''}" data-action="sport-tabs" data-tab="strength">💪 力量训练</div>
+          <div class="sport-tab ${activeTab==='cardio'?'active':''}" data-action="sport-tabs" data-stab="cardio">🏃 有氧运动</div>
+          <div class="sport-tab ${activeTab==='strength'?'active':''}" data-action="sport-tabs" data-stab="strength">💪 力量训练</div>
         </div>
         ${detailHtml}
       `;
@@ -23578,7 +23578,7 @@
         case 'set-day-sport': { const day=+t.dataset.day, id=t.dataset.id; state.sport.weekPlan[day]=id==='rest'?null:id; save(); closeModal(); renderSport(); toast('周排期已更新'); break; }
         case 'log-sport': { const id=t.dataset.id; const sp=SPORTS.find(s=>s.id===id); const v=prompt(`今天 ${sp.name} 练了多少分钟？`, '30'); const m=+v; if(!v||isNaN(m)||m<=0){ if(v!==null) toast('请输入有效分钟数'); break; } state.sport.log[today()]=state.sport.log[today()]||{}; state.sport.log[today()][id]=(state.sport.log[today()][id]||0)+m; save(); toast(`✅ ${sp.icon} 已记录 ${m} 分钟`); renderSport(); break; }
         case 'muscle-tab': { setMuscleView(t.dataset.side); break; }
-        case 'sport-tabs': { state._sportTab = t.dataset.tab; renderSport(); break; }
+        case 'sport-tabs': { state._sportTab = t.dataset.stab; renderSport(); break; }
         case 'heat-muscle': { const id=t.dataset.id; highlightMuscle(id); updateMuscleInfo(id); break; }
         case 'add-set': { const ei=t.dataset.ei; const row=document.getElementById('setInput'+ei); const btn=document.getElementById('addBtn'+ei); if(row){ row.style.display='flex'; btn.style.display='none'; setTimeout(()=>{ const inp=document.getElementById('setR'+ei); if(inp) inp.focus(); },50);} break; }
         case 'cancel-set': { const ei=t.dataset.ei; const row=document.getElementById('setInput'+ei); const btn=document.getElementById('addBtn'+ei); if(row){ row.style.display='none'; btn.style.display=''; } break; }
