@@ -1323,13 +1323,17 @@
       const learnActive = Object.values(state.lang||{}).filter(l=>l && l.level < (LANG[Object.keys(state.lang).find(k=>state.lang[k]===l)]?.plan?.length||99)).length;
       const billFlows = (state.bill && Array.isArray(state.bill.flows)) ? state.bill.flows.filter(f => monthKey(f.date) === monthKey()) : [];
       const billExp = billFlows.filter(f=>f.type==='exp').reduce((s,f)=>s+f.amount,0);
+      const pianoToday = !!(state.pianoLog && state.pianoLog[today()]);
+      const studyToday = !!(state.studyLog && state.studyLog[today()]);
+      const sleepRec = (state.health && state.health.records && state.health.records[today()]) || {};
       const dashItems = [
         { ic:'📝', num:`${done}/${r.length}`, lbl:'今日计划', v:'daily', ok: r.length>0 && done>=r.length },
         { ic:'💡', num: topicN, lbl:'选题灵感', v:'topic' },
-        { ic:'🎹', num:`${mastered}/${totalPiano}`, lbl:'钢琴练习', v:'piano', ok: mastered>=totalPiano },
+        { ic:'🎹', num: pianoToday?'已练 ✓':`${mastered}/${totalPiano}`, lbl:'钢琴练习', v:'piano', ok: pianoToday },
         { ic:'📖', num: bookN, lbl:'读书笔记', v:'book' },
-        { ic:'📚', num: learnActive, lbl:'学习进行', v:'study' },
-        { ic:'💰', num: fmtMoney(billExp), lbl:'本月记账', v:'bill' }
+        { ic:'📚', num: studyToday?'已学 ✓':`连续${learnActive}`, lbl:'学习成长', v:'study', ok: studyToday },
+        { ic:'💰', num: fmtMoney(billExp), lbl:'本月记账', v:'bill' },
+        { ic:'😴', num: sleepRec.sleep?`${sleepRec.sleep}h`:'未记', lbl:'昨晚睡眠', v:'health' }
       ];
       const dashHtml = `
         <div class="section-title">模块进度 · 今日一览</div>
@@ -1401,6 +1405,9 @@
     function renderDaily() {
       const remaining = [...state.daily.routine, ...state.daily.tasks].filter(i=>!i.done).length;
       const rate = completion();
+      const pianoTodayDone = !!(state.pianoLog && state.pianoLog[today()]);
+      const studyTodayDone = !!(state.studyLog && state.studyLog[today()]);
+      const sleepRecDone = !!(state.health && state.health.records && state.health.records[today()] && state.health.records[today()].sleep);
       $('main').innerHTML = `
         <div class="card">
           <div class="card-title">${remaining} 待完成</div>
@@ -1411,6 +1418,21 @@
         <div class="card">${state.daily.routine.map(i=>taskItem(i,'routine')).join('')}</div>
         <div class="section-title">创作任务</div>
         <div class="card">${state.daily.tasks.map(i=>taskItem(i,'tasks')).join('')}</div>
+        <div class="section-title">今日习惯打卡（联动钢琴 / 学习）</div>
+        <div class="card">
+          <div class="item" style="padding:10px 4px">
+            <div style="flex:1"><div style="font-weight:600;font-size:14px">🎹 钢琴练习</div><div class="item-desc" style="margin-top:2px">${pianoTodayDone?'今日已练 ✓':'今天还没练'}</div></div>
+            ${pianoTodayDone?'<span class="tag primary">已完成</span>':`<button class="btn sm" data-action="piano-checkin">去练琴</button>`}
+          </div>
+          <div class="item" style="padding:10px 4px;border-top:1px solid var(--line-2)">
+            <div style="flex:1"><div style="font-weight:600;font-size:14px">📚 学习成长</div><div class="item-desc" style="margin-top:2px">${studyTodayDone?'今日已学 ✓':'今天还没学'}</div></div>
+            ${studyTodayDone?'<span class="tag primary">已完成</span>':`<button class="btn sm" data-action="study-checkin">去学习</button>`}
+          </div>
+          <div class="item" style="padding:10px 4px;border-top:1px solid var(--line-2)">
+            <div style="flex:1"><div style="font-weight:600;font-size:14px">😴 睡眠记录</div><div class="item-desc" style="margin-top:2px">${sleepRecDone?'今日已记 ✓':'今晚记得记'}</div></div>
+            ${sleepRecDone?'<span class="tag primary">已完成</span>':`<button class="btn sm" data-action="go" data-v="health">去记录</button>`}
+          </div>
+        </div>
         <div class="card">
           <div class="card-title">添加任务</div>
           <div class="row" style="margin-top:8px">
@@ -2428,8 +2450,8 @@
         case 'shoot-done': { const id=t.dataset.id; const it=state.shoot.find(s=>s.id===id); if(it){it.done=!it.done;save();renderShoot();} break; }
         case 'gtype': gameType=t.dataset.t; renderGameArea(); document.querySelectorAll('.row .btn.sm').forEach(b=>{}); break;
         case 'master': { const id=+t.dataset.id; if(!state.pianoMastered.includes(id))state.pianoMastered.push(id); if(state.pianoUnlocked===id&&state.pianoUnlocked<5)state.pianoUnlocked++; save(); renderPiano(); break; }
-        case 'piano-checkin': { if(!state.pianoLog) state.pianoLog={}; state.pianoLog[today()]=true; save(); toast('✅ 已记录今日练习，保持手感！'); renderPiano(); break; }
-        case 'study-checkin': { if(!state.studyLog) state.studyLog={}; state.studyLog[today()]=true; save(); toast('✅ 今日学习已打卡，保持连胜！'); renderStudy(); break; }
+        case 'piano-checkin': { if(!state.pianoLog) state.pianoLog={}; state.pianoLog[today()]=true; save(); toast('✅ 已记录今日练习，保持手感！'); currentView==='daily'?renderDaily():renderPiano(); break; }
+        case 'study-checkin': { if(!state.studyLog) state.studyLog={}; state.studyLog[today()]=true; save(); toast('✅ 今日学习已打卡，保持连胜！'); currentView==='daily'?renderDaily():renderStudy(); break; }
         case 'piano-edit': {
           const sId=t.dataset.s, idx=+t.dataset.i;
           if(!state.pianoEx[sId]) state.pianoEx[sId] = PIANO_STAGES.find(s=>s.id==sId).ex.map(e=>({id:uid(), title:e.title, desc:e.desc}));
