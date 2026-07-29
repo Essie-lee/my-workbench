@@ -22895,7 +22895,7 @@
       const activeTab = state._sportTab || 'cardio';
 
       const detailHtml = activeTab === 'cardio' ? cardioSports.map(s => `
-        <details class="sport-sec" open>
+        <details class="sport-sec">
           <summary>
             <div>
               <div class="ss-title">${s.icon} ${s.name}</div>
@@ -22914,7 +22914,7 @@
             ${s.videos.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" data-action="open-link" data-url="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}
           </div>
         </details>`).join('') : strengthSports.map(s => `
-        <details class="sport-sec" open>
+        <details class="sport-sec">
           <summary>
             <div>
               <div class="ss-title">${s.icon} ${s.name} <span class="ss-tag">${s.muscles?.map(m=>MUSCLES[m]?.short||m).join('/')||''}</span></div>
