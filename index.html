@@ -23080,7 +23080,7 @@
         </div>
         <div class="card">
           <div class="card-title">😴 失眠 / 睡眠专项（参考小睡眠·潮汐）</div>
-          <div class="card-sub">记录作息与睡眠质量，追踪规律；助眠内容见底部推荐。</div>
+          <div class="card-sub">记录作息与睡眠质量，追踪规律。</div>
           <div class="row" style="gap:10px;margin:10px 0 8px">
             <input class="input" id="recBedtime" type="time" value="${rec.bedtime||''}" style="flex:1" placeholder="入睡时间" />
             <input class="input" id="recWake" type="time" value="${rec.wake||''}" style="flex:1" placeholder="起床时间" />
@@ -23089,7 +23089,7 @@
             <select class="input" id="recQuality" style="flex:1;font-size:15px">${[0,1,2,3,4,5].map(m=>`<option value="${m}" ${rec.quality===m?'selected':''}>${['未评','😵 很差','🙁 差','😐 一般','🙂 还行','😄 很好'][m]}</option>`).join('')}</select>
             <input class="input" id="recAwake" type="number" placeholder="夜醒次数" value="${rec.awake??''}" style="flex:1" />
           </div>
-          <div class="card-sub" style="margin-bottom:2px">💡 规律建议：固定起床时间比固定入睡更能稳住生物钟；睡前 1 小时远离屏幕、调暗灯光。</div>
+          <div class="card-sub" style="margin-bottom:2px">记录作息与睡眠质量，追踪规律。</div>
         </div>
         <div class="section-title">近 7 天趋势</div>
         <div class="card">${svgBars(days.map(d=>({label:d.k.slice(5),value:d.sleep})), 'var(--primary)')}
@@ -23098,16 +23098,7 @@
           <div class="card-sub" style="margin:8px 0 4px">体重（kg）</div></div>
         ${days.some(d=>d.quality>0)?`<div class="card">${svgBars(days.map(d=>({label:d.k.slice(5),value:d.quality})), '#8e7cc3')}
           <div class="card-sub" style="margin:8px 0 4px">睡眠质量（1-5）</div></div>`:''}
-        <div class="card">
-          <div class="card-title">🎧 助眠工具推荐</div>
-          <div class="card-sub">精选助眠 App 的核心能力，挑一个顺手的当睡前仪式。</div>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-            <div class="item" style="padding:8px 4px"><div><strong>🌊 白噪音 / 雨声</strong><div class="item-desc" style="margin-top:2px">小睡眠、潮汐的镇店之宝——遮蔽环境噪音，帮大脑"关机"。</div></div></div>
-            <div class="item" style="padding:8px 4px"><div><strong>🧘 冥想 / 正念</strong><div class="item-desc" style="margin-top:2px">睡前 10 分钟身体扫描，降低焦虑性失眠（参考潮汐正念呼吸）。</div></div></div>
-            <div class="item" style="padding:8px 4px"><div><strong>📖 助眠故事 / ASMR</strong><div class="item-desc" style="margin-top:2px">小睡眠的明星哄睡、ASMR，适合"脑子停不下来"的人。</div></div></div>
-            <div class="item" style="padding:8px 4px"><div><strong>🛌 CBT-i 睡眠认知</strong><div class="item-desc" style="margin-top:2px">慢性失眠首选非药物方案：固定起床时间 + 床只用来睡（刺激控制）。</div></div></div>
-          </div>
-        </div>`;
+      `;
     }
     function svgBars(data, color) {
       const w=600,h=150,pad=20,n=data.length; if(!n) return '';
