@@ -552,6 +552,19 @@
       color: var(--accent); background: var(--accent-soft);
       padding: 3px 9px; border-radius: 20px; margin-top: 6px;
     }
+
+    /* 新闻生词高亮 + 点击查词 */
+    .vocab-hl {
+      color: var(--accent); border-bottom: 1.5px dotted var(--accent);
+      cursor: pointer; font-weight: 600; border-radius: 3px; padding: 0 1px;
+    }
+    .vocab-hl:hover { background: var(--accent-soft); }
+    .vt-word { font-size: 18px; font-weight: 800; color: var(--ink-1); }
+    .vt-pron { font-size: 13px; color: var(--muted); margin-left: 8px; }
+    .vt-lv { display: inline-block; font-size: 11px; font-weight: 700; color: #fff; background: var(--accent); border-radius: 6px; padding: 1px 7px; margin-left: 8px; vertical-align: middle; }
+    .vt-mean { margin-top: 10px; font-size: 14px; color: var(--ink-1); }
+    .vt-ex { margin-top: 8px; font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+    .vt-hint { margin-top: 12px; font-size: 11px; color: var(--muted); text-align: right; }
   </style>
 </head>
 <body>
@@ -618,6 +631,55 @@
     function esc(s) {
       if (s == null) return '';
       return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    // 新闻生词高亮：命中单词表的词标蓝，点击弹出释义
+    function highlightNews(text, L) {
+      if (!L.__vocabReady) {
+        const words = [];
+        L.__vocabMap = {};
+        (L.vocabulary || []).forEach(w => {
+          const key = (L.tts === 'en-US') ? w.word.toLowerCase() : w.word;
+          L.__vocabMap[key] = w;
+          if (!words.includes(w.word)) words.push(w.word);
+        });
+        words.sort((a, b) => b.length - a.length);
+        const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        let pat;
+        if (L.tts === 'en-US') {
+          pat = '\\b(' + words.map(escRe).join('|') + ')\\b';
+          L.__vocabRe = new RegExp(pat, 'gi');
+        } else {
+          // 韩语/粤语：按子串匹配（词间以空格或标点分隔，命中即标蓝）
+          pat = '(' + words.map(escRe).join('|') + ')';
+          L.__vocabRe = new RegExp(pat, 'g');
+        }
+        L.__vocabReady = true;
+      }
+      return text.replace(L.__vocabRe, (m) => {
+        const key = (L.tts === 'en-US') ? m.toLowerCase() : m;
+        const w = L.__vocabMap[key];
+        if (!w) return m;
+        return `<span class="vocab-hl" data-w="${encodeURIComponent(JSON.stringify(w))}">${m}</span>`;
+      });
+    }
+
+    // 点击生词弹出释义（一次性绑定）
+    if (!window.__vocabBound) {
+      window.__vocabBound = true;
+      document.addEventListener('click', (e) => {
+        const el = e.target.closest('.vocab-hl');
+        if (!el) return;
+        let w;
+        try { w = JSON.parse(decodeURIComponent(el.dataset.w)); } catch (_) { return; }
+        const html = `<div>
+          <div><span class="vt-word">${esc(w.word)}</span><span class="vt-pron">${esc(w.pron || '')}</span><span class="vt-lv">${esc(w.level || '')}</span></div>
+          <div class="vt-mean">${esc(w.meaning || '')}</div>
+          ${w.example ? `<div class="vt-ex">${esc(w.example)}</div>` : ''}
+          <div class="vt-hint">轻触空白处关闭</div>
+        </div>`;
+        openModal(html);
+      });
     }
 
     // ===================== 头像 SVG(9 个小动物) =====================
@@ -950,7 +1012,37 @@
           { word:"voluntary", pron:"ˈvɑːlənteri", meaning:"自愿的", example:"It was a voluntary act.", level:"CET6" },
           { word:"vulnerable", pron:"ˈvʌlnərəbl", meaning:"脆弱的", example:"Children are vulnerable.", level:"CET6" },
           { word:"whereas", pron:"werˈæz", meaning:"然而", example:"He is rich, whereas I am poor.", level:"CET4" },
-          { word:"widespread", pron:"ˈwaɪdspred", meaning:"广泛的", example:"There is widespread support.", level:"CET6" }
+          { word:"widespread", pron:"ˈwaɪdspred", meaning:"广泛的", example:"There is widespread support.", level:"CET6" },
+        // ===== 新闻精读专项词（与内置新闻重合，便于高亮查词）=====
+          { word:"instant", pron:"ˈɪnstənt", meaning:"即刻的", example:"Instant feedback helps learning.", level:"CET4" },
+          { word:"feedback", pron:"ˈfiːdbæk", meaning:"反馈", example:"We value your feedback.", level:"CET4" },
+          { word:"essay", pron:"ˈeseɪ", meaning:"文章、随笔", example:"Write a short essay.", level:"CET4" },
+          { word:"marking", pron:"ˈmɑːrkɪŋ", meaning:"批改、评分", example:"Routine marking takes time.", level:"CET6" },
+          { word:"independent", pron:"ˌɪndɪˈpendənt", meaning:"独立的", example:"Independent thinking matters.", level:"CET4" },
+          { word:"thinking", pron:"ˈθɪŋkɪŋ", meaning:"思维", example:"Critical thinking is key.", level:"CET4" },
+          { word:"weaken", pron:"ˈwiːkən", meaning:"削弱", example:"It may weaken focus.", level:"CET6" },
+          { word:"expert", pron:"ˈekspɜːrt", meaning:"专家", example:"An expert gave advice.", level:"CET4" },
+          { word:"replace", pron:"rɪˈpleɪs", meaning:"取代", example:"We replace old parts.", level:"CET4" },
+          { word:"patient", pron:"ˈpeɪʃnt", meaning:"有耐心的", example:"Be patient with learners.", level:"CET4" },
+          { word:"partner", pron:"ˈpɑːrtnər", meaning:"伙伴", example:"A study partner helps.", level:"CET4" },
+          { word:"planner", pron:"ˈplænər", meaning:"规划者", example:"City planners design streets.", level:"CET6" },
+          { word:"crowded", pron:"ˈkraʊdɪd", meaning:"拥挤的", example:"Crowded streets at noon.", level:"CET4" },
+          { word:"roof", pron:"ruːf", meaning:"屋顶", example:"A green roof cools buildings.", level:"CET4" },
+          { word:"shade", pron:"ʃeɪd", meaning:"树荫", example:"Sit in the shade.", level:"CET4" },
+          { word:"surface", pron:"ˈsɜːrfɪs", meaning:"表面", example:"Surface temperature rose.", level:"CET4" },
+          { word:"temperature", pron:"ˈtemprətʃər", meaning:"温度", example:"The temperature dropped.", level:"CET4" },
+          { word:"absorb", pron:"əbˈzɔːrb", meaning:"吸收", example:"Plants absorb water.", level:"CET4" },
+          { word:"researcher", pron:"rɪˈsɜːrtʃər", meaning:"研究者", example:"A researcher published a paper.", level:"CET4" },
+          { word:"neighbourhood", pron:"ˈneɪbərhʊd", meaning:"社区", example:"A clean neighbourhood.", level:"CET4" },
+          { word:"pleasant", pron:"ˈpleznt", meaning:"宜人的", example:"A pleasant evening.", level:"CET4" },
+          { word:"shift", pron:"ʃɪft", meaning:"转变", example:"A shift in habits.", level:"CET4" },
+          { word:"centre", pron:"ˈsentər", meaning:"中心", example:"The city centre is busy.", level:"CET4" },
+          { word:"rush", pron:"rʌʃ", meaning:"高峰、匆忙", example:"Avoid the rush hour.", level:"CET4" },
+          { word:"resident", pron:"ˈrezɪdənt", meaning:"居民", example:"Local residents benefit.", level:"CET4" },
+          { word:"economist", pron:"ˌiːkəˈnɑːmɪst", meaning:"经济学家", example:"An economist analyzed data.", level:"CET6" },
+          { word:"permanent", pron:"ˈpɜːrmənənt", meaning:"永久的", example:"A permanent change.", level:"CET4" },
+          { word:"rethink", pron:"ˌriːˈθɪŋk", meaning:"重新思考", example:"We must rethink the plan.", level:"CET6" },
+          { word:"central", pron:"ˈsentrəl", meaning:"中心的", example:"The central issue.", level:"CET4" }
         ],
         translations: [
           { source:'我每天早上喝一杯咖啡。', answer:'I drink a cup of coffee every morning.', hint:'一般现在时，drink', note:'一般现在时表习惯' },
@@ -2512,7 +2604,7 @@
             </div>
             <div class="card-sub" style="margin:4px 0 8px">${esc(n.zhTitle)}</div>
             ${n.paras.map(p=>`<div class="sentence">
-              <div class="en">${esc(p.foreign)} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(p.foreign)}" data-l="${L.tts}">🔊</button></div>
+              <div class="en">${highlightNews(esc(p.foreign), L)} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(p.foreign)}" data-l="${L.tts}">🔊</button></div>
               <div class="zh">${esc(p.zh)}</div>
             </div>`).join('')}
             <button class="btn sm outline" data-action="speak" data-t="${encodeURIComponent(n.paras.map(p=>p.foreign).join(' '))}" data-l="${L.tts}" style="margin-top:8px">🔊 朗读全文</button>
