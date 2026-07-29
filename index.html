@@ -348,6 +348,27 @@
     /* ===== 周历颜色条 ===== */
     .day-cell .day-bar { height:3px; border-radius:2px; margin-bottom:4px; }
 
+    /* ===== 有氧打卡表单 ===== */
+    .cardio-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .cardio-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-2, rgba(248,248,246,.8)); display: grid; place-items: center; font-size: 20px; flex-shrink: 0; }
+    [data-theme="dark"] .cardio-icon { background: rgba(45,45,45,.6); }
+    .cardio-name { font-size: 17px; font-weight: 700; color: var(--ink-1); }
+    .cardio-goal { font-size: 13px; color: var(--muted); margin-top: 1px; }
+    .cardio-form { background: var(--bg-2, rgba(248,248,246,.7)); border: 1px solid var(--line-1); border-radius: var(--radius-sm); padding: 14px; }
+    [data-theme="dark"] .cardio-form { background: rgba(45,45,45,.4); border-color: rgba(255,255,255,.08); }
+    .cardio-row { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+    .cardio-field { display: flex; flex-direction: column; gap: 5px; }
+    .cardio-label { font-size: 12px; font-weight: 500; color: var(--muted); }
+    .cardio-unit { font-size: 13px; color: var(--muted); white-space: nowrap; }
+    .cardio-actions { display: flex; justify-content: flex-end; margin-top: 12px; }
+    .cardio-extra { margin-top: 12px; text-align: center; }
+    .cardio-done { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--primary-soft, rgba(0,120,212,.08)); border: 1px solid var(--primary-soft, rgba(0,120,212,.12)); border-radius: var(--radius-sm); padding: 14px; }
+    [data-theme="dark"] .cardio-done { background: rgba(76,194,255,.08); border-color: rgba(76,194,255,.12); }
+    .cardio-done-main { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .cardio-done-min { font-size: 26px; font-weight: 800; color: var(--primary); line-height: 1; }
+    .cardio-done-min small { font-size: 12px; font-weight: 500; margin-left: 3px; color: var(--muted); }
+    .cardio-done-note { font-size: 14px; color: var(--ink-1); font-weight: 500; }
+
     /* ===== 运动卡片折叠 ===== */
     details.sport-sec {
       border: 1px solid var(--line);
@@ -22886,18 +22907,42 @@
         const minVal = (typeof loggedMin === 'object' && loggedMin) ? loggedMin.min : (typeof loggedMin === 'number' ? loggedMin : 0);
         const noteVal = (typeof loggedMin === 'object' && loggedMin) ? (loggedMin.note||'') : '';
         todayCard = `
-          <div style="font-size:18px;margin-bottom:6px">${todaySport.icon} ${todaySport.name}</div>
-          <div class="card-sub">${todaySport.goal}</div>
-          <div id="cardioInputWrap" style="${minVal||noteVal?'display:none':'display:block'};gap:8px;margin-top:10px;flex-wrap:wrap">
-            <input class="ex-set-input" id="cardioMin" type="number" placeholder="时长(分钟)" value="${minVal||''}" style="width:90px" />
-            <input class="input" id="cardioNote" placeholder="今天具体练了什么？如：正手多球+发球" value="${noteVal}" style="flex:1;min-width:140px" />
-            <button class="btn sm" data-action="save-cardio" data-id="${todaySport.id}">✅ 保存</button>
+          <div class="cardio-head">
+            <div class="cardio-icon">${todaySport.icon}</div>
+            <div>
+              <div class="cardio-name">${todaySport.name}</div>
+              <div class="cardio-goal">${todaySport.goal}</div>
+            </div>
           </div>
+
           ${minVal||noteVal ? `
-            <div style="margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <span class="tag primary">${todaySport.icon} ${todaySport.name} ${minVal?minVal+'分钟':''}${noteVal?' · '+noteVal:''}</span>
-              <button class="btn sm ghost" data-action="edit-cardio" data-id="${todaySport.id}">✏️ 修改</button>
-            </div>` : ''}
+            <div class="cardio-done">
+              <div class="cardio-done-main">
+                <div class="cardio-done-min">${minVal||'—'}<small>分钟</small></div>
+                ${noteVal?`<div class="cardio-done-note">${noteVal}</div>`:''}
+              </div>
+              <button class="btn sm outline" data-action="edit-cardio" data-id="${todaySport.id}">✏️ 修改</button>
+            </div>
+          ` : `
+            <div class="cardio-form">
+              <div class="cardio-row">
+                <label class="cardio-field">
+                  <span class="cardio-label">时长</span>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <input class="input" id="cardioMin" type="number" placeholder="30" value="" style="width:72px;text-align:center" />
+                    <span class="cardio-unit">分钟</span>
+                  </div>
+                </label>
+                <label class="cardio-field" style="flex:1">
+                  <span class="cardio-label">具体练了什么</span>
+                  <input class="input" id="cardioNote" placeholder="如：正手多球 + 发球练习" value="" />
+                </label>
+              </div>
+              <div class="cardio-actions">
+                <button class="btn sm" data-action="save-cardio" data-id="${todaySport.id}">保存记录</button>
+              </div>
+            </div>
+          `}
         `;
       }
 
@@ -22975,7 +23020,7 @@
         <div class="card">
           <div class="card-title">🏃 今日打卡（周${dayNames[dow-1]}）</div>
           ${todayCard}
-          <div style="margin-top:12px"><button class="btn sm outline" data-action="add-extra-sport" style="width:100%">➕ 补记今天练了别的（计划外的项目）</button></div>
+          <div class="cardio-extra"><button class="btn sm outline" data-action="add-extra-sport">+ 补记今天练了别的项目</button></div>
         </div>
         <div class="section-title">📊 本周训练量</div>
         <div class="card">${svgBars(getWeekVolumeData(), 'var(--primary)')}
@@ -23640,7 +23685,7 @@
         case 'set-day-sport': { const day=+t.dataset.day, id=t.dataset.id; state.sport.weekPlan[day]=id==='rest'?null:id; save(); closeModal(); renderSport(); toast('周排期已更新'); break; }
         case 'log-sport': { const id=t.dataset.id; const sp=SPORTS.find(s=>s.id===id); const v=prompt(`今天 ${sp.name} 练了多少分钟？`, '30'); const m=+v; if(!v||isNaN(m)||m<=0){ if(v!==null) toast('请输入有效分钟数'); break; } state.sport.log[today()]=state.sport.log[today()]||{}; state.sport.log[today()][id]=(state.sport.log[today()][id]||0)+m; save(); toast(`✅ ${sp.icon} 已记录 ${m} 分钟`); renderSport(); break; }
         case 'save-cardio': { const id=t.dataset.id; const min=+$('cardioMin').value, note=($('cardioNote').value||'').trim(); if(!min||min<=0){ toast('请输入有效的时长'); break; } state.sport.log[today()]=state.sport.log[today()]||{}; state.sport.log[today()][id]={ min, note, ts:Date.now() }; save(); const sp=SPORTS.find(s=>s.id===id); toast(`✅ ${sp.icon} 已记录 ${min}分钟${note?' · '+note:''}`); renderSport(); break; }
-        case 'edit-cardio': { const id=t.dataset.id; const wrap=$('cardioInputWrap'); if(wrap){ wrap.style.display='flex'; } break; }
+        case 'edit-cardio': { renderSport(); break; }
         case 'add-extra-sport': {
           const opts = SPORTS.map(s=>`<option value="${s.id}">${s.icon} ${s.name}</option>`).join('');
           openModal(`<h3>➕ 补记今天练的项目</h3>
