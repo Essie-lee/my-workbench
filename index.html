@@ -460,6 +460,48 @@
     .cell { aspect-ratio: 1; border-radius: var(--radius-sm); background: var(--bg-2); display: grid; place-items: center; font-size: 24px; cursor: pointer; user-select: none; border: 1px solid var(--line-1); }
     [data-theme="dark"] .cell { background: rgba(45,45,45,.6); }
     .cell.flip { background: var(--primary-soft); }
+    /* ===== 难度胶囊 ===== */
+    .diff-pills { display:flex; gap:8px; margin-top:8px; }
+    .diff-pill { flex:1; padding:9px 0; border:1px solid var(--line-1); background:var(--bg-2); border-radius:999px; font-size:14px; color:var(--ink-2); cursor:pointer; }
+    .diff-pill.on { background:var(--primary); color:#fff; border-color:var(--primary); font-weight:600; }
+    /* ===== 数独 ===== */
+    .sudoku { display:grid; grid-template-columns:repeat(9,1fr); gap:1px; background:var(--line-1); border:2px solid var(--ink-2); border-radius:8px; overflow:hidden; touch-action:manipulation; }
+    .sud-cell { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:clamp(16px,5vw,22px); font-weight:600; background:#fff; color:var(--ink-1); user-select:none; }
+    [data-theme="dark"] .sud-cell { background:#2a2a2a; color:#eee; }
+    .sud-cell.given { color:var(--primary-dark); font-weight:800; }
+    .sud-cell.br { border-right:2px solid var(--ink-2); }
+    .sud-cell.bb { border-bottom:2px solid var(--ink-2); }
+    .sud-cell.sel { background:var(--primary-soft); }
+    .sud-cell.peer { background:#eef3ff; }
+    [data-theme="dark"] .sud-cell.peer { background:#33384a; }
+    .sud-cell.same { background:#d7e6ff; }
+    [data-theme="dark"] .sud-cell.same { background:#3a4a66; }
+    .sud-cell.wrong { color:#e23b3b; }
+    .sud-cell .notes { display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); width:100%; height:100%; font-size:9px; color:var(--muted); font-weight:400; }
+    .sud-cell .notes span { display:flex; align-items:center; justify-content:center; }
+    .num-pad { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:10px; }
+    .numbtn { padding:14px 0; border:1px solid var(--line-1); background:var(--bg-2); border-radius:12px; font-size:18px; font-weight:700; color:var(--ink-1); cursor:pointer; }
+    .numbtn:active { background:var(--primary-soft); }
+    /* ===== 英文填字 ===== */
+    .xw { display:grid; gap:1px; background:var(--ink-2); border:2px solid var(--ink-2); border-radius:6px; overflow:hidden; touch-action:manipulation; margin:4px 0 10px; }
+    .xw-cell { aspect-ratio:1; display:flex; align-items:flex-start; justify-content:flex-start; background:#fff; color:var(--ink-1); position:relative; font-size:clamp(12px,4.5vw,18px); font-weight:700; text-transform:uppercase; padding:1px 2px; user-select:none; }
+    [data-theme="dark"] .xw-cell { background:#2a2a2a; color:#eee; }
+    .xw-cell.block { background:#222; }
+    .xw-cell.sel { background:var(--primary-soft); }
+    .xw-cell.word { background:#eef3ff; }
+    [data-theme="dark"] .xw-cell.word { background:#33384a; }
+    .xw-cell.lock { color:var(--primary-dark); }
+    .xw-cell.wrong { color:#e23b3b; background:#ffeaea; }
+    .xw-cell .xn { position:absolute; top:1px; left:2px; font-size:9px; font-weight:600; color:var(--muted); }
+    .xw-pad { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-top:8px; }
+    .xw-pad button { padding:11px 0; border:1px solid var(--line-1); background:var(--bg-2); border-radius:10px; font-size:15px; font-weight:700; text-transform:uppercase; cursor:pointer; }
+    .xw-pad button:active { background:var(--primary-soft); }
+    .clue-list { margin-top:6px; }
+    .clue { padding:8px 10px; border-radius:8px; font-size:13px; color:var(--ink-2); cursor:pointer; }
+    .clue .cn { color:var(--primary); font-weight:700; margin-right:6px; }
+    .clue.active { background:var(--primary-soft); color:var(--primary-dark); }
+    .clue.done { color:var(--muted); text-decoration:line-through; }
+
 
     .chart { width: 100%; height: 150px; }
 
@@ -23399,7 +23441,7 @@
 
     // ===================== 益智游戏 =====================
     let gameType = null;
-    function dailyGameType() { const types=['memory','guess','match']; const seed=new Date().getDate(); return types[seed%types.length]; }
+    function dailyGameType() { const types=['memory','guess','sudoku','crossword']; const seed=new Date().getDate(); return types[seed%types.length]; }
 
     // ===================== 记账 =====================
     function monthKey(d) { const x = d ? new Date(d) : new Date(); return x.getFullYear() + '-' + String(x.getMonth()+1).padStart(2,'0'); }
@@ -23537,21 +23579,35 @@
         ${flowHtml}
       `;
     }
+    // ===================== 益智游戏（新版） =====================
+    const GAME_DIFF_LABEL = { easy:'简单', medium:'中等', hard:'困难' };
+    function gameDiff() { return (state.gameDiff && GAME_DIFF_LABEL[state.gameDiff]) ? state.gameDiff : 'easy'; }
+
     function renderGame() {
-      // 防御性初始化
+      if (sudokuState && sudokuState._t) clearInterval(sudokuState._t);
+      if (crosswordState && crosswordState._t) clearInterval(crosswordState._t);
       if (!state.gameHistory || typeof state.gameHistory !== 'object') { state.gameHistory = {}; save(); }
-      gameType = dailyGameType();
-      const names={memory:'🃏 记忆翻牌', guess:'🔢 猜数字', match:'🔤 词语接龙'};
+      if (!state.gameDiff) state.gameDiff='easy';
+      if (!gameType) gameType = dailyGameType();
+      const names={memory:'🃏 记忆翻牌', guess:'🔢 猜数字', sudoku:'🔢 数独', crossword:'📝 英文填字'};
       const todayKey = today();
       const his = state.gameHistory[todayKey] || {};
+      const diff = state.gameDiff;
       $('main').innerHTML = `
         <div class="card">
           <div class="card-title">🎮 今日游戏：${names[gameType]}</div>
           <div class="card-sub">每天自动更换一种；下方可切换尝试其他游戏。</div>
-          <div class="row">
+          <div class="row" style="margin-top:8px">
             <button class="btn sm ${gameType==='memory'?'':'outline'}" data-action="gtype" data-t="memory">记忆翻牌</button>
             <button class="btn sm ${gameType==='guess'?'':'outline'}" data-action="gtype" data-t="guess">猜数字</button>
-            <button class="btn sm ${gameType==='match'?'':'outline'}" data-action="gtype" data-t="match">词语接龙</button>
+            <button class="btn sm ${gameType==='sudoku'?'':'outline'}" data-action="gtype" data-t="sudoku">数独</button>
+            <button class="btn sm ${gameType==='crossword'?'':'outline'}" data-action="gtype" data-t="crossword">英文填字</button>
+          </div>
+          <div class="card-sub" style="margin-top:10px">难度</div>
+          <div class="diff-pills">
+            <button class="diff-pill ${diff==='easy'?'on':''}" data-action="gdiff" data-d="easy">简单</button>
+            <button class="diff-pill ${diff==='medium'?'on':''}" data-action="gdiff" data-d="medium">中等</button>
+            <button class="diff-pill ${diff==='hard'?'on':''}" data-action="gdiff" data-d="hard">困难</button>
           </div>
         </div>
         <div class="card" id="gameArea"></div>
@@ -23564,47 +23620,140 @@
       const area = $('gameArea'); if(!area) return;
       if (gameType==='memory') return renderMemory(area);
       if (gameType==='guess') return renderGuess(area);
-      if (gameType==='match') return renderMatch(area);
+      if (gameType==='sudoku') return renderSudoku(area);
+      if (gameType==='crossword') return renderCrossword(area);
     }
     function renderMemory(area){
-      const emo=['🍎','🎹','🏊','🌟','📚','🍊','🌸','🐱'];
+      const pairs = { easy:6, medium:8, hard:10 }[gameDiff()];
+      const pool = ['🍎','🎹','🏊','🌟','📚','🍊','🌸','🐱','⚽','🍔','🌈','🚀','🎁','⭐','🐶','🍉','🌻','🍇'];
+      const emo = pool.slice(0, pairs);
       let cards = emo.concat(emo).map((e,i)=>({e,i})).sort(()=>Math.random()-0.5);
-      let flipped=[], matched=0;
-      area.innerHTML = `<div class="game-board" style="grid-template-columns:repeat(4,1fr)">${cards.map(c=>`<div class="cell" data-i="${c.i}" data-e="${c.e}">？</div>`).join('')}</div><p class="muted" style="font-size:13px;text-align:center" id="mstat">点击翻开两张配对</p>`;
+      let flipped=[], matched=0, lock=false;
+      area.innerHTML = `<div class="game-board" style="grid-template-columns:repeat(${pairs<=6?3:4},1fr)">${cards.map(c=>`<div class="cell" data-e="${c.e}">？</div>`).join('')}</div><p class="muted" style="font-size:13px;text-align:center" id="mstat">点击翻开两张配对（共 ${emo.length} 对）</p>`;
       area.querySelectorAll('.cell').forEach(c=>c.onclick=()=>{
-        if(c.classList.contains('flip')||flipped.length===2) return;
+        if(lock||c.classList.contains('flip')||flipped.length===2) return;
         c.classList.add('flip'); c.textContent=c.dataset.e; flipped.push(c);
-        if(flipped.length===2){
-          if(flipped[0].dataset.e===flipped[1].dataset.e){ matched++; flipped=[]; if(matched===emo.length){ $('mstat').textContent='🎉 全部配对完成！'; logGame('记忆翻牌','完成'); } }
-          else { setTimeout(()=>{ flipped.forEach(x=>{x.classList.remove('flip');x.textContent='？';}); flipped=[]; },700); }
-        }
+        if(flipped.length===2){ lock=true; if(flipped[0].dataset.e===flipped[1].dataset.e){ matched++; flipped=[]; lock=false; if(matched===emo.length){ $('mstat').textContent='🎉 全部配对完成！'; logGame('记忆翻牌','完成'); } } else { setTimeout(()=>{ flipped.forEach(x=>{x.classList.remove('flip');x.textContent='？';}); flipped=[]; lock=false; },700); } }
       });
     }
     function renderGuess(area){
-      const target = Math.floor(Math.random()*100)+1; let tries=0;
-      area.innerHTML = `<p class="muted" style="font-size:13px;margin-bottom:8px">我已想好 1-100 的数字，猜猜看（${new Date().getDate()%2? '7':'8'} 次内）。</p>
+      const cfg = { easy:{max:50,tries:7}, medium:{max:100,tries:8}, hard:{max:200,tries:10} }[gameDiff()];
+      const target = Math.floor(Math.random()*cfg.max)+1; let tries=0;
+      area.innerHTML = `<p class="muted" style="font-size:13px;margin-bottom:8px">我想好了一个 1-${cfg.max} 的数字，在 ${cfg.tries} 次内猜中它。</p>
         <div class="row"><input class="input" id="gnum" type="number" placeholder="你的猜测" style="flex:1"/><button class="btn" id="gbtn">猜</button></div>
         <p id="gmsg" class="muted" style="font-size:13px;margin-top:8px"></p>`;
       $('gbtn').onclick=()=>{ const v=+$('gnum').value; if(!v)return; tries++;
-        if(v===target){ $('gmsg').textContent=`🎉 猜对了！用了 ${tries} 次`; logGame('猜数字',`${tries}次猜中`); }
-        else { $('gmsg').textContent = v>target?'大了 ↓':'小了 ↑'; if(tries>=8){ $('gmsg').textContent=`次数用完，答案是 ${target}`; logGame('猜数字','未猜中'); } }
-      };
-    }
-    function renderMatch(area){
-      const words=['坚持','习惯','钢琴','努力','梦想','成长','学习','阳光','未来','勇气','热爱','自律'];
-      let cur = words[Math.floor(Math.random()*words.length)]; let ok=0;
-      area.innerHTML = `<p class="muted" style="font-size:13px;margin-bottom:8px">用上一个词的<strong>最后一个字</strong>开头接词（如 坚持→持久）。</p>
-        <div class="card-title" style="font-size:18px;color:var(--primary)">当前词：${cur}</div>
-        <div class="row"><input class="input" id="mword" placeholder="接一个词…" style="flex:1"/><button class="btn" id="mbtn">接</button></div>
-        <p id="mmsg" class="muted" style="font-size:13px;margin-top:8px"></p>`;
-      $('mbtn').onclick=()=>{ const v=$('mword').value.trim(); if(!v)return;
-        const last=cur[cur.length-1];
-        if(v[0]===last){ ok++; cur=v; $('mmsg').textContent=`✅ 接得好！新词：${cur}（已连 ${ok} 个）`; area.querySelector('.card-title').textContent=`当前词：${cur}`; $('mword').value=''; if(ok>=5){ logGame('词语接龙',`连${ok}个`); } }
-        else { $('mmsg').textContent=`❌ 要用「${last}」开头哦`; }
+        if(v===target){ $('gmsg').textContent=`🎉 猜对了！用了 ${tries} 次`; logGame('猜数字',`${tries}次猜中(${GAME_DIFF_LABEL[gameDiff()]})`); }
+        else { $('gmsg').textContent = v>target?'大了 ↓':'小了 ↑'; if(tries>=cfg.tries){ $('gmsg').textContent=`次数用完，答案是 ${target}`; logGame('猜数字','未猜中'); } }
       };
     }
 
-    // ===================== 钢琴 =====================
+    // ---------- 数独 ----------
+    let sudokuState=null;
+    function sgOk(b,r,c,n){ for(let i=0;i<9;i++){ if(b[r][i]===n||b[i][c]===n) return false; } const br=Math.floor(r/3)*3, bc=Math.floor(c/3)*3; for(let i=0;i<3;i++)for(let j=0;j<3;j++) if(b[br+i][bc+j]===n) return false; return true; }
+    function sgSolve(b){ for(let r=0;r<9;r++)for(let c=0;c<9;c++){ if(b[r][c]===0){ const ns=[1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-0.5); for(const n of ns){ if(sgOk(b,r,c,n)){ b[r][c]=n; if(sgSolve(b)) return true; b[r][c]=0; } } return false; } } return true; }
+    function sgCount(b,limit){ let cnt=0; (function rec(){ if(cnt>=limit) return; for(let r=0;r<9;r++)for(let c=0;c<9;c++){ if(b[r][c]===0){ for(let n=1;n<=9;n++){ if(sgOk(b,r,c,n)){ b[r][c]=n; rec(); b[r][c]=0; if(cnt>=limit) return; } } return; } } cnt++; })(); return cnt; }
+    function sgGenerate(diff){ const givens={easy:42,medium:34,hard:28}[diff]; const sol=Array.from({length:9},()=>Array(9).fill(0)); sgSolve(sol); const pz=sol.map(r=>r.slice()); const cells=[]; for(let i=0;i<81;i++) cells.push(i); cells.sort(()=>Math.random()-0.5); let removed=0; const target=81-givens; for(let i=0;i<cells.length && removed<target;i++){ const r=Math.floor(cells[i]/9), c=cells[i]%9; if(pz[r][c]===0) continue; const bak=pz[r][c]; pz[r][c]=0; if(sgCount(pz.map(x=>x.slice()),2)!==1){ pz[r][c]=bak; } else removed++; } return { pz, sol }; }
+    function cgFmt(s){ const m=String(Math.floor(s/60)).padStart(2,'0'); const ss=String(s%60).padStart(2,'0'); return m+':'+ss; }
+    function renderSudoku(area){
+      if(sudokuState && sudokuState._t) clearInterval(sudokuState._t);
+      const diff=gameDiff(); const { pz, sol } = sgGenerate(diff);
+      sudokuState={ puzzle:pz.map(r=>r.slice()), sol, given:pz.map(r=>r.map(x=>x!==0)), notes:pz.map(r=>r.map(()=>new Set())), sel:-1, pencil:false, mistakes:0, timer:0, done:false, _t:null };
+      const givenCount = pz.flat().filter(x=>x).length;
+      area.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span class="tag gray">${GAME_DIFF_LABEL[diff]} · 提示 ${givenCount} 个</span>
+          <span class="muted" id="sudTimer" style="font-size:13px">00:00</span>
+        </div>
+        <div class="sudoku" id="sudGrid"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn sm ${sudokuState.pencil?'':'outline'}" id="sudPencil">✏️ 草稿</button>
+          <button class="btn sm outline" id="sudHint">💡 提示</button>
+          <button class="btn sm outline" id="sudNew">🔄 新局</button>
+        </div>
+        <div class="num-pad" id="sudPad"></div>
+        <p id="sudMsg" class="muted" style="font-size:13px;text-align:center;margin-top:6px"></p>`;
+      sgDraw();
+      sudokuState._t=setInterval(()=>{ if(sudokuState.done) return; sudokuState.timer++; const el=$('sudTimer'); if(el) el.textContent=cgFmt(sudokuState.timer); },1000);
+      const pad=$('sudPad');
+      for(let n=1;n<=9;n++){ const b=document.createElement('button'); b.className='numbtn'; b.textContent=n; b.onclick=()=>sgInput(n); pad.appendChild(b); }
+      const er=document.createElement('button'); er.className='numbtn'; er.textContent='⌫'; er.onclick=()=>sgInput(0); pad.appendChild(er);
+      $('sudPencil').onclick=()=>{ sudokuState.pencil=!sudokuState.pencil; $('sudPencil').className='btn sm '+(sudokuState.pencil?'':'outline'); };
+      $('sudHint').onclick=sgHint; $('sudNew').onclick=()=>renderSudoku(area);
+    }
+    function sgDraw(){
+      const g=$('sudGrid'); if(!g||!sudokuState) return; const st=sudokuState; const sel=st.sel; let html='';
+      for(let r=0;r<9;r++)for(let c=0;c<9;c++){
+        const v=st.puzzle[r][c]; const given=v!==0; const cls=['sud-cell'];
+        if(given) cls.push('given'); if(sel===r*9+c) cls.push('sel');
+        if(sel>=0){ const sr=Math.floor(sel/9), sc=sel%9; if(r===sr||c===sc||(Math.floor(r/3)===Math.floor(sr/3)&&Math.floor(c/3)===Math.floor(sc/3))) cls.push('peer'); if(v!==0&&v===st.puzzle[sr][sc]&&(r!==sr||c!==sc)) cls.push('same'); }
+        if(!given&&v!==0&&v!==st.sol[r][c]) cls.push('wrong');
+        const br=(c%3===2&&c<8)?' br':''; const bb=(r%3===2&&r<8)?' bb':'';
+        let inner=''; if(v!==0) inner=String(v); else if(st.notes[r][c].size){ inner='<div class="notes">'+Array.from({length:9},(_,i)=>st.notes[r][c].has(i+1)?`<span>${i+1}</span>`:'<span></span>').join('')+'</div>'; }
+        html+=`<div class="${cls.join(' ')}${br}${bb}" data-r="${r}" data-c="${c}">${inner}</div>`;
+      }
+      g.innerHTML=html; g.querySelectorAll('.sud-cell').forEach(cell=>cell.onclick=()=>{ st.sel=+cell.dataset.r*9+(+cell.dataset.c); sgDraw(); });
+    }
+    function sgInput(n){ const st=sudokuState; if(!st||st.sel<0||st.done) return; const r=Math.floor(st.sel/9), c=st.sel%9; if(st.given[r][c]) return;
+      if(st.pencil && n!==0){ if(st.puzzle[r][c]!==0) return; if(st.notes[r][c].has(n)) st.notes[r][c].delete(n); else st.notes[r][c].add(n); }
+      else { st.puzzle[r][c]=n; st.notes[r][c].clear(); if(n!==0&&n!==st.sol[r][c]) st.mistakes++; }
+      if((function(){ for(let r=0;r<9;r++)for(let c=0;c<9;c++) if(st.puzzle[r][c]!==st.sol[r][c]) return false; return true; })()){ st.done=true; clearInterval(st._t); $('sudMsg').textContent=`🎉 完成！用时 ${cgFmt(st.timer)}，错误 ${st.mistakes} 次`; logGame('数独',`${GAME_DIFF_LABEL[gameDiff()]} 完成(${cgFmt(st.timer)})`); }
+      sgDraw();
+    }
+    function sgHint(){ const st=sudokuState; if(!st||st.done) return; const cand=[]; for(let r=0;r<9;r++)for(let c=0;c<9;c++) if(st.puzzle[r][c]!==st.sol[r][c]) cand.push([r,c]); if(!cand.length) return; const [r,c]=cand[Math.floor(Math.random()*cand.length)]; st.puzzle[r][c]=st.sol[r][c]; st.given[r][c]=true; st.notes[r][c].clear(); sgDraw(); if((function(){ for(let r=0;r<9;r++)for(let c=0;c<9;c++) if(st.puzzle[r][c]!==st.sol[r][c]) return false; return true; })()){ st.done=true; clearInterval(st._t); $('sudMsg').textContent='🎉 完成！'; logGame('数独',`${GAME_DIFF_LABEL[gameDiff()]} 完成`); } }
+
+    // ---------- 英文填字 ----------
+    let crosswordState=null;
+    function cgEsc(s){ return (s||'').replace(/[&<>"]/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
+    function cwPool(){ let pool=[]; try{ (LANG.english.vocabulary||[]).forEach(w=>{ const wd=(w.word||'').trim().toLowerCase(); if(/^[a-z]{3,8}$/.test(wd)&&w.meaning) pool.push({w:wd,clue:w.meaning}); }); }catch(e){} if(pool.length<12) pool=[{w:'apple',clue:'苹果'},{w:'book',clue:'书'},{w:'music',clue:'音乐'},{w:'dream',clue:'梦想'},{w:'light',clue:'光'},{w:'water',clue:'水'},{w:'happy',clue:'快乐'},{w:'world',clue:'世界'},{w:'friend',clue:'朋友'},{w:'study',clue:'学习'},{w:'green',clue:'绿色'},{w:'plant',clue:'植物'},{w:'smart',clue:'聪明'},{w:'train',clue:'火车'},{w:'beach',clue:'海滩'}]; return pool; }
+    function cwGen(diff){ const target={easy:5,medium:7,hard:9}[diff]; const preFrac={easy:0.45,medium:0.22,hard:0}[diff]; const pool=cwPool().slice().sort(()=>Math.random()-0.5); const size=13; const grid=Array.from({length:size},()=>Array(size).fill(0)); const placed=[];
+      function canPlace(word,r,c,dir){ const L=word.length; if(dir==='H'){ if(c<0||c+L>size||r<0||r>=size) return false; if(c>0&&grid[r][c-1]!==0) return false; if(c+L<size&&grid[r][c+L]!==0) return false; for(let i=0;i<L;i++){ const cell=grid[r][c+i]; if(cell!==0&&cell!==word[i]) return false; if(cell===0){ if(r>0&&grid[r-1][c+i]!==0) return false; if(r<size-1&&grid[r+1][c+i]!==0) return false; } } return true; } else { if(r<0||r+L>size||c<0||c>=size) return false; if(r>0&&grid[r-1][c]!==0) return false; if(r+L<size&&grid[r+L][c]!==0) return false; for(let i=0;i<L;i++){ const cell=grid[r+i][c]; if(cell!==0&&cell!==word[i]) return false; if(cell===0){ if(c>0&&grid[r+i][c-1]!==0) return false; if(c<size-1&&grid[r+i][c+1]!==0) return false; } } return true; } }
+      function place(word,r,c,dir){ for(let i=0;i<word.length;i++){ if(dir==='H') grid[r][c+i]=word[i]; else grid[r+i][c]=word[i]; } placed.push({w:word,r,c,dir}); }
+      const first=pool[0]; place(first.w, Math.floor(size/2), Math.floor((size-first.w.length)/2), 'H');
+      for(let wi=1; wi<pool.length && placed.length<target; wi++){ const word=pool[wi].w; let put=false; for(let pi=0; pi<placed.length&&!put; pi++){ const pw=placed[pi]; for(let i=0;i<word.length&&!put;i++){ for(let j=0;j<pw.w.length&&!put;j++){ if(word[i]===pw.w[j]){ let r,c,dir; if(pw.dir==='H'){ r=pw.r-i; c=pw.c+j; dir='V'; } else { r=pw.r+j; c=pw.c-i; dir='H'; } if(canPlace(word,r,c,dir)){ place(word,r,c,dir); put=true; } } } } } }
+      const num=Array.from({length:size},()=>Array(size).fill(0)); let n=0;
+      for(let r=0;r<size;r++)for(let c=0;c<size;c++){ if(grid[r][c]===0) continue; const aS=(c===0||grid[r][c-1]===0)&&(c+1<size&&grid[r][c+1]!==0); const dS=(r===0||grid[r-1][c]===0)&&(r+1<size&&grid[r+1][c]!==0); if(aS||dS){ n++; num[r][c]=n; } }
+      const across=[], down=[]; placed.forEach(p=>{ const meta=pool.find(x=>x.w===p.w); const entry={num:num[p.r][p.c], clue:meta?meta.clue:p.w, w:p.w, r:p.r, c:p.c, dir:p.dir}; if(p.dir==='H') across.push(entry); else down.push(entry); }); across.sort((a,b)=>a.num-b.num); down.sort((a,b)=>a.num-b.num);
+      let r0=size,r1=0,c0=size,c1=0; for(let r=0;r<size;r++)for(let c=0;c<size;c++) if(grid[r][c]!==0){ r0=Math.min(r0,r); r1=Math.max(r1,r); c0=Math.min(c0,c); c1=Math.max(c1,c); }
+      const locked=Array.from({length:size},()=>Array(size).fill(false)); for(let r=0;r<size;r++)for(let c=0;c<size;c++) if(grid[r][c]!==0&&Math.random()<preFrac) locked[r][c]=true;
+      return { size, grid, num, across, down, r0,r1,c0,c1, locked, diff };
+    }
+    function cwIn(w,r,c){ return w.dir==='H' ? (r===w.r&&c>=w.c&&c<w.c+w.w.length) : (c===w.c&&r>=w.r&&r<w.r+w.w.length); }
+    function cwCells(w){ const sz=crosswordState.size, a=[]; for(let i=0;i<w.w.length;i++) a.push(w.dir==='H'? w.r*sz+(w.c+i):(w.r+i)*sz+w.c); return a; }
+    function cwFilled(w){ const st=crosswordState; for(let i=0;i<w.w.length;i++){ const r=w.dir==='H'?w.r:w.r+i, c=w.dir==='H'?w.c+i:w.c; if(st.cur[r][c]!==st.grid[r][c]) return false; } return true; }
+    function renderCrossword(area){
+      if(crosswordState && crosswordState._t) clearInterval(crosswordState._t);
+      const diff=gameDiff(); const gen=cwGen(diff);
+      const cur=Array.from({length:gen.size},()=>Array(gen.size).fill('')); for(let r=0;r<gen.size;r++)for(let c=0;c<gen.size;c++) if(gen.locked[r][c]) cur[r][c]=String(gen.grid[r][c]);
+      crosswordState={ ...gen, cur, sel:-1, activeWord:null, done:false, _t:null };
+      area.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span class="tag gray">${GAME_DIFF_LABEL[diff]} · ${gen.across.length} 横 ${gen.down.length} 纵</span>
+          <span class="muted" style="font-size:12px">线索=单词中文释义</span>
+        </div>
+        <div class="xw" id="xwGrid"></div>
+        <div class="row" style="margin-top:4px">
+          <button class="btn sm outline" id="xwCheck">✅ 检查</button>
+          <button class="btn sm outline" id="xwReveal">💡 揭示</button>
+          <button class="btn sm outline" id="xwNew">🔄 新局</button>
+        </div>
+        <div class="xw-pad" id="xwPad"></div>
+        <div class="section-title" style="margin-top:10px">线索</div>
+        <div class="clue-list" id="xwClues"></div>
+        <p id="xwMsg" class="muted" style="font-size:13px;margin-top:6px"></p>`;
+      cwDraw(); cwClues();
+      const pad=$('xwPad'); 'abcdefghijklmnopqrstuvwxyz'.split('').forEach(ch=>{ const b=document.createElement('button'); b.textContent=ch; b.onclick=()=>cwInput(ch); pad.appendChild(b); });
+      const er=document.createElement('button'); er.textContent='⌫'; er.onclick=()=>cwInput(''); pad.appendChild(er);
+      $('xwCheck').onclick=cwCheck; $('xwReveal').onclick=cwReveal; $('xwNew').onclick=()=>renderCrossword(area);
+    }
+    function cwDraw(){ const st=crosswordState; const g=$('xwGrid'); if(!g||!st) return; const {r0,r1,c0,c1,size}=st; const cols=c1-c0+1; g.style.gridTemplateColumns=`repeat(${cols},1fr)`; let html='';
+      for(let r=r0;r<=r1;r++)for(let c=c0;c<=c1;c++){ if(st.grid[r][c]===0){ html+='<div class="xw-cell block"></div>'; continue; } const cls=['xw-cell']; if(st.locked[r][c]) cls.push('lock'); if(st.sel===r*size+c) cls.push('sel'); if(st.activeWord && st.activeWord.cells.includes(r*size+c)) cls.push('word'); const wrong=st._checked&&!st.locked[r][c]&&st.cur[r][c]&&st.cur[r][c]!==st.grid[r][c]; if(wrong) cls.push('wrong'); const num=st.num[r][c]?`<span class="xn">${st.num[r][c]}</span>`:''; html+=`<div class="${cls.join(' ')}" data-r="${r}" data-c="${c}">${num}${st.cur[r][c]||''}</div>`; }
+      g.innerHTML=html; g.querySelectorAll('.xw-cell:not(.block)').forEach(cell=>cell.onclick=()=>{ const r=+cell.dataset.r, c=+cell.dataset.c; st.sel=r*size+c; const aw=st.across.find(w=>cwIn(w,r,c)); const dw=st.down.find(w=>cwIn(w,r,c)); st.activeWord=aw?{w:aw,cells:cwCells(aw)}:dw?{w:dw,cells:cwCells(dw)}:null; cwDraw(); cwClues(); });
+    }
+    function cwClues(){ const st=crosswordState; const el=$('xwClues'); if(!el||!st) return; const render=(arr)=>arr.map(w=>{ const filled=cwFilled(w); const active=st.activeWord&&st.activeWord.w===w; return `<div class="clue ${active?'active':''} ${filled?'done':''}" data-num="${w.num}" data-dir="${w.dir}"><span class="cn">${w.num}</span>${cgEsc(w.clue)} <span class="muted">(${w.w.length})</span></div>`; }).join(''); el.innerHTML=`<div style="font-weight:700;font-size:13px;margin:4px 0">横向 Across</div>${render(st.across)}<div style="font-weight:700;font-size:13px;margin:10px 0 4px">纵向 Down</div>${render(st.down)}`; el.querySelectorAll('.clue').forEach(cl=>cl.onclick=()=>{ const num=+cl.dataset.num, dir=cl.dataset.dir; const w=st[dir].find(x=>x.num===num); st.activeWord={w,cells:cwCells(w)}; st.sel=w.r*st.size+w.c; cwDraw(); cwClues(); }); }
+    function cwInput(ch){ const st=crosswordState; if(!st||st.sel<0||st.done) return; const r=Math.floor(st.sel/st.size), c=st.sel%st.size; if(st.locked[r][c]) return; st.cur[r][c]=ch; st._checked=false; if(ch&&st.activeWord){ const cells=st.activeWord.cells; const idx=cells.indexOf(st.sel); if(idx>=0&&idx<cells.length-1) st.sel=cells[idx+1]; } cwDraw(); }
+    function cwCheck(){ const st=crosswordState; if(!st) return; st._checked=true; let allOk=true, filled=0, total=0; for(let r=0;r<st.size;r++)for(let c=0;c<st.size;c++){ if(st.grid[r][c]===0) continue; total++; if(st.cur[r][c]) filled++; if(!st.locked[r][c]&&st.cur[r][c]!==st.grid[r][c]) allOk=false; } if(filled<total) $('xwMsg').textContent=`已填 ${filled}/${total}，继续加油`; else if(allOk){ st.done=true; if(st._t) clearInterval(st._t); $('xwMsg').textContent='🎉 填字完成！全部正确'; logGame('英文填字',`${GAME_DIFF_LABEL[st.diff]} 完成`); } else $('xwMsg').textContent='有填错的格子（红色），再看看线索'; cwDraw(); cwClues(); }
+    function cwReveal(){ const st=crosswordState; if(!st||st.done) return; const empties=[]; for(let r=0;r<st.size;r++)for(let c=0;c<st.size;c++) if(st.grid[r][c]!==0&&!st.locked[r][c]&&!st.cur[r][c]) empties.push([r,c]); if(!empties.length) return; const [r,c]=empties[Math.floor(Math.random()*empties.length)]; st.cur[r][c]=String(st.grid[r][c]); st.locked[r][c]=true; st._checked=false; cwDraw(); }    // ===================== 钢琴 =====================
     const PIANO_STAGES = [
       { id:1, title:'第1阶段 · 入门·识谱与基本手型', goal:'熟悉琴键、坐姿手型与基本识谱。', standard:'能正确弹奏哈农 No.1-5、拜厄 No.1-10、《小星星》单手。',
         ex:[
@@ -23863,7 +24012,8 @@
         }
         case 'del-note': state.bookNotes=state.bookNotes.filter(n=>n.id!==t.dataset.id); save(); renderBook(); break;
         case 'shoot-done': { const id=t.dataset.id; const it=state.shoot.find(s=>s.id===id); if(it){it.done=!it.done;save();renderShoot();} break; }
-        case 'gtype': gameType=t.dataset.t; renderGameArea(); document.querySelectorAll('.row .btn.sm').forEach(b=>{}); break;
+        case 'gtype': gameType=t.dataset.t; renderGameArea(); break;
+        case 'gdiff': state.gameDiff=t.dataset.d; save(); renderGame(); break;
         case 'master': { const id=+t.dataset.id; if(!state.pianoMastered.includes(id))state.pianoMastered.push(id); if(state.pianoUnlocked===id&&state.pianoUnlocked<5)state.pianoUnlocked++; save(); renderPiano(); break; }
         case 'piano-checkin': { if(!state.pianoLog) state.pianoLog={}; state.pianoLog[today()]=true; save(); toast('✅ 已记录今日练习，保持手感！'); currentView==='daily'?renderDaily():renderPiano(); break; }
         case 'study-checkin': { if(!state.studyLog) state.studyLog={}; state.studyLog[today()]=true; save(); toast('✅ 今日学习已打卡，保持连胜！'); currentView==='daily'?renderDaily():renderStudy(); break; }
