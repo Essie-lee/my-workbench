@@ -22808,7 +22808,7 @@
       if (!days.some(d=>(d.log && Object.keys(d.log).length) || (d.setsLog && Object.keys(d.setsLog).length))) return '<div class="empty">本周还没有运动记录</div>';
       return days.map(d=>{
         const items = [];
-        if (d.log) Object.entries(d.log).forEach(([id,m])=>{ const sp=SPORTS.find(s=>s.id===id); if(sp) items.push(`${sp.icon} ${sp.name} ${m}分`); });
+        if (d.log) Object.entries(d.log).forEach(([id,m])=>{ const sp=SPORTS.find(s=>s.id===id); if(!sp) return; const txt = typeof m==='object'&&m ? (m.min?m.min+'分':'')+(m.note?' · '+m.note:'') : (m?m+'分':''); items.push(`${sp.icon} ${sp.name} ${txt}`); });
         if (d.setsLog) Object.entries(d.setsLog).forEach(([sid, exs])=>{
           const sp = SPORTS.find(s=>s.id===sid); if(!sp) return;
           const totalSets = exs.reduce((sum, e) => sum + (e.sets?.length||0), 0);
@@ -22866,7 +22866,7 @@
       }).join('');
 
       const todaySport = SPORTS.find(s => s.id === wp[dow]);
-      const todayTags = Object.entries(todayLog).map(([id,m])=>{ const sp=SPORTS.find(s=>s.id===id); return sp?`<span class="tag primary" style="margin-right:6px">${sp.icon} ${sp.name} ${m}分钟</span>`:''; }).join('');
+      const todayTags = Object.entries(todayLog).map(([id,m])=>{ const sp=SPORTS.find(s=>s.id===id); const mv = typeof m==='object'&&m ? (m.min?m.min+'分钟':'')+(m.note?' · '+m.note:'') : (m?m+'分钟':''); return sp?`<span class="tag primary" style="margin-right:6px">${sp.icon} ${sp.name} ${mv}</span>`:''; }).join('');
 
       let todayCard;
       if (!todaySport) {
@@ -22881,12 +22881,23 @@
           ${todayTags ? `<div style="margin-top:10px">${todayTags}</div>` : ''}
         `;
       } else {
-        // 有氧：分钟数记录
+        // 有氧：inline 记录（避免 prompt 在 PWA 下失效）
+        const loggedMin = todayLog[todaySport.id];
+        const minVal = (typeof loggedMin === 'object' && loggedMin) ? loggedMin.min : (typeof loggedMin === 'number' ? loggedMin : 0);
+        const noteVal = (typeof loggedMin === 'object' && loggedMin) ? (loggedMin.note||'') : '';
         todayCard = `
           <div style="font-size:18px;margin-bottom:6px">${todaySport.icon} ${todaySport.name}</div>
           <div class="card-sub">${todaySport.goal}</div>
-          <div style="margin-top:10px"><button class="btn sm" data-action="log-sport" data-id="${todaySport.id}">✅ 记录今日时长</button></div>
-          ${todayTags ? `<div style="margin-top:10px">${todayTags}</div>` : ''}
+          <div id="cardioInputWrap" style="${minVal||noteVal?'display:none':'display:block'};gap:8px;margin-top:10px;flex-wrap:wrap">
+            <input class="ex-set-input" id="cardioMin" type="number" placeholder="时长(分钟)" value="${minVal||''}" style="width:90px" />
+            <input class="input" id="cardioNote" placeholder="今天具体练了什么？如：正手多球+发球" value="${noteVal}" style="flex:1;min-width:140px" />
+            <button class="btn sm" data-action="save-cardio" data-id="${todaySport.id}">✅ 保存</button>
+          </div>
+          ${minVal||noteVal ? `
+            <div style="margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span class="tag primary">${todaySport.icon} ${todaySport.name} ${minVal?minVal+'分钟':''}${noteVal?' · '+noteVal:''}</span>
+              <button class="btn sm ghost" data-action="edit-cardio" data-id="${todaySport.id}">✏️ 修改</button>
+            </div>` : ''}
         `;
       }
 
@@ -22964,6 +22975,7 @@
         <div class="card">
           <div class="card-title">🏃 今日打卡（周${dayNames[dow-1]}）</div>
           ${todayCard}
+          <div style="margin-top:12px"><button class="btn sm outline" data-action="add-extra-sport" style="width:100%">➕ 补记今天练了别的（计划外的项目）</button></div>
         </div>
         <div class="section-title">📊 本周训练量</div>
         <div class="card">${svgBars(getWeekVolumeData(), 'var(--primary)')}
@@ -23627,6 +23639,38 @@
         case 'day-sport': { const day=+t.dataset.day; const dn=['一','二','三','四','五','六','日'][day-1]; const opts=SPORTS.map(s=>`<button class="btn sm outline" data-action="set-day-sport" data-day="${day}" data-id="${s.id}" style="margin:4px">${s.icon} ${s.name}</button>`).join('')+`<button class="btn sm outline" data-action="set-day-sport" data-day="${day}" data-id="rest" style="margin:4px">💤 休息</button>`; openModal(`<h3>周${dn} 安排哪个项目？</h3><div style="display:flex;flex-wrap:wrap">${opts}</div><div class="modal-actions"><button class="btn ghost" data-action="modal-close">取消</button></div>`); break; }
         case 'set-day-sport': { const day=+t.dataset.day, id=t.dataset.id; state.sport.weekPlan[day]=id==='rest'?null:id; save(); closeModal(); renderSport(); toast('周排期已更新'); break; }
         case 'log-sport': { const id=t.dataset.id; const sp=SPORTS.find(s=>s.id===id); const v=prompt(`今天 ${sp.name} 练了多少分钟？`, '30'); const m=+v; if(!v||isNaN(m)||m<=0){ if(v!==null) toast('请输入有效分钟数'); break; } state.sport.log[today()]=state.sport.log[today()]||{}; state.sport.log[today()][id]=(state.sport.log[today()][id]||0)+m; save(); toast(`✅ ${sp.icon} 已记录 ${m} 分钟`); renderSport(); break; }
+        case 'save-cardio': { const id=t.dataset.id; const min=+$('cardioMin').value, note=($('cardioNote').value||'').trim(); if(!min||min<=0){ toast('请输入有效的时长'); break; } state.sport.log[today()]=state.sport.log[today()]||{}; state.sport.log[today()][id]={ min, note, ts:Date.now() }; save(); const sp=SPORTS.find(s=>s.id===id); toast(`✅ ${sp.icon} 已记录 ${min}分钟${note?' · '+note:''}`); renderSport(); break; }
+        case 'edit-cardio': { const id=t.dataset.id; const wrap=$('cardioInputWrap'); if(wrap){ wrap.style.display='flex'; } break; }
+        case 'add-extra-sport': {
+          const opts = SPORTS.map(s=>`<option value="${s.id}">${s.icon} ${s.name}</option>`).join('');
+          openModal(`<h3>➕ 补记今天练的项目</h3>
+            <div style="margin:12px 0">
+              <label style="font-size:13px;color:var(--muted)">选运动</label>
+              <select class="input" id="extraSport" style="width:100%;margin-top:4px">${opts}</select>
+            </div>
+            <div style="margin:12px 0">
+              <label style="font-size:13px;color:var(--muted)">时长（分钟）</label>
+              <input class="input" id="extraMin" type="number" placeholder="如 30" style="width:100%;margin-top:4px" />
+            </div>
+            <div style="margin:12px 0">
+              <label style="font-size:13px;color:var(--muted)">具体练了什么（选填）</label>
+              <input class="input" id="extraNote" placeholder="如：正手多球+发球练习" style="width:100%;margin-top:4px" />
+            </div>
+            <div class="modal-actions"><button class="btn ghost" data-action="modal-close">取消</button><button class="btn" data-action="save-extra-sport">保存</button></div>`);
+          break;
+        }
+        case 'save-extra-sport': {
+          const id=$('extraSport').value, min=+$('extraMin').value, note=($('extraNote').value||'').trim();
+          if(!min||min<=0){ toast('请输入有效的时长'); break; }
+          state.sport.log[today()]=state.sport.log[today()]||{};
+          // 同一项目追加合并
+          const prev = state.sport.log[today()][id];
+          if (typeof prev==='object'&&prev) { prev.min=(prev.min||0)+min; if(note) prev.note=(prev.note?prev.note+' · ':'')+note; prev.ts=Date.now(); }
+          else if (typeof prev==='number') { state.sport.log[today()][id]={min:prev+min, note:note, ts:Date.now()}; }
+          else { state.sport.log[today()][id]={min, note, ts:Date.now()}; }
+          save(); const sp=SPORTS.find(s=>s.id===id); toast(`✅ 已补记 ${sp.icon} ${min}分钟${note?' · '+note:''}`);
+          closeModal(); renderSport(); break;
+        }
         case 'muscle-tab': { setMuscleView(t.dataset.side); break; }
         case 'sport-tabs': { state._sportTab = t.dataset.stab; renderSport(); break; }
         case 'heat-muscle': { const id=t.dataset.id; highlightMuscle(id); updateMuscleInfo(id); break; }
