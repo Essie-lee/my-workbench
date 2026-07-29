@@ -1085,7 +1085,7 @@
         topicSaved: [], bookNotes: [], bookSaved: [], bookApi: null,
         shoot: SHOOT_PLAN.map((s,i)=>({ id:'s'+i, ...s, done:false })),
         gameHistory: {},
-        pianoUnlocked: 1, pianoMastered: [], pianoLog: {}, studyLog: {},
+        pianoUnlocked: 1, pianoMastered: [], pianoLog: {}, studyLog: {}, studyQuiz: {}, flashDone: {},
         memos: [],
         lastLearnUpdate: null,  // 由 AI 每次 push 学习内容时更新（ISO 日期 'YYYY-MM-DD'）
         bill: {
@@ -1451,14 +1451,21 @@
 
     // ===================== 学习中心 =====================
     let curLang = null;
+    let studyMode = 'overview';  // overview | quiz | flash | listen
+    // 今日练习进度（答题数）
+    function studyQuizToday() { return (state.studyQuiz && state.studyQuiz[today()]) || 0; }
     function renderStudy() {
       if (!state.studyLog || typeof state.studyLog !== 'object') { state.studyLog = {}; save(); }
+      if (!state.studyQuiz || typeof state.studyQuiz !== 'object') { state.studyQuiz = {}; save(); }
+      if (!state.flashDone || typeof state.flashDone !== 'object') { state.flashDone = {}; save(); }
       const sstreak = (()=>{ let s=0; for(let i=0;i<365;i++){ const d=new Date(); d.setDate(d.getDate()-i); if(state.studyLog[dateStr(d)]) s++; else if(i>0) break; } return s; })();
       const todayDone = !!state.studyLog[today()];
+      const qn = studyQuizToday();
       const langs = Object.keys(LANG);
-      // tabs 增加 "全部" 选项
       const tabsHtml = `<button class="${!curLang?'active':''}" data-action="lang-all">全部</button>` +
         langs.map(k=>`<button class="${curLang===k?'active':''}" data-action="lang" data-k="${k}">${LANG[k].flag} ${LANG[k].name}</button>`).join('');
+      const modes = [['overview','📚 总览'],['quiz','🎯 闯关练习'],['flash','🔤 单词卡'],['listen','👂 精听跟读']];
+      const modeHtml = `<div class="tabs" style="margin-bottom:10px">${modes.map(m=>`<button class="${studyMode===m[0]?'active':''}" data-action="study-mode" data-m="${m[0]}">${m[1]}</button>`).join('')}</div>`;
       $('main').innerHTML = `
         <div class="card" style="border:1px solid var(--primary);background:var(--primary-soft)">
           <div style="display:flex;justify-content:space-between;align-items:center">
@@ -1466,10 +1473,21 @@
             ${todayDone?'<span class="tag primary">✅ 今日已学</span>':'<button class="btn sm" data-action="study-checkin">记一笔今日学习</button>'}
           </div>
           <div class="card-sub" style="margin:6px 0 0">游戏化坚持（参考多邻国 streak）：每天 10 分钟，比周末突击更有效；间隔复习比一次性硬背更牢。</div>
+          <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
+            <div style="flex:1;height:8px;background:var(--line-2);border-radius:5px;overflow:hidden"><div style="height:100%;width:${Math.min(100,qn*10)}%;background:linear-gradient(90deg,#5b8def,#7c5cff)"></div></div>
+            <span style="font-size:12px;color:var(--muted)">今日练习 ${qn}/10</span>
+          </div>
         </div>
-        <div class="tabs">${tabsHtml}</div>
+        ${modeHtml}
         <div id="langBody"></div>`;
-      renderLangBody();
+      studyRenderBody();
+    }
+    // 根据 studyMode 分发
+    function studyRenderBody() {
+      if (studyMode==='quiz') return renderStudyQuiz();
+      if (studyMode==='flash') return renderStudyFlash();
+      if (studyMode==='listen') return renderStudyListen();
+      return renderLangBody();
     }
 
     // 新增:三个语言总览
@@ -1611,6 +1629,119 @@
           </div>` : ''}
         <div class="section-title">推荐资源</div>
         <div class="card">${L.resources.map(r=>`<div class="video-card"><div class="play">🔗</div><div><div style="font-weight:600;font-size:14px">${r.title}</div><a href="${r.url}" data-action="open-link" data-url="${r.url}" target="_blank" rel="noopener">${r.url}</a></div></div>`).join('')}</div>`;
+    }
+
+    // ============ 闯关练习（对标多邻国：交互作答 + 即时反馈）============
+    let quizState = null;
+    function buildQuiz() {
+      const L = LANG[curLang || 'english'];
+      const pool = [];
+      // 单词选择题
+      (L.vocabulary||[]).forEach(w => {
+        const others = (L.vocabulary||[]).filter(x=>x.word!==w.word).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.meaning);
+        if (others.length>=3) pool.push({ type:'word', q:`「${w.word}」是什么意思？`, answer:w.meaning, opts:shuffle([w.meaning,...others]), say:w.word, sayLang:L.tts });
+      });
+      // 翻译选择题（给出中文，选英文）
+      (L.translations||[]).forEach(t => {
+        const others = (L.translations||[]).filter(x=>x.answer!==t.answer).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.answer);
+        if (others.length>=3) pool.push({ type:'trans', q:`「${t.source}」怎么翻译？`, answer:t.answer, opts:shuffle([t.answer,...others]) });
+      });
+      pool.sort(()=>Math.random()-0.5);
+      return pool.slice(0,5);
+    }
+    function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+    function renderStudyQuiz() {
+      if (!quizState || quizState.finished) {
+        const qs = buildQuiz();
+        if (!qs.length) { $('langBody').innerHTML = '<div class="card"><div class="empty">该语言暂无足够练习数据</div></div>'; return; }
+        quizState = { qs, idx:0, score:0, chosen:null, finished:false };
+      }
+      const st = quizState, q = st.qs[st.idx];
+      const prog = Math.round((st.idx)/(st.qs.length)*100);
+      let body;
+      if (st.finished) {
+        const pass = st.score>=Math.ceil(st.qs.length*0.6);
+        body = `<div class="card" style="text-align:center;padding:24px">
+          <div style="font-size:40px">${pass?'🎉':'💪'}</div>
+          <div class="card-title" style="justify-content:center">今日闯关完成</div>
+          <div style="font-size:28px;font-weight:800;margin:8px 0">${st.score}/${st.qs.length}</div>
+          <div class="card-sub">${pass?'很棒，保持连胜！':'再来一次会更熟。'}</div>
+          <button class="btn" data-action="quiz-restart" style="margin-top:12px">🔄 再来一组</button>
+        </div>`;
+      } else {
+        body = `<div class="card">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px"><span>第 ${st.idx+1}/${st.qs.length} 题</span><span>${st.score} 分</span></div>
+          <div style="height:6px;background:var(--line-2);border-radius:4px;overflow:hidden;margin-bottom:14px"><div style="height:100%;width:${prog}%;background:linear-gradient(90deg,#5b8def,#7c5cff)"></div></div>
+          <div style="font-size:16px;font-weight:600;margin-bottom:4px">${esc(q.q)}</div>
+          ${q.say?`<button class="btn sm outline" data-action="speak" data-t="${encodeURIComponent(q.say)}" data-l="${q.sayLang}" style="margin-bottom:12px">🔊 听发音</button>`:''}
+          <div style="display:flex;flex-direction:column;gap:8px">
+            ${q.opts.map(o=>`<button class="btn ${st.chosen?(o===q.answer?'sm ok':'sm'):'sm outline'}" data-action="quiz-ans" data-o="${esc(o)}" ${st.chosen?'disabled':''} style="justify-content:flex-start;${st.chosen&&o===q.answer?'background:var(--primary-soft);color:var(--primary);border-color:var(--primary)':''}${st.chosen&&st.chosen===o&&o!==q.answer?'background:#fde8e8;color:var(--red)':''}">${esc(o)}</button>`).join('')}
+          </div>
+          ${st.chosen?`<div style="margin-top:12px;font-size:13px;color:${st.chosen===q.answer?'var(--green)':'var(--red)'}">${st.chosen===q.answer?'✅ 答对啦':'❌ 正确答案：'+esc(q.answer)}</div><button class="btn sm" data-action="quiz-next" style="margin-top:8px">${st.idx+1>=st.qs.length?'看结果':'下一题 →'}</button>`:''}
+        </div>`;
+      }
+      $('langBody').innerHTML = body;
+    }
+    // ============ 单词卡（对标不背单词：语境例句 + 认识/不认识）============
+    let flashState = null;
+    function renderStudyFlash() {
+      const L = LANG[curLang || 'english'];
+      const list = (L.vocabulary||[]);
+      if (!list.length) { $('langBody').innerHTML = '<div class="card"><div class="empty">该语言暂无单词卡</div></div>'; return; }
+      if (!flashState || flashState.done) {
+        const done = (state.flashDone[L.name]||[]);
+        const remain = list.filter(w=>!done.includes(w.word));
+        const pick = (remain.length?remain:list).slice(0,10);
+        flashState = { pick, idx:0, flipped:false, done:false };
+      }
+      const st = flashState, w = st.pick[st.idx];
+      if (!w) { $('langBody').innerHTML = '<div class="card"><div class="empty">今日单词已刷完 🎉</div></div>'; return; }
+      $('langBody').innerHTML = `
+        <div class="card" style="text-align:center">
+          <div style="font-size:12px;color:var(--muted)">第 ${st.idx+1}/${st.pick.length} 张</div>
+          <div style="font-size:32px;font-weight:800;margin:10px 0">${esc(w.word)}</div>
+          <div style="color:var(--muted);font-size:13px">${esc(w.pron||'')}</div>
+          <button class="btn sm outline" data-action="speak" data-t="${encodeURIComponent(w.word)}" data-l="${L.tts}" style="margin:10px auto;display:block">🔊 发音</button>
+          ${st.flipped?`<div style="margin-top:8px;padding:14px;background:var(--bg);border-radius:10px">
+            <div style="font-size:18px;font-weight:700;color:var(--primary)">${esc(w.meaning)}</div>
+            <div style="font-size:13px;color:var(--ink-2);margin-top:8px;font-style:italic">「${esc(w.example||'')}」</div>
+          </div>`:`<div class="card-sub" style="margin-top:8px">点击卡片看释义与例句</div>`}
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn sm outline" data-action="flash-flip" style="flex:1">${st.flipped?'收起':'翻转看释义'}</button>
+          <button class="btn sm" data-action="flash-know" style="flex:1">✅ 认识</button>
+          <button class="btn sm outline" data-action="flash-unknow" style="flex:1">📌 不认识</button>
+        </div>`;
+    }
+    // ============ 精听跟读（对标每日英语听力：单句精听 + 跟读打分）============
+    let listenState = null;
+    function renderStudyListen() {
+      const L = LANG[curLang || 'english'];
+      const sentences = [];
+      (L.articles||[]).forEach(a=>a.paras.forEach(p=>sentences.push(p.en)));
+      (L.vocabulary||[]).forEach(w=>{ if(w.example) sentences.push(w.example); });
+      if (!sentences.length) { $('langBody').innerHTML = '<div class="card"><div class="empty">该语言暂无听力句</div></div>'; return; }
+      if (!listenState || listenState.done) {
+        const day = Math.floor(Date.now()/86400000);
+        const pick = [];
+        for (let i=0;i<5;i++) pick.push(sentences[(day+i*7)%sentences.length]);
+        listenState = { pick, idx:0, revealed:false, result:null, done:false };
+      }
+      const st = listenState, s = st.pick[st.idx];
+      $('langBody').innerHTML = `
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted)"><span>精听 ${st.idx+1}/${st.pick.length}</span><button class="btn sm outline" data-action="listen-play" style="margin:0">🔊 盲听</button></div>
+          <div style="margin:14px 0;min-height:48px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:15px;line-height:1.6">
+            ${st.revealed?esc(s):'<span style="color:var(--muted)">先盲听，再点「显示原文」</span>'}
+          </div>
+          ${st.revealed?`<button class="btn sm outline" data-action="speak" data-t="${encodeURIComponent(s)}" data-l="${L.tts}" style="width:100%;justify-content:center;margin-bottom:8px">🔊 跟读示范</button>`:''}
+          <div style="display:flex;gap:8px">
+            ${!st.revealed?`<button class="btn sm" data-action="listen-reveal" style="flex:1">显示原文</button>`:`<button class="btn sm" data-action="listen-record" style="flex:1">🎤 我开始跟读</button>`}
+          </div>
+          ${st.result?`<div style="margin-top:10px;padding:10px;background:var(--bg);border-radius:8px;font-size:13px;line-height:1.5">${st.result}</div>`:''}
+          <button class="btn sm outline" data-action="listen-next" style="margin-top:10px;width:100%;justify-content:center">下一句 →</button>
+        </div>
+        <div class="card-sub" style="text-align:center;margin-top:6px">跟读使用浏览器语音识别，部分手机/PWA 可能不支持；不支持时可用「显示原文 + 跟读示范」替代练习。</div>`;
     }
     function startAssess() {
       const L = LANG[curLang];
@@ -2352,8 +2483,8 @@
         case 'toggle-task': { const g=t.dataset.g,id=t.dataset.id; const it=state.daily[g].find(x=>x.id===id); if(it){it.done=!it.done;save();renderDaily();} break; }
         case 'del-task': { const g=t.dataset.g,id=t.dataset.id; state.daily[g]=state.daily[g].filter(x=>x.id!==id); save(); renderDaily(); break; }
         case 'add-task': { const v=$('newTask').value.trim(); if(!v)break; const ty=$('newType').value; state.daily[ty].push({id:uid(),title:v,tag:ty==='routine'?'每日必做':'创作任务',done:false}); save(); renderDaily(); break; }
-        case 'lang-all': curLang=null; renderLangBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.action==='lang-all')); break;
-        case 'lang': curLang=t.dataset.k; renderLangBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.k===curLang)); break;
+        case 'lang-all': curLang=null; studyRenderBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.action==='lang-all')); break;
+        case 'lang': curLang=t.dataset.k; quizState=null; flashState=null; listenState=null; studyRenderBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.k===curLang)); break;
         case 'assess': startAssess(); break;
         case 'lang-done': { const i=+t.dataset.i; const L=LANG[curLang]; if(state.lang[curLang].level===i && i<L.plan.length-1){ state.lang[curLang].level=i+1; } save(); renderLangBody(); break; }
         case 'speak': speak(decodeURIComponent(t.dataset.t), t.dataset.l); break;
@@ -2452,6 +2583,88 @@
         case 'master': { const id=+t.dataset.id; if(!state.pianoMastered.includes(id))state.pianoMastered.push(id); if(state.pianoUnlocked===id&&state.pianoUnlocked<5)state.pianoUnlocked++; save(); renderPiano(); break; }
         case 'piano-checkin': { if(!state.pianoLog) state.pianoLog={}; state.pianoLog[today()]=true; save(); toast('✅ 已记录今日练习，保持手感！'); currentView==='daily'?renderDaily():renderPiano(); break; }
         case 'study-checkin': { if(!state.studyLog) state.studyLog={}; state.studyLog[today()]=true; save(); toast('✅ 今日学习已打卡，保持连胜！'); currentView==='daily'?renderDaily():renderStudy(); break; }
+        // ===== 学习中心：模式切换 + 闯关 + 单词卡 + 精听跟读 =====
+        case 'study-mode': { studyMode = t.dataset.m; renderStudy(); break; }
+        case 'quiz-ans': {
+          if (!quizState || quizState.chosen) break;
+          quizState.chosen = t.dataset.o;
+          if (quizState.chosen === quizState.qs[quizState.idx].answer) quizState.score++;
+          renderStudyQuiz();
+          break;
+        }
+        case 'quiz-next': {
+          if (!quizState) break;
+          quizState.idx++;
+          quizState.chosen = null;
+          if (quizState.idx >= quizState.qs.length) {
+            quizState.finished = true;
+            if (!state.studyQuiz) state.studyQuiz = {};
+            state.studyQuiz[today()] = (state.studyQuiz[today()]||0) + quizState.qs.length;
+            if (!state.studyLog) state.studyLog = {}; state.studyLog[today()] = true;
+            save();
+            toast('🎯 今日闯关完成 +' + quizState.qs.length + ' 题');
+          }
+          renderStudyQuiz();
+          break;
+        }
+        case 'quiz-restart': { quizState = null; renderStudyQuiz(); break; }
+        case 'flash-flip': { if(flashState) flashState.flipped = !flashState.flipped; renderStudyFlash(); break; }
+        case 'flash-know':
+        case 'flash-unknow': {
+          if (!flashState) break;
+          const w = flashState.pick[flashState.idx];
+          const L = LANG[curLang || 'english'];
+          if (!state.flashDone[L.name]) state.flashDone[L.name] = [];
+          if (!state.flashDone[L.name].includes(w.word)) state.flashDone[L.name].push(w.word);
+          save();
+          flashState.idx++;
+          flashState.flipped = false;
+          if (flashState.idx >= flashState.pick.length) flashState.done = true;
+          toast(a==='flash-know' ? '✅ 已记住，下一轮不再出现' : '📌 已标记，下次重点练');
+          renderStudyFlash();
+          break;
+        }
+        case 'listen-play': { const st=listenState; if(st&&st.pick[st.idx]) speak(st.pick[st.idx], LANG[curLang||'english'].tts); break; }
+        case 'listen-reveal': { if(listenState) listenState.revealed = true; renderStudyListen(); break; }
+        case 'listen-next': {
+          if (!listenState) break;
+          listenState.idx++;
+          listenState.revealed = false; listenState.result = null;
+          if (listenState.idx >= listenState.pick.length) listenState.done = true;
+          renderStudyListen();
+          break;
+        }
+        case 'listen-record': {
+          if (!listenState) break;
+          const target = listenState.pick[listenState.idx];
+          const L = LANG[curLang || 'english'];
+          if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            listenState.result = '⚠️ 当前浏览器不支持语音识别。可点「显示原文 + 跟读示范」对照练习。';
+            renderStudyListen(); break;
+          }
+          const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+          const rec = new SR();
+          rec.lang = L.tts; rec.interimResults = false; rec.maxAlternatives = 1;
+          listenState.result = '🎤 请跟读…（说完自动评分）';
+          renderStudyListen();
+          try {
+            rec.onresult = (ev) => {
+              const said = ev.results[0][0].transcript.trim().toLowerCase();
+              const tgt = target.toLowerCase().replace(/[.,!?;:]/g,'');
+              const sim = said.replace(/[.,!?;:]/g,'');
+              let score = 0;
+              const tWords = tgt.split(' ').filter(Boolean);
+              const sWords = sim.split(' ').filter(Boolean);
+              tWords.forEach(w=>{ if(sWords.includes(w)) score++; });
+              const pct = tWords.length? Math.round(score/tWords.length*100):0;
+              listenState.result = `你说的：${said}<br>匹配度：<b style="color:${pct>=70?'var(--green)':'var(--red)'}">${pct}%</b><br>${pct>=70?'👍 很接近，继续保持！':'💡 再听一遍示范，注意节奏。'}`;
+              renderStudyListen();
+            };
+            rec.onerror = () => { listenState.result = '⚠️ 没听清或浏览器不支持，请重试，或用示范对照练习。'; renderStudyListen(); };
+            rec.start();
+          } catch(_) { listenState.result = '⚠️ 语音识别启动失败，请用示范对照练习。'; renderStudyListen(); }
+          break;
+        }
         case 'piano-edit': {
           const sId=t.dataset.s, idx=+t.dataset.i;
           if(!state.pianoEx[sId]) state.pianoEx[sId] = PIANO_STAGES.find(s=>s.id==sId).ex.map(e=>({id:uid(), title:e.title, desc:e.desc}));
