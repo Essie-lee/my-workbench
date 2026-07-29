@@ -640,7 +640,7 @@
       english: {
         name: '英语', flag: '🇬🇧', tts: 'en-US',
         intro: '以「可理解输入 + 朗读模仿」为核心，参考 CEFR 欧洲语言框架分级。',
-        goal: '🎯 我的目标：到英语国家旅行、生活时，能跟本地人自然、无痛地聊天。',
+        goal: '🎯 我的目标：精通英语 —— 既能跟本地人自然、无痛地聊天，也能看懂 BBC News 等当地时政新闻。',
         levels: ['A1 入门','A2 基础','B1 进阶','B2 流利','C1 精通'],
         plan: [
           { t:'A1 入门', g:'掌握 1000 核心词、基础语法与日常对话', s:'能自我介绍、点餐、问路；看懂简短通知', items:['发音与音标','be 动词与一般现在时','50 个高频动词','数字/时间/购物对话'] },
@@ -915,12 +915,29 @@
             { role:'loc', f:"Call the transit lost-and-found now.", zh:'快打交通失物招领电话。', r:'' },
             { role:'me', f:"Okay, thank you for helping.", zh:'好，谢谢你帮忙。', r:'' }
           ]}
+        ],
+        news: [
+          { title:'How AI Tools Are Quietly Reshaping the Classroom', zhTitle:'AI 工具如何悄悄改变课堂', source:'BBC News', minutes:3, paras:[
+            { foreign:'Across the world, schools are experimenting with AI tutors that give students instant feedback on essays and maths.', zh:'全球各地的学校正在尝试使用 AI 家教，为学生提供作文与数学的即时反馈。' },
+            { foreign:'Supporters say the technology frees teachers from routine marking, while critics warn it may weaken independent thinking.', zh:'支持者称这项技术把老师从重复性批改中解放出来；批评者则担心它会削弱独立思考。' },
+            { foreign:'Most experts agree the goal is not to replace teachers, but to give every child a patient, always-available study partner.', zh:'多数专家认为，目标不是取代老师，而是给每个孩子一位永远有空、耐心的学习伙伴。' }
+          ]},
+          { title:'Cities Are Planting More Trees to Fight Extreme Heat', zhTitle:'城市种更多树以对抗极端高温', source:'BBC News', minutes:3, paras:[
+            { foreign:'As summers grow hotter, city planners are turning to trees and green roofs to cool crowded streets.', zh:'随着夏天越来越热，城市规划者正借助树木与绿化屋顶为拥挤的街道降温。' },
+            { foreign:'Shade can lower surface temperatures by several degrees, and also helps absorb heavy rain.', zh:'树荫能让地表温度下降好几度，还能帮助吸收暴雨积水。' },
+            { foreign:'Researchers note that greener neighbourhoods tend to be healthier and more pleasant to live in.', zh:'研究人员指出，更绿化的社区往往更健康，也更宜居。' }
+          ]},
+          { title:'Remote Work Is Reshaping the Heart of the City', zhTitle:'远程办公正在重塑城市中心', source:'BBC News', minutes:3, paras:[
+            { foreign:'Five years after the shift to home working began, many city centres still have quieter rush hours than before.', zh:'居家办公的浪潮开始五年后，许多城市中心的早晚高峰仍比以往安静。' },
+            { foreign:'Some shops and cafés have closed, yet others have opened to serve residents who now stay local during the day.', zh:'一些商店与咖啡馆关门了，但也有另一些开张，服务白天留在社区里的居民。' },
+            { foreign:'Economists say the change is permanent enough that cities must rethink how they use their central spaces.', zh:'经济学家表示，这一变化足够持久，城市必须重新思考中心区域该如何利用。' }
+          ]}
         ]
       },
       korean: {
         name: '韩语', flag: '🇰🇷', tts: 'ko-KR',
         intro: '采用延世大学《延世韩国语》体系（1-6 册，对应 TOPIK），从发音到语法系统进阶。',
-        goal: '🎯 我的目标：去韩国旅游、生活时，能跟本地人自然聊天，看懂韩剧。',
+        goal: '🎯 我的目标：精通韩语 —— 既能跟本地人自然聊天、看懂韩剧，也能看懂 연합뉴스 等韩国时政新闻。',
         levels: ['发音入门','初级1','初级2','中级','高级'],
         plan: [
           { t:'发音入门', g:'掌握 40 个字母（19 辅音+21 元音）与基本拼读', s:'能拼读任意韩文、念出自己的名字', items:['19 个辅音','21 个元音','收音(받침)','发音规则：连音/送气'] },
@@ -1119,12 +1136,29 @@
             { role:'loc', ko:'분실물 센터에 전화하세요.', zh:'打失物招领电话。', r:'bunsilmul senteo-e jeonwahaseyo' },
             { role:'me', ko:'네, 도와줘서 고마워요.', zh:'好，谢谢你帮忙。', r:'ne, dowajwoseo gomawoyo' }
           ]}
+        ],
+        news: [
+          { title:'AI 보조공학, 교실을 조용히 바꾸고 있다', zhTitle:'AI 辅助教学，正悄悄改变课堂', source:'연합뉴스', minutes:3, paras:[
+            { foreign:'전 세계 학교들이 에세이와 수학에 즉시 피드백을 주는 AI 튜터를 시험하고 있다.', zh:'全球学校正在试验能即时反馈作文与数学的 AI 家教。' },
+            { foreign:'지지자는 교사가 반복 채점에서 벗어나게 한다고 하고, 비판자는 독립적 사고가 약해질까 봐 우려한다.', zh:'支持者认为能让老师摆脱重复批改，批评者担心独立思考被削弱。' },
+            { foreign:'대다수 전문가는 목표가 교사를 대체하는 것이 아니라, 항상 대기하는 인내심 있는 학습 파트너를 제공하는 것이라고 말한다.', zh:'多数专家认为，目标并非取代老师，而是提供一位随时待命、有耐心的学习伙伴。' }
+          ]},
+          { title:'도시, 무더위를 식히려 나무를 심다', zhTitle:'城市种树以消暑降温', source:'조선일보', minutes:3, paras:[
+            { foreign:'여름이 더워짐에 따라 도시 설계자들은 나무와 녹색 지붕으로 붐비는 거리를 식히고 있다.', zh:'随着夏季变热，城市规划者正用树木与绿化屋顶为拥挤街道降温。' },
+            { foreign:'그늘은 지표 온도를 몇 도 낮추고, 폭우의 빗물을 흡수하는 데도 도움이 된다.', zh:'树荫可使地表温度降低几度，也有助于吸收暴雨积水。' },
+            { foreign:'연구자들은 더 푸른 동네일수록 건강하고 살기 좋다고 지적한다.', zh:'研究人员指出，社区越绿，越健康宜居。' }
+          ]},
+          { title:'재택근무가 도심의 중심을 다시 만든다', zhTitle:'远程办公重塑城市中心', source:'한국경제', minutes:3, paras:[
+            { foreign:'재택근무 시작 5년 뒤, 많은 도심의 출퇴근 시간은 여전히 예전보다 조용하다.', zh:'远程办公开始五年后，许多城市中心的早晚高峰仍比以往安静。' },
+            { foreign:'일부 가게와 카페는 문을 닫았지만, 낮에 동네에 남은 주민을 위한 가게도 새로 열렸다.', zh:'一些商店咖啡馆关门了，但也有服务白天留在社区居民的店铺新开张。' },
+            { foreign:'경제학자들은 이 변화가 충분히 영구적이라 도시가 중심 공간을 어떻게 쓸지 다시 생각해야 한다고 한다.', zh:'经济学家认为这变化足够持久，城市须重新思考中心空间的使用。' }
+          ]}
         ]
       },
       cantonese: {
         name: '粤语', flag: '🇭🇰', tts: 'zh-HK',
         intro: '以粤拼 Jyutping（香港语言学学会方案，九声六调）为正音基础，从日常会话到港剧无字幕。',
-        goal: '🎯 我的目标：在香港生活、游玩时，能跟本地人自然、无痛地讲粤语。',
+        goal: '🎯 我的目标：精通粤语 —— 既能跟本地人自然、无痛地讲粤语，也能看懂《明報》等香港时政新闻。',
         levels: ['拼音正音','基础会话','生活场景','地道表达','港剧自由'],
         plan: [
           { t:'拼音正音', g:'掌握粤拼声母/韵母与九声六调', s:'能拼读粤拼、区分六声', items:['声母 b p m f','韵母 aa o e','九声六调','入声 -p -t -k'] },
@@ -1325,6 +1359,23 @@
             { role:'me', ko:'好似喺巴士上。', zh:'好像在公交车上。', r:'hou2ci5 hai2 baa1si2 soeng6' },
             { role:'loc', ko:'快啲打去失物招領。', zh:'快打失物招领电话。', r:'faai1di1 daa2heoi3 sat1mat6 ziu1leng5' },
             { role:'me', ko:'好，多謝你幫手。', zh:'好，谢谢你帮忙。', r:'hou2, do1ze6 nei5 bong1sau2' }
+          ]}
+        ],
+        news: [
+          { title:'AI 助教工具 改寫課堂', zhTitle:'AI 助教工具 改写课堂', source:'明報', minutes:3, paras:[
+            { foreign:'全球各地學校，開始試用 AI 助教，為學生嘅作文同數學俾即時回饋。', zh:'全球各地的学校开始试用 AI 助教，为学生的作文和数学提供即时反馈。' },
+            { foreign:'支持者話，呢項技術將老師由重複批改中解放；批評者就憂心會削弱獨立思考。', zh:'支持者说，这项技术把老师从重复批改中解放；批评者则担心会削弱独立思考。' },
+            { foreign:'多數專家認同，目標唔係取代老師，而係畀每個細路一位隨時有空、好有耐性嘅學習伙伴。', zh:'多数专家认同，目标不是取代老师，而是给每个孩子一位随时有空、很有耐心的学习伙伴。' }
+          ]},
+          { title:'城市種樹降溫 抗極端高溫', zhTitle:'城市种树降温 抗极端高温', source:'頭條日報', minutes:3, paras:[
+            { foreign:'夏天越嚟越熱，城市規劃者借助樹木同綠化天台，為擠迫嘅街道降溫。', zh:'夏天越来越热，城市规划者借助树木和绿化天台为拥挤的街道降温。' },
+            { foreign:'樹蔭可以令地表溫度低幾度，亦幫到吸收暴雨積水。', zh:'树荫可以让地表温度降几度，也帮助吸收暴雨积水。' },
+            { foreign:'研究人員指出，越綠化嘅社區，通常越健康、越宜居。', zh:'研究人员指出，越绿化的社区，通常越健康、越宜居。' }
+          ]},
+          { title:'遙距工作 重塑鬧市', zhTitle:'远程工作 重塑闹市', source:'明報', minutes:3, paras:[
+            { foreign:'居家辦公嘅浪潮展開五年後，好多城市中心嘅上下班高峰，仲係比以往靜。', zh:'居家办公的浪潮展开五年后，很多城市中心的上下班高峰，还是比以往安静。' },
+            { foreign:'有啲舖頭同咖啡室執咗，亦都有新開嘅，服務朝早留喺社區嘅居民。', zh:'有些店铺和咖啡馆结业了，也有新开的，服务白天留在社区的居民。' },
+            { foreign:'經濟學者話，呢個改變夠持久，城市要重新諗清楚中心空間點用。', zh:'经济学家说，这个改变够持久，城市要重新想清楚中心空间怎么用。' }
           ]}
         ]
       }
@@ -1869,9 +1920,10 @@
         const sceneCnt = (L.scenes||[]).length;
         const lineCnt = sceneLines.length + (L.dialogues||[]).length;
         const goalDone = lvIdx!==null && lvIdx>=lvTotal-1;
-        const todayVocab = L.vocabulary[dayKey % L.vocabulary.length];
-        const todayTr = L.translations[dayKey % L.translations.length];
-        const todayLine = sceneLines.length ? sceneLines[dayKey % sceneLines.length] : (L.dialogues&&L.dialogues.length?L.dialogues[dayKey%L.dialogues.length]:null);
+      const todayVocab = L.vocabulary[dayKey % L.vocabulary.length];
+      const todayTr = L.translations[dayKey % L.translations.length];
+      const todayLine = sceneLines.length ? sceneLines[dayKey % sceneLines.length] : (L.dialogues&&L.dialogues.length?L.dialogues[dayKey%L.dialogues.length]:null);
+      const todayNews = L.news ? L.news[dayKey % L.news.length] : null;
         return `
         <div class="card" style="padding:0;overflow:hidden">
           <div style="padding:14px 16px;border-bottom:1px solid var(--line-2)">
@@ -1879,7 +1931,7 @@
               <div style="font-size:24px;line-height:1">${L.flag}</div>
               <div style="flex:1;min-width:0">
                 <div style="font-weight:700;font-size:15px;color:var(--ink)">${L.name}</div>
-                <div class="goal-chip">🎯 无痛对话本地人</div>
+                <div class="goal-chip">🎯 精通 + 看懂时政新闻</div>
               </div>
               <div style="text-align:right">
                 <div style="font-size:11px;color:var(--muted)">目标进度</div>
@@ -1888,9 +1940,10 @@
             </div>
           </div>
           <div style="padding:12px 16px">
-            <div class="lv-dash" style="margin-top:0">
+            <div class="lv-dash" style="margin-top:0;grid-template-columns:1fr 1fr 1fr">
               <div class="mini-stat"><div class="ms-label">🗣 情景对话库</div><div class="ms-value">${sceneCnt} 场景 <small>· ${lineCnt} 句</small></div></div>
               <div class="mini-stat"><div class="ms-label">📚 单词 / 翻译</div><div class="ms-value">${L.vocabulary.length} / ${L.translations.length}</div></div>
+              <div class="mini-stat"><div class="ms-label">📰 新闻精读</div><div class="ms-value">${L.news.length} 篇</div></div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0">
               <button class="btn sm outline" data-action="lang" data-k="${k}">🗣 情景</button>
@@ -1901,6 +1954,7 @@
               <div>🗣 今日一句 · ${todayLine?(todayLine.f||todayLine.ko):'—'}</div>
               <div>🎴 今日单词 · ${todayVocab.word} <span style="color:var(--muted)">(${todayVocab.meaning || ''})</span></div>
               <div>✍️ 今日翻译 · ${todayTr.answer.slice(0,22)}…</div>
+              <div>📰 今日新闻 · ${todayNews?todayNews.zhTitle:'—'}</div>
             </div>
           </div>
         </div>`;
@@ -1908,8 +1962,8 @@
       $('langBody').innerHTML = `
         <div class="goal-banner" style="margin-bottom:14px">
           <div class="gb-label">🎯 三语齐学 · 共同目标</div>
-          <div class="gb-text">跟本地人无痛对话</div>
-          <div class="gb-sub">英语 / 韩语 / 粤语，按真实生活场景（餐厅·交通·购物·住宿·就医·闲聊·邀约·求助）分组练习，照着说就能开口。</div>
+          <div class="gb-text">无痛对话本地人 + 看懂当地时政新闻</div>
+          <div class="gb-sub">英语 / 韩语 / 粤语，按真实生活场景（餐厅·交通·购物·住宿·就医·闲聊·邀约·求助）分组练对话；并内置 BBC News 等当地主流媒体的时政新闻精读，照着练既能无痛开口，也能读懂新闻。</div>
         </div>
         ${cards}
         <div style="height:8px"></div>
@@ -1940,9 +1994,10 @@
             ${lvIdx===null ? `<button class="btn sm" data-action="assess">📝 测评</button>` : `<button class="btn sm outline" data-action="assess">重测</button>`}
           </div>
           <div class="lv-bar" style="margin-top:10px"><span style="width:${lvIdx===null?0:Math.round(((lvIdx+1)/lvTotal)*100)}%"></span></div>
-          <div class="lv-dash">
-            <div class="mini-stat"><div class="ms-label">🎯 目标：无痛对话</div><div class="ms-value">${goalDone?'✅ 已达成':(lvIdx===null?'待测评':'进行中')}</div></div>
+          <div class="lv-dash" style="grid-template-columns:1fr 1fr 1fr">
+            <div class="mini-stat"><div class="ms-label">🎯 目标：精通+新闻</div><div class="ms-value">${goalDone?'✅ 已达成':(lvIdx===null?'待测评':'进行中')}</div></div>
             <div class="mini-stat"><div class="ms-label">🗣 情景对话库</div><div class="ms-value">${sceneCnt} 场景 <small>· ${lineCnt} 句</small></div></div>
+            <div class="mini-stat"><div class="ms-label">📰 新闻精读</div><div class="ms-value">${L.news.length} 篇</div></div>
           </div>
           ${lvIdx!==null?`<div style="margin-top:10px"><button class="btn sm" data-action="lang-done" data-i="${lvIdx}">✅ 本阶段完成</button></div>`:''}
         </div>`;
@@ -2029,12 +2084,31 @@
           </div>
         </div>` : '';
       const resHtml = `<div class="sec-body"><div class="card">${L.resources.map(r=>`<div class="video-card"><div class="play">🔗</div><div><div style="font-weight:600;font-size:14px">${esc(r.title)}</div><a href="${esc(r.url)}" data-action="open-link" data-url="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url)}</a></div></div>`).join('')}</div></div>`;
+      const newsHtml = L.news ? `
+        <div class="sec-body">
+          <div class="card-sub">精选当地主流媒体的时政／社会新闻（对标 BBC News 水准），逐句精读＋朗读，练到能看懂当地新闻。</div>
+          ${L.news.map(n=>`<div class="card" style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+              <div class="card-title" style="margin:0;font-size:15px">${esc(n.title)}</div>
+              <div style="display:flex;gap:6px;align-items:center">
+                <span class="tag gray" style="font-size:11px">${esc(n.source)}</span>
+                <span style="font-size:11px;color:var(--muted)">⏱ ${n.minutes} 分钟</span>
+              </div>
+            </div>
+            <div class="card-sub" style="margin:4px 0 8px">${esc(n.zhTitle)}</div>
+            ${n.paras.map(p=>`<div class="sentence">
+              <div class="en">${esc(p.foreign)} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(p.foreign)}" data-l="${L.tts}">🔊</button></div>
+              <div class="zh">${esc(p.zh)}</div>
+            </div>`).join('')}
+            <button class="btn sm outline" data-action="speak" data-t="${encodeURIComponent(n.paras.map(p=>p.foreign).join(' '))}" data-l="${L.tts}" style="margin-top:8px">🔊 朗读全文</button>
+          </div>`).join('')}
+        </div>` : '';
 
       $('langBody').innerHTML = `
         <div class="goal-banner">
           <div class="gb-label">🎯 我的语言目标</div>
           <div class="gb-text">${esc(L.goal)}</div>
-          <div class="gb-sub">已内置 ${sceneCnt} 个真实生活场景、${lineCnt} 句本地人对话，照着练就能无痛开口。</div>
+          <div class="gb-sub">已内置 ${sceneCnt} 个真实生活场景、${lineCnt} 句本地人对话，外加 ${L.news.length} 篇当地主流媒体时政新闻精读（逐句＋朗读），照着练既能无痛开口，也能看懂新闻。</div>
         </div>
         ${dashHtml}
         ${todayHtml}
@@ -2051,6 +2125,7 @@
           <div class="sec-body">${drillHtml}</div>
         </details>
         ${curLang==='english'&&L.fullTexts?`<details class="lang-sec"><summary><span class="sec-count">${L.fullTexts.length} 篇</span>📖 英文全文阅读<span class="chev">▶</span></summary>${fullTextHtml}</details>`:''}
+        ${L.news?`<details class="lang-sec"><summary><span class="sec-count">${L.news.length} 篇</span>📰 新闻精读 · 当地时政（对标 BBC News）<span class="chev">▶</span></summary>${newsHtml}</details>`:''}
         ${L.vocabulary?`<details class="lang-sec"><summary><span class="sec-count">${L.vocabulary.length} 词</span>🎴 单词卡片（每日轮播）<span class="chev">▶</span></summary>${vocabHtml}</details>`:''}
         ${L.translations?`<details class="lang-sec"><summary><span class="sec-count">${L.translations.length} 题</span>✍️ 翻译练习<span class="chev">▶</span></summary>${transHtml}</details>`:''}
         <details class="lang-sec">
