@@ -434,6 +434,124 @@
     .learn-row { transition: background-color .15s ease; }
     .learn-row:active { background: var(--line-2); }
     @media (hover:hover){ .learn-row:hover { background: var(--line-3); } }
+
+    /* ---------- 语言学习：总览重构 ---------- */
+    .goal-banner {
+      background: linear-gradient(135deg, var(--accent), #f0a07a);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .goal-banner::before {
+      content: "🎯";
+      position: absolute;
+      right: -6px; top: -10px;
+      font-size: 70px;
+      opacity: .18;
+      line-height: 1;
+    }
+    .goal-banner .gb-label { font-size: 12px; opacity: .9; letter-spacing: .5px; }
+    .goal-banner .gb-text { font-size: 17px; font-weight: 800; margin-top: 4px; line-height: 1.4; }
+    .goal-banner .gb-sub { font-size: 12.5px; opacity: .92; margin-top: 6px; line-height: 1.5; }
+
+    /* 进度仪表盘 */
+    .lv-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .mini-stat {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+    }
+    .mini-stat .ms-label { font-size: 11px; color: var(--muted); }
+    .mini-stat .ms-value { font-size: 16px; font-weight: 700; color: var(--ink); margin-top: 3px; }
+    .mini-stat .ms-value small { font-weight: 400; font-size: 11px; color: var(--muted); }
+    .lv-bar { height: 8px; background: var(--line); border-radius: 5px; overflow: hidden; margin-top: 8px; }
+    .lv-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #f0a07a); border-radius: 5px; }
+
+    /* 今日三件套 */
+    .today-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+    .tp-card {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .tp-card .tp-tag { font-size: 10.5px; color: var(--muted); }
+    .tp-card .tp-main { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.35; }
+    .tp-card .tp-sub { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+    /* 可折叠分区 */
+    details.lang-sec {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    details.lang-sec > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      font-weight: 700; font-size: 15px; color: var(--ink);
+      user-select: none;
+    }
+    details.lang-sec > summary::-webkit-details-marker { display: none; }
+    details.lang-sec > summary .chev {
+      font-size: 13px; color: var(--muted);
+      transition: transform .2s ease;
+      flex-shrink: 0; margin-left: 8px;
+    }
+    details.lang-sec[open] > summary .chev { transform: rotate(90deg); }
+    details.lang-sec > summary .sec-count {
+      font-size: 11px; font-weight: 600; color: var(--accent);
+      background: var(--accent-soft); padding: 2px 8px; border-radius: 20px; margin-right: 8px;
+    }
+    details.lang-sec .sec-body { padding: 4px 16px 16px; }
+    details.lang-sec .sec-body .card-sub { margin-bottom: 10px; }
+
+    /* 情景对话脚本（按场景） */
+    .scene-group { margin-bottom: 12px; }
+    .scene-group:last-child { margin-bottom: 0; }
+    .sg-head {
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 700; font-size: 14px; color: var(--ink);
+      padding: 8px 0; border-bottom: 1px dashed var(--line); margin-bottom: 8px;
+    }
+    .sg-head .sg-icon { font-size: 18px; }
+    .scene-line {
+      display: flex; gap: 8px; align-items: flex-start;
+      padding: 9px 0; border-bottom: 1px solid var(--line);
+    }
+    .scene-line:last-child { border-bottom: none; }
+    .scene-line .sl-role {
+      font-size: 10px; font-weight: 700; color: #fff; background: var(--accent-2);
+      border-radius: 6px; padding: 2px 6px; flex-shrink: 0; margin-top: 2px; min-width: 30px; text-align: center;
+    }
+    .scene-line .sl-role.you { background: var(--accent-3); }
+    .scene-line .sl-body { flex: 1; min-width: 0; }
+    .scene-line .sl-f { font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.5; }
+    .scene-line .sl-r { font-size: 12px; color: var(--accent); margin-top: 2px; }
+    .scene-line .sl-zh { font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+    .scene-line .sl-play {
+      flex-shrink: 0; align-self: center;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid var(--line); background: var(--panel-2);
+      display: grid; place-items: center; font-size: 14px; cursor: pointer;
+    }
+    .scene-line .sl-play:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* 总览卡片：目标标签 */
+    .goal-chip {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      color: var(--accent); background: var(--accent-soft);
+      padding: 3px 9px; border-radius: 20px; margin-top: 6px;
+    }
   </style>
 </head>
 <body>
@@ -522,6 +640,7 @@
       english: {
         name: '英语', flag: '🇬🇧', tts: 'en-US',
         intro: '以「可理解输入 + 朗读模仿」为核心，参考 CEFR 欧洲语言框架分级。',
+        goal: '🎯 我的目标：到英语国家旅行、生活时，能跟本地人自然、无痛地聊天。',
         levels: ['A1 入门','A2 基础','B1 进阶','B2 流利','C1 精通'],
         plan: [
           { t:'A1 入门', g:'掌握 1000 核心词、基础语法与日常对话', s:'能自我介绍、点餐、问路；看懂简短通知', items:['发音与音标','be 动词与一般现在时','50 个高频动词','数字/时间/购物对话'] },
@@ -686,12 +805,122 @@
               {en:'But every yes to a low-value activity is a no to a high-value one.', zh:'但对低价值活动说"是"，就是对高价值活动说"不"。'},
               {en:'Try this week: before saying yes, pause ten seconds and ask what you are really trading away.', zh:'这周试试：在说"是"之前，停顿十秒，问问自己到底在放弃什么。'},
               {en:'You will be surprised how often the right answer is a polite no.', zh:'你会惊��地发现，正确答案常常是礼貌的拒绝。'}
-            ] }
+            ] },
+        ],
+        dialogues: [
+          { ko:"Hi, I'm ___. Nice to meet you!", zh:'你好，我是___，很高兴认识你！', mp:'' },
+          { ko:"Nice to meet you too.", zh:'我也很高兴认识你。', mp:'' },
+          { ko:"Where are you from?", zh:'你来自哪里？', mp:'' },
+          { ko:"I'm here on vacation.", zh:'我来这儿度假。', mp:'' },
+          { ko:"How long are you staying?", zh:'你打算待多久？', mp:'' },
+          { ko:"Table for two, please.", zh:'请安排两位。', mp:'' },
+          { ko:"Do you have a window seat?", zh:'有靠窗的位置吗？', mp:'' },
+          { ko:"What's the specialty here?", zh:'这里的招牌菜是什么？', mp:'' },
+          { ko:"I'd like the grilled fish.", zh:'我要烤鱼。', mp:'' },
+          { ko:"A lemonade, please.", zh:'请给我一杯柠檬水。', mp:'' },
+          { ko:"Could we get the bill?", zh:'买单，结账。', mp:'' },
+          { ko:"Excuse me, where is the station?", zh:'打扰一下，车站在哪？', mp:'' },
+          { ko:"Go straight and turn left.", zh:'直走然后左转。', mp:'' },
+          { ko:"Is it far from here?", zh:'离这儿远吗？', mp:'' },
+          { ko:"About ten minutes on foot.", zh:'步行大约十分钟。', mp:'' },
+          { ko:"Thanks, you saved me!", zh:'谢谢，帮大忙了！', mp:'' },
+          { ko:"How much is this T-shirt?", zh:'这件 T 恤多少钱？', mp:'' },
+          { ko:"That's a bit pricey.", zh:'有点贵。', mp:'' },
+          { ko:"Any discount for me?", zh:'能给我优惠吗？', mp:'' },
+          { ko:"Deal! I'll take two.", zh:'成交！我要两件。', mp:'' },
+          { ko:"I have a reservation under ___.", zh:'我用___的名字预订了。', mp:'' },
+          { ko:"A single room for three nights.", zh:'单人间三晚。', mp:'' },
+          { ko:"What time is breakfast?", zh:'早餐几点？', mp:'' },
+          { ko:"On the second floor, 7 to 10.", zh:'二楼，七点到十点。', mp:'' },
+          { ko:"I have a headache and a fever.", zh:'我头痛还发烧。', mp:'' },
+          { ko:"How long have you felt this way?", zh:'这样多久了？', mp:'' },
+          { ko:"Since yesterday morning.", zh:'从昨天早上开始。', mp:'' },
+          { ko:"Take this medicine twice a day.", zh:'这药每天两次。', mp:'' },
+          { ko:"You should rest well.", zh:'你要好好休息。', mp:'' },
+          { ko:"Beautiful day, isn't it?", zh:'天气真好，是吧？', mp:'' },
+          { ko:"Perfect for a walk.", zh:'正适合散步。', mp:'' },
+          { ko:"Does it rain a lot here?", zh:'这儿常下雨吗？', mp:'' },
+          { ko:"Want to grab a coffee?", zh:'去喝杯咖啡吗？', mp:'' },
+          { ko:"What time works for you?", zh:'你几点方便？', mp:'' },
+          { ko:"How about three o'clock?", zh:'三点怎么样？', mp:'' },
+          { ko:"Where should we meet?", zh:'我们在哪碰面？', mp:'' },
+          { ko:"Help! I lost my wallet.", zh:'救命！我丢钱包了。', mp:'' },
+          { ko:"Calm down, where did you last see it?", zh:'别慌，最后在哪看到的？', mp:'' },
+          { ko:"Call the lost-and-found, please.", zh:'请打失物招领电话。', mp:'' },
+          { ko:"Thank you for helping me.", zh:'谢谢你帮忙。', mp:'' }
+        ],
+        scenes: [
+          { theme:'自我介绍 · 破冰', icon:'🤝', lines:[
+            { role:'me', f:"Hi, I'm ___. Nice to meet you!", zh:'你好，我是___，很高兴认识你！', r:'' },
+            { role:'loc', f:"Nice to meet you too. What brings you here?", zh:'我也很高兴。你来这儿做什么？', r:'' },
+            { role:'me', f:"I'm here on vacation.", zh:'我来度假。', r:'' },
+            { role:'loc', f:"Cool! How long are you staying?", zh:'酷！你打算待多久？', r:'' },
+            { role:'me', f:"Just two weeks. Any recommendations?", zh:'就两周。有什么推荐吗？', r:'' }
+          ]},
+          { theme:'餐厅点餐', icon:'🍽️', lines:[
+            { role:'loc', f:"Hi, table for how many?", zh:'你好，几位？', r:'' },
+            { role:'me', f:"Two, please. Do you have a window seat?", zh:'两位。有靠窗的位置吗？', r:'' },
+            { role:'loc', f:"Sure, follow me. Here is the menu.", zh:'有，跟我来。这是菜单。', r:'' },
+            { role:'me', f:"What is the specialty here?", zh:'这里招牌菜是什么？', r:'' },
+            { role:'loc', f:"The grilled fish is popular. Want to order?", zh:'烤鱼很受欢迎。现在点吗？', r:'' },
+            { role:'me', f:"Yes, one grilled fish and a lemonade, please.", zh:'好，一份烤鱼和一杯柠檬水。', r:'' }
+          ]},
+          { theme:'问路 · 交通', icon:'🚇', lines:[
+            { role:'me', f:"Excuse me, how do I get to the station?", zh:'打扰一下，去车站怎么走？', r:'' },
+            { role:'loc', f:"Go straight, then turn left at the corner.", zh:'直走，到路口左转。', r:'' },
+            { role:'me', f:"Is it far from here?", zh:'离这儿远吗？', r:'' },
+            { role:'loc', f:"About ten minutes on foot.", zh:'步行大约十分钟。', r:'' },
+            { role:'me', f:"Thanks a lot! You saved me.", zh:'太感谢了！帮大忙了。', r:'' }
+          ]},
+          { theme:'购物 · 讲价', icon:'🛍️', lines:[
+            { role:'me', f:"How much is this T-shirt?", zh:'这件 T 恤多少钱？', r:'' },
+            { role:'loc', f:"It is twenty dollars.", zh:'二十美元。', r:'' },
+            { role:'me', f:"That is a bit pricey. Any discount?", zh:'有点贵。能优惠吗？', r:'' },
+            { role:'loc', f:"For you, fifteen.", zh:'给你算十五。', r:'' },
+            { role:'me', f:"Deal! I'll take two.", zh:'成交！我要两件。', r:'' }
+          ]},
+          { theme:'住酒店 · 住宿', icon:'🏨', lines:[
+            { role:'me', f:"Hi, I have a reservation under ___.", zh:'你好，我用___的名字预订了。', r:'' },
+            { role:'loc', f:"Let me check... Yes, a single room for three nights.", zh:'查一下…是的，单人间三晚。', r:'' },
+            { role:'me', f:"Great. What time is breakfast?", zh:'太好了。早餐几点？', r:'' },
+            { role:'loc', f:"7 to 10, on the second floor.", zh:'七点到十点，二楼。', r:'' },
+            { role:'me', f:"Perfect, thank you.", zh:'完美，谢谢。', r:'' }
+          ]},
+          { theme:'看病 · 健康', icon:'🩺', lines:[
+            { role:'me', f:"I have a headache and a fever.", zh:'我头痛还发烧。', r:'' },
+            { role:'loc', f:"How long have you felt this way?", zh:'这样多久了？', r:'' },
+            { role:'me', f:"Since yesterday morning.", zh:'从昨天早上开始。', r:'' },
+            { role:'loc', f:"Let me check your temperature. Take this medicine twice a day.", zh:'量下体温。这药每天两次。', r:'' },
+            { role:'me', f:"Should I drink more water?", zh:'我要多喝水吗？', r:'' },
+            { role:'loc', f:"Yes, and rest well.", zh:'对，好好休息。', r:'' }
+          ]},
+          { theme:'天气 · 闲聊', icon:'☀️', lines:[
+            { role:'loc', f:"Beautiful day, isn't it?", zh:'天气真好，是吧？', r:'' },
+            { role:'me', f:"Sure is! Perfect for a walk.", zh:'是啊！正适合散步。', r:'' },
+            { role:'loc', f:"Do you get much sun here?", zh:'你们这儿常出太阳吗？', r:'' },
+            { role:'me', f:"Not really, it rains a lot.", zh:'不太常，经常下雨。', r:'' },
+            { role:'loc', f:"Same here, honestly.", zh:'说实话，我们那儿也一样。', r:'' }
+          ]},
+          { theme:'邀约 · 交友', icon:'☕', lines:[
+            { role:'me', f:"Want to grab a coffee this afternoon?", zh:'今天下午去喝杯咖啡吗？', r:'' },
+            { role:'loc', f:"Sure! What time works for you?", zh:'好啊！你几点方便？', r:'' },
+            { role:'me', f:"How about three?", zh:'三点怎么样？', r:'' },
+            { role:'loc', f:"Sounds good. Where should we meet?", zh:'行。在哪碰面？', r:'' },
+            { role:'me', f:"The café near the park entrance.", zh:'公园门口那家咖啡馆。', r:'' }
+          ]},
+          { theme:'求助 · 应急', icon:'🆘', lines:[
+            { role:'me', f:"Help! I think I lost my wallet.", zh:'救命！我好像丢钱包了。', r:'' },
+            { role:'loc', f:"Calm down. Where did you last see it?", zh:'别慌。你最后在哪看到的？', r:'' },
+            { role:'me', f:"Maybe on the bus.", zh:'可能在公交车上。', r:'' },
+            { role:'loc', f:"Call the transit lost-and-found now.", zh:'快打交通失物招领电话。', r:'' },
+            { role:'me', f:"Okay, thank you for helping.", zh:'好，谢谢你帮忙。', r:'' }
+          ]}
         ]
       },
       korean: {
         name: '韩语', flag: '🇰🇷', tts: 'ko-KR',
         intro: '采用延世大学《延世韩国语》体系（1-6 册，对应 TOPIK），从发音到语法系统进阶。',
+        goal: '🎯 我的目标：去韩国旅游、生活时，能跟本地人自然聊天，看懂韩剧。',
         levels: ['发音入门','初级1','初级2','中级','高级'],
         plan: [
           { t:'发音入门', g:'掌握 40 个字母（19 辅音+21 元音）与基本拼读', s:'能拼读任意韩文、念出自己的名字', items:['19 个辅音','21 个元音','收音(받침)','发音规则：连音/送气'] },
@@ -823,11 +1052,79 @@
           { ko:'사랑해요.', zh:'我爱你。', mp:'salanghaeyo' },
           { ko:'보고 싶어요.', zh:'我想你。', mp:'bogo sipeoyo' },
           { ko:'잘 지내요?', zh:'你过得好吗？', mp:'jal jinaeyo' }
-        ]        
+        ],
+        scenes: [
+          { theme:'自我介绍 · 破冰', icon:'🤝', lines:[
+            { role:'me', ko:'안녕하세요, 저는 ___라고 해요.', zh:'你好，我叫___。', r:'annyeonghaseyo, jeoneun ___rago haeyo' },
+            { role:'loc', ko:'반가워요! 어디서 오셨어요?', zh:'很高兴！你从哪儿来？', r:'bang-gawoyo! eodiseo osyeosseoyo?' },
+            { role:'me', ko:'한국에 여행 왔어요.', zh:'我来韩国旅游。', r:'hanguge yeohaeng wasseoyo' },
+            { role:'loc', ko:'얼마나 계실 거예요?', zh:'待多久呢？', r:'eolmana gyesil geoyeyo?' },
+            { role:'me', ko:'일주일 정도요.', zh:'大概一周。', r:'iljuil jeongdoyo' }
+          ]},
+          { theme:'餐厅点餐', icon:'🍽️', lines:[
+            { role:'loc', ko:'몇 분이세요?', zh:'几位？', r:'myeot buniseyo?' },
+            { role:'me', ko:'두 명이요. 창가 자리 있어요?', zh:'两位。有靠窗位吗？', r:'du myeongiyo. changga jari isseoyo?' },
+            { role:'loc', ko:'네, 이쪽으로 오세요.', zh:'有，这边请。', r:'ne, ijjogeuro oseyo' },
+            { role:'me', ko:'인기 메뉴가 뭐예요?', zh:'招牌菜是什么？', r:'ingi menyuga mwoyeyo?' },
+            { role:'loc', ko:'불고기 추천해요.', zh:'推荐烤肉。', r:'bulgogi chucheonhaeyo' },
+            { role:'me', ko:'불고기 1인분 주세요.', zh:'来一份烤肉。', r:'bulgogi il-inbun juseyo' }
+          ]},
+          { theme:'问路 · 交通', icon:'🚇', lines:[
+            { role:'me', ko:'실례합니다, 지하철역 어떻게 가요?', zh:'打扰了，地铁站怎么走？', r:'sillyehamnida, jihacheolyeok eotteoke gayo?' },
+            { role:'loc', ko:'저기서 오른쪽으로 가세요.', zh:'从那儿往右走。', r:'jeogiseo oreunjjogeuro gaseyo' },
+            { role:'me', ko:'걸어서 얼마나 걸려요?', zh:'步行要多久？', r:'geoleoseo eolmana geollyeoyo?' },
+            { role:'loc', ko:'5분쯤 걸려요.', zh:'大概五分钟。', r:'o-bun jjeum geollyeoyo' },
+            { role:'me', ko:'감사합니다!', zh:'谢谢！', r:'gamsahamnida!' }
+          ]},
+          { theme:'购物 · 讲价', icon:'🛍️', lines:[
+            { role:'me', ko:'이 티셔츠 얼마예요?', zh:'这件 T 恤多少钱？', r:'i tisyeocheu eolmayeyo?' },
+            { role:'loc', ko:'2만 원이에요.', zh:'两万韩元。', r:'i-man wonieyo' },
+            { role:'me', ko:'조금 싸게 해주세요.', zh:'能便宜点吗？', r:'jogeum ssage haejuseyo' },
+            { role:'loc', ko:'그럼 1만 5천 원요.', zh:'那就一万五。', r:'geureom man-o-cheon wonyo' },
+            { role:'me', ko:'네, 두 개 살게요.', zh:'好，买两件。', r:'ne, du gae salgeyo' }
+          ]},
+          { theme:'住酒店 · 住宿', icon:'🏨', lines:[
+            { role:'me', ko:'안녕하세요, ___로 예약했어요.', zh:'你好，我用___预订了。', r:'annyeonghaseyo, ___ro yeyakhaesseoyo' },
+            { role:'loc', ko:'확인할게요... 네, 3박이네요.', zh:'查一下…是的，三晚。', r:'hwaginhalgeyo... ne, sam-bagiyeyo' },
+            { role:'me', ko:'조식은 몇 시예요?', zh:'早餐几点？', r:'josigeun myeot siyeyo?' },
+            { role:'loc', ko:'7시부터 10시까지요.', zh:'七点到十点。', r:'ilgopsibuteo yeolssikkaji' },
+            { role:'me', ko:'알겠어요, 감사합니다.', zh:'知道了，谢谢。', r:'algesseoyo, gamsahamnida' }
+          ]},
+          { theme:'看病 · 健康', icon:'🩺', lines:[
+            { role:'me', ko:'머리가 아프고 열이 나요.', zh:'我头痛还发烧。', r:'meoriga apeugo yeori nayo' },
+            { role:'loc', ko:'언제부터 그랬어요?', zh:'从什么时候开始的？', r:'eonjebuteo geulaesseoyo?' },
+            { role:'me', ko:'어제 아침부터요.', zh:'从昨天早上。', r:'eoje achimbuteoyo' },
+            { role:'loc', ko:'약 하루에 두 번 드세요.', zh:'药每天两次。', r:'yak harue du beon deuseyo' },
+            { role:'me', ko:'물 많이 마셔도 돼요?', zh:'能多喝水吗？', r:'mul mani masyeodo dwaeyo?' },
+            { role:'loc', ko:'네, 푹 쉬세요.', zh:'可以，好好休息。', r:'ne, puk swiseyo' }
+          ]},
+          { theme:'天气 · 闲聊', icon:'☀️', lines:[
+            { role:'loc', ko:'오늘 날씨 진짜 좋네요!', zh:'今天天气真好！', r:'oneul nalssi jinjja joneyo!' },
+            { role:'me', ko:'그러게요, 산책하기 딱 좋아요.', zh:'是啊，正适合散步。', r:'geureogeyo, sanchaekhagi ttak joayo' },
+            { role:'loc', ko:'비 많이 오세요?', zh:'你们那儿常下雨吗？', r:'bi mani oseyo?' },
+            { role:'me', ko:'아니요, 가뭄이 좀 있어요.', zh:'不常，有点旱。', r:'aniyo, gamugi jom isseoyo' },
+            { role:'loc', ko:'저희도요.', zh:'我们也是。', r:'jeohuidoyo' }
+          ]},
+          { theme:'邀约 · 交友', icon:'☕', lines:[
+            { role:'me', ko:'오후에 커피 마실래요?', zh:'下午喝咖啡吗？', r:'ohu-e keopi masillaeyo?' },
+            { role:'loc', ko:'좋아요! 몇 시가 편해요?', zh:'好啊！几点方便？', r:'joayo! myeot siga pyeonhaeyo?' },
+            { role:'me', ko:'3시 어때요?', zh:'三点怎样？', r:'se-si eottaeyo?' },
+            { role:'loc', ko:'좋아요, 어디서 만날까요?', zh:'行，在哪见？', r:'joayo, eodiseo mannalkkayo?' },
+            { role:'me', ko:'공원 앞 카페요.', zh:'公园前咖啡馆。', r:'gongwon ap kapeyo' }
+          ]},
+          { theme:'求助 · 应急', icon:'🆘', lines:[
+            { role:'me', ko:'도와주세요, 지갑을 잃어버렸어요!', zh:'帮帮我，我丢钱包了！', r:'dowajuseyo, jigabeul ireobeoryeosseoyo!' },
+            { role:'loc', ko:'진정하세요. 어디서 마지막으로 봤어요?', zh:'别慌，最后在哪看到的？', r:'jinjeonghaseyo. eodiseo majimakeuro bwasseoyo?' },
+            { role:'me', ko:'버스 안인 것 같아요.', zh:'好像在公交车上。', r:'beoseu anin geot gatayo' },
+            { role:'loc', ko:'분실물 센터에 전화하세요.', zh:'打失物招领电话。', r:'bunsilmul senteo-e jeonwahaseyo' },
+            { role:'me', ko:'네, 도와줘서 고마워요.', zh:'好，谢谢你帮忙。', r:'ne, dowajwoseo gomawoyo' }
+          ]}
+        ]
       },
       cantonese: {
         name: '粤语', flag: '🇭🇰', tts: 'zh-HK',
         intro: '以粤拼 Jyutping（香港语言学学会方案，九声六调）为正音基础，从日常会话到港剧无字幕。',
+        goal: '🎯 我的目标：在香港生活、游玩时，能跟本地人自然、无痛地讲粤语。',
         levels: ['拼音正音','基础会话','生活场景','地道表达','港剧自由'],
         plan: [
           { t:'拼音正音', g:'掌握粤拼声母/韵母与九声六调', s:'能拼读粤拼、区分六声', items:['声母 b p m f','韵母 aa o e','九声六调','入声 -p -t -k'] },
@@ -962,7 +1259,74 @@
           { ko:'識少少，講得唔好。', zh:'会一点点，说得不好。', mp:'sik1siu2siu2, gong2dak1 m4hou2' },
           { ko:'慢慢學就識㗎啦。', zh:'慢慢学就会的。', mp:'maan6maan4 hok6 zau6 sik1 gaa3laa1' },
           { ko:'你講得好好呀！', zh:'你说得很好啊！', mp:'nei5 gong2dak1 hou2hou2 aa3' }
-        ]        
+        ],
+        scenes: [
+          { theme:'自我介绍 · 破冰', icon:'🤝', lines:[
+            { role:'me', ko:'你好，我叫___。', zh:'你好，我叫___。', r:'nei5hou2, ngo5giu3 ___' },
+            { role:'loc', ko:'幸會！你係邊度人呀？', zh:'幸会！你是哪里人？', r:'hang6wui2! nei5 hai6 bin1dou6 jan4 aa3' },
+            { role:'me', ko:'我係___人，嚟度旅行。', zh:'我是___人，来这里旅行。', r:'ngo5 hai6 ___ jan4, lai4dou6 leoi5hang4' },
+            { role:'loc', ko:'咁啱嘅，玩得開心啲！', zh:'真巧，玩开心点！', r:'gam3ngaam5ge3, waan2dak1 hoi1sam1di1' },
+            { role:'me', ko:'多謝晒！', zh:'多谢啦！', r:'do1ze6 saai3' }
+          ]},
+          { theme:'餐厅点餐（茶餐厅）', icon:'🍽️', lines:[
+            { role:'loc', ko:'幾位呀？', zh:'几位？', r:'gei2wai2 aa3' },
+            { role:'me', ko:'兩位，有冇窗邊位？', zh:'两位，有靠窗位吗？', r:'loeng5wai2, jau5mou5 coeng1bin1 wai2' },
+            { role:'loc', ko:'有，呢邊坐。', zh:'有，坐这边。', r:'jau5, ni1bin1 co5' },
+            { role:'me', ko:'招牌嘢食係咩？', zh:'招牌菜是什么？', r:'ziu1paai3 je5sik6 hai6 me1' },
+            { role:'loc', ko:'菠蘿油同絲襪奶茶好正。', zh:'菠萝包和丝袜奶茶很棒。', r:'bo1lo4jau4 tung4 si1mat1 naai5caa4 hou2zeng3' },
+            { role:'me', ko:'咁要一盅奶茶、一個菠蘿包。', zh:'那要一杯奶茶、一个菠萝包。', r:'gam2 jiu3 jat1zung1 naai5caa4, jat1go3 bo1lo4baau1' }
+          ]},
+          { theme:'问路 · 交通', icon:'🚇', lines:[
+            { role:'me', ko:'唔該，點去地鐵站？', zh:'麻烦，怎么去地铁站？', r:'m4goi1, dim2 heoi3 dei6tit3zaam6' },
+            { role:'loc', ko:'行前少少，右手邊就到。', zh:'往前一点，右边就到。', r:'haang4cin4 siu2siu2, jau6sau2bin1 zau6dou3' },
+            { role:'me', ko:'行幾耐呀？', zh:'步行要多久？', r:'haang4 gei2noi6 aa3' },
+            { role:'loc', ko:'差唔多五分鐘。', zh:'差不多五分钟。', r:'caa1m4do1 ng5fan1zung1' },
+            { role:'me', ko:'唔該晒！', zh:'谢谢啦！', r:'m4goi1 saai3' }
+          ]},
+          { theme:'购物 · 讲价', icon:'🛍️', lines:[
+            { role:'me', ko:'呢件衫幾錢？', zh:'这件衣服多少钱？', r:'ni1gin6 saam1 gei2cin2' },
+            { role:'loc', ko:'二百蚊。', zh:'两百块。', r:'ji6baak3 man1' },
+            { role:'me', ko:'平啲啦，慳返啲得唔得？', zh:'便宜点吧，少点行不行？', r:'peng4di1 laa1, haan1faan1di1 dak1m4dak1' },
+            { role:'loc', ko:'咁一百五賣畀你。', zh:'那一百五卖给你。', r:'gam2 jat1baak3ng5 maai6 bei2 nei5' },
+            { role:'me', ko:'好，要兩件。', zh:'好，要两件。', r:'hou2, jiu3 loeng5gin6' }
+          ]},
+          { theme:'住酒店 · 住宿', icon:'🏨', lines:[
+            { role:'me', ko:'你好，我用___訂咗房。', zh:'你好，我用___订了房。', r:'nei5hou2, ngo5 jung6 ___ deng6zo2 fong4' },
+            { role:'loc', ko:'睇下先…係呀，三晚單人房。', zh:'查一下…是的，三晚单人间。', r:'tai2haa5 sin1... hai6 aa3, saam1maan5 daan1jan4fong4' },
+            { role:'me', ko:'早餐幾點呀？', zh:'早餐几点？', r:'zou2caan1 gei2dim2 aa3' },
+            { role:'loc', ko:'七點到十點，二樓。', zh:'七点到十点，二楼。', r:'cat1dim2 dou3 sap6dim2, ji5lau2' },
+            { role:'me', ko:'好，唔該。', zh:'好，谢谢。', r:'hou2, m4goi1' }
+          ]},
+          { theme:'看病 · 健康', icon:'🩺', lines:[
+            { role:'me', ko:'我個頭好痛，仲發燒。', zh:'我头很痛，还发烧。', r:'ngo5 go3 tau4 hou2tung3, zung6 faat3siu1' },
+            { role:'loc', ko:'咁嘢幾時開始㗎？', zh:'这样从什么时候开始？', r:'gam2 je5 gei2si4 hoi1ci2 gaa3' },
+            { role:'me', ko:'聽日朝早開始。', zh:'从今天早上开始。', r:'ting1jat6 ziu1zou2 hoi1ci2' },
+            { role:'loc', ko:'食呢啲藥，一日兩次。', zh:'吃这些药，一天两次。', r:'sik6 ni1di1 joek6, jat1jat6 loeng5ci3' },
+            { role:'me', ko:'多唔多飲水呀？', zh:'要多喝水吗？', r:'do1m4do1 jam2seoi2 aa3' },
+            { role:'loc', ko:'係，同埋好瞓。', zh:'对，还要睡好。', r:'hai6, tung4maai4 hou2fan3' }
+          ]},
+          { theme:'天气 · 闲聊', icon:'☀️', lines:[
+            { role:'loc', ko:'今日天氣好靚喎！', zh:'今天天气真好！', r:'gam1jat6 tin1hei3 hou2leng3 wo3' },
+            { role:'me', ko:'係呀，行街最啱。', zh:'是啊，逛街正适合。', r:'hai6aa3, haang4gaai1 zeoi3ngaam5' },
+            { role:'loc', ko:'你嗰邊落唔落雨呀？', zh:'你们那儿下雨吗？', r:'nei5 go2bin1 lok6m4lok6jyu5 aa3' },
+            { role:'me', ko:'好少落，成日好焗。', zh:'很少下，经常闷热。', r:'hou2siu2 lok6, sing4jat6 hou2guk6' },
+            { role:'loc', ko:'我哋都係。', zh:'我们也是。', r:'ngo5dei6 dou1hai6' }
+          ]},
+          { theme:'邀约 · 交友', icon:'☕', lines:[
+            { role:'me', ko:'下晝飲杯咖啡啦？', zh:'下午喝杯咖啡吗？', r:'haa6zau3 jam2bui1 gaa3caa4 laa1' },
+            { role:'loc', ko:'好呀！幾點得閒？', zh:'好啊！几点有空？', r:'hou2aa3! gei2dim2 dak1haan4' },
+            { role:'me', ko:'三點好唔好？', zh:'三点好吗？', r:'saam1dim2 hou2m4hou2' },
+            { role:'loc', ko:'得，喺邊度見？', zh:'行，在哪见？', r:'dak1, hai2 bin1dou6 gin3' },
+            { role:'me', ko:'公園門口嗰間cafe。', zh:'公园门口那家 cafe。', r:'gung1jyun2 mun4hau2 go2gaan1 cafe' }
+          ]},
+          { theme:'求助 · 应急', icon:'🆘', lines:[
+            { role:'me', ko:'幫幫手，我唔見咗個銀包！', zh:'帮帮忙，我丢钱包了！', r:'bong1bong1sau2, ngo5 m4gin3zo2 go3 ngan4baau1' },
+            { role:'loc', ko:'唔好嘈，最後喺邊度見到？', zh:'别慌，最后在哪看到的？', r:'m4hou2cou4, zeoi3hau6 hai2 bin1dou6 gin3dou3' },
+            { role:'me', ko:'好似喺巴士上。', zh:'好像在公交车上。', r:'hou2ci5 hai2 baa1si2 soeng6' },
+            { role:'loc', ko:'快啲打去失物招領。', zh:'快打失物招领电话。', r:'faai1di1 daa2heoi3 sat1mat6 ziu1leng5' },
+            { role:'me', ko:'好，多謝你幫手。', zh:'好，谢谢你帮忙。', r:'hou2, do1ze6 nei5 bong1sau2' }
+          ]}
+        ]
       }
     };
 
@@ -1494,24 +1858,20 @@
     // 新增:三个语言总览
     function renderAllLangs() {
       const langs = Object.keys(LANG);
-      const today = new Date();
-      const dayKey = Math.floor(today.getTime() / 86400000);
+      const dayKey = Math.floor(Date.now() / 86400000);
       const cards = langs.map(k => {
         const L = LANG[k];
         const st = state.lang[k] || (state.lang[k] = { level: null });
         const lvIdx = st.level;
         const lvName = lvIdx === null ? '未测评' : L.levels[lvIdx];
         const lvTotal = L.levels.length;
-        // 今日材料索引(基于日期轮换)
+        const sceneLines = (L.scenes||[]).flatMap(s=>s.lines);
+        const sceneCnt = (L.scenes||[]).length;
+        const lineCnt = sceneLines.length + (L.dialogues||[]).length;
+        const goalDone = lvIdx!==null && lvIdx>=lvTotal-1;
         const todayVocab = L.vocabulary[dayKey % L.vocabulary.length];
         const todayTr = L.translations[dayKey % L.translations.length];
-        // 今日原文:有 articles 用 articles,否则用 dialogues 第一句
-        let todayOriginal = '';
-        if (L.articles && L.articles.length) {
-          todayOriginal = L.articles[dayKey % L.articles.length].title;
-        } else if (L.dialogues && L.dialogues.length) {
-          todayOriginal = L.dialogues[dayKey % L.dialogues.length].zh.slice(0, 20) + '…';
-        }
+        const todayLine = sceneLines.length ? sceneLines[dayKey % sceneLines.length] : (L.dialogues&&L.dialogues.length?L.dialogues[dayKey%L.dialogues.length]:null);
         return `
         <div class="card" style="padding:0;overflow:hidden">
           <div style="padding:14px 16px;border-bottom:1px solid var(--line-2)">
@@ -1519,33 +1879,38 @@
               <div style="font-size:24px;line-height:1">${L.flag}</div>
               <div style="flex:1;min-width:0">
                 <div style="font-weight:700;font-size:15px;color:var(--ink)">${L.name}</div>
-                <div style="font-size:12px;color:var(--muted);margin-top:2px">${L.intro}</div>
+                <div class="goal-chip">🎯 无痛对话本地人</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:11px;color:var(--muted)">目标进度</div>
+                <div style="font-weight:700;font-size:14px;color:${goalDone?'var(--accent-3)':'var(--accent)'}">${lvName}</div>
               </div>
             </div>
           </div>
-          <div style="padding:14px 16px">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-              <div style="font-size:12px;color:var(--muted)">当前阶段</div>
-              <div style="font-weight:600;color:var(--ink)">${lvName} <span style="color:var(--muted);font-weight:400">/ 共 ${lvTotal} 阶段</span></div>
+          <div style="padding:12px 16px">
+            <div class="lv-dash" style="margin-top:0">
+              <div class="mini-stat"><div class="ms-label">🗣 情景对话库</div><div class="ms-value">${sceneCnt} 场景 <small>· ${lineCnt} 句</small></div></div>
+              <div class="mini-stat"><div class="ms-label">📚 单词 / 翻译</div><div class="ms-value">${L.vocabulary.length} / ${L.translations.length}</div></div>
             </div>
-            <div class="progress" style="height:6px;background:var(--line-2);border-radius:3px;overflow:hidden;margin-bottom:12px">
-              <span style="display:block;height:100%;background:var(--primary);border-radius:3px;width:${lvIdx===null?0:Math.round(((lvIdx+1)/lvTotal)*100)}%"></span>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-              <button class="btn sm outline" data-action="lang" data-k="${k}">📖 全文</button>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0">
+              <button class="btn sm outline" data-action="lang" data-k="${k}">🗣 情景</button>
               <button class="btn sm outline" data-action="lang" data-k="${k}">🎴 单词</button>
               <button class="btn sm outline" data-action="lang" data-k="${k}">✍️ 翻译</button>
             </div>
             <div style="font-size:11px;color:var(--muted);background:var(--bg);border-radius:8px;padding:8px 10px;line-height:1.6">
-              <div>📖 今日原文 · ${todayOriginal}</div>
-              <div>🎴 今日单词 · ${todayVocab.word} <span style="color:var(--muted)">(${todayVocab.meaning || todayVocab.mean || ''})</span></div>
-              <div>✍️ 今日翻译 · ${todayTr.answer.slice(0,24)}…</div>
+              <div>🗣 今日一句 · ${todayLine?(todayLine.f||todayLine.ko):'—'}</div>
+              <div>🎴 今日单词 · ${todayVocab.word} <span style="color:var(--muted)">(${todayVocab.meaning || ''})</span></div>
+              <div>✍️ 今日翻译 · ${todayTr.answer.slice(0,22)}…</div>
             </div>
           </div>
         </div>`;
       }).join('');
       $('langBody').innerHTML = `
-        <div class="card-sub" style="margin:0 4px 12px;line-height:1.6">3 个语言的完整学习计划。今日按日期自动轮换原文 / 单词 / 翻译练习。</div>
+        <div class="goal-banner" style="margin-bottom:14px">
+          <div class="gb-label">🎯 三语齐学 · 共同目标</div>
+          <div class="gb-text">跟本地人无痛对话</div>
+          <div class="gb-sub">英语 / 韩语 / 粤语，按真实生活场景（餐厅·交通·购物·住宿·就医·闲聊·邀约·求助）分组练习，照着说就能开口。</div>
+        </div>
         ${cards}
         <div style="height:8px"></div>
       `;
@@ -1555,81 +1920,143 @@
       const L = LANG[curLang];
       const st = state.lang[curLang];
       const lvIdx = st.level;
-      $('langBody').innerHTML = `
+      const day = Math.floor(Date.now()/86400000);
+      const pick = (arr,n)=>{ if(!arr||!arr.length) return []; const off=day%arr.length; const r=[]; for(let i=0;i<Math.min(n,arr.length);i++) r.push(arr[(off+i)%arr.length]); return r; };
+      const sceneLines = (L.scenes||[]).flatMap(s=>s.lines.map(ln=>({f:ln.f||ln.ko, zh:ln.zh, r:ln.r})));
+      const tDialog = pick(sceneLines,1)[0];
+      const tWord = pick(L.vocabulary,1)[0];
+      const tTrans = pick(L.translations,1)[0];
+      const sceneCnt = (L.scenes||[]).length;
+      const lineCnt = sceneLines.length + (L.dialogues||[]).length;
+      const lvTotal = L.levels.length;
+      const goalDone = lvIdx!==null && lvIdx>=lvTotal-1;
+      const dashHtml = `
         <div class="card">
-          <div class="card-title">${L.flag} ${L.name} · 学习路径</div>
-          <div class="card-sub">${L.intro}</div>
-          ${lvIdx===null ? `<button class="btn" data-action="assess">📝 开始水平测评</button>`
-            : `<div class="tag primary">当前阶段：${L.levels[lvIdx]}</div> <button class="btn sm outline" data-action="assess" style="margin-left:8px">重测</button>`}
-        </div>
-        ${lvIdx!==null ? `
-        <div class="section-title">阶段计划</div>
-        ${L.plan.map((p,idx)=>`
-          <div class="card ${idx===lvIdx?'stage-card':''}">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div class="card-title" style="margin:0">${p.t} ${idx<lvIdx?'✅':idx===lvIdx?'🎯':''}</div>
-              ${idx===lvIdx?`<button class="btn sm" data-action="lang-done" data-i="${idx}">本阶段完成</button>`:''}
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:12px;color:var(--muted)">当前阶段</div>
+              <div style="font-weight:700;font-size:16px;color:var(--ink);margin-top:2px">${lvIdx===null?'未测评':esc(L.levels[lvIdx])} <span style="font-weight:400;font-size:12px;color:var(--muted)">/ 共 ${lvTotal} 阶段</span></div>
             </div>
-            <div class="card-sub" style="margin:6px 0">目标：${p.g}<br>过关：${p.s}</div>
-            ${p.items.map(it=>`<div class="item" style="padding:8px 0"><span class="tag gray" style="margin-right:8px">${idx+1}.${p.items.indexOf(it)+1}</span>${it}</div>`).join('')}
-          </div>`).join('')}
-        `:''}
-        <div class="section-title">学习材料</div>
+            ${lvIdx===null ? `<button class="btn sm" data-action="assess">📝 测评</button>` : `<button class="btn sm outline" data-action="assess">重测</button>`}
+          </div>
+          <div class="lv-bar" style="margin-top:10px"><span style="width:${lvIdx===null?0:Math.round(((lvIdx+1)/lvTotal)*100)}%"></span></div>
+          <div class="lv-dash">
+            <div class="mini-stat"><div class="ms-label">🎯 目标：无痛对话</div><div class="ms-value">${goalDone?'✅ 已达成':(lvIdx===null?'待测评':'进行中')}</div></div>
+            <div class="mini-stat"><div class="ms-label">🗣 情景对话库</div><div class="ms-value">${sceneCnt} 场景 <small>· ${lineCnt} 句</small></div></div>
+          </div>
+          ${lvIdx!==null?`<div style="margin-top:10px"><button class="btn sm" data-action="lang-done" data-i="${lvIdx}">✅ 本阶段完成</button></div>`:''}
+        </div>`;
+      const todayHtml = `
         <div class="card">
-          ${curLang==='english' ? L.articles.map((a,ai)=>`
+          <div class="card-title">📅 今日三件套 <span style="font-weight:400;font-size:12px;color:var(--muted)">· 每天自动轮换</span></div>
+          <div class="today-pick">
+            <div class="tp-card"><div class="tp-tag">🗣 今日一句</div><div class="tp-main">${tDialog?esc(tDialog.f):'—'}</div><div class="tp-sub">${tDialog?esc(tDialog.zh):''}</div></div>
+            <div class="tp-card"><div class="tp-tag">🎴 今日单词</div><div class="tp-main">${tWord?esc(tWord.word):'—'}</div><div class="tp-sub">${tWord?esc(tWord.meaning||''):''}</div></div>
+            <div class="tp-card"><div class="tp-tag">✍️ 今日翻译</div><div class="tp-main" style="font-size:13px">${tTrans?esc(tTrans.source):'—'}</div><div class="tp-sub">${tTrans?esc(tTrans.answer.slice(0,18)+(tTrans.answer.length>18?'…':'')):''}</div></div>
+          </div>
+        </div>`;
+      const sceneHtml = (L.scenes||[]).map(s=>`
+        <div class="scene-group">
+          <div class="sg-head"><span class="sg-icon">${s.icon}</span>${esc(s.theme)}</div>
+          ${s.lines.map(ln=>`
+            <div class="scene-line">
+              <div class="sl-role ${ln.role==='me'?'you':''}">${ln.role==='me'?'你':'本地'}</div>
+              <div class="sl-body">
+                <div class="sl-f">${esc(ln.f||ln.ko)}</div>
+                ${ln.r?`<div class="sl-r">${esc(ln.r)}</div>`:''}
+                <div class="sl-zh">${esc(ln.zh)}</div>
+              </div>
+              <button class="sl-play" data-action="speak" data-t="${encodeURIComponent(ln.f||ln.ko)}" data-l="${L.tts}">🔊</button>
+            </div>`).join('')}
+        </div>`).join('');
+      const planHtml = lvIdx!==null ? `
+        <div class="sec-body">
+          ${L.plan.map((p,idx)=>`
+            <div class="card ${idx===lvIdx?'stage-card':''}" style="margin-bottom:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="card-title" style="margin:0">${esc(p.t)} ${idx<lvIdx?'✅':idx===lvIdx?'🎯':''}</div>
+                ${idx===lvIdx?`<button class="btn sm" data-action="lang-done" data-i="${idx}">本阶段完成</button>`:''}
+              </div>
+              <div class="card-sub" style="margin:6px 0">目标：${esc(p.g)}<br>过关：${esc(p.s)}</div>
+              ${p.items.map(it=>`<div class="item" style="padding:8px 0"><span class="tag gray" style="margin-right:8px">${idx+1}.${p.items.indexOf(it)+1}</span>${esc(it)}</div>`).join('')}
+            </div>`).join('')}
+        </div>` : `<div class="sec-body"><div class="card-sub">完成「水平测评」后，会按你的当前阶段展示专属路线。点上方「📝 测评」开始。</div></div>`;
+      const drillHtml = (curLang==='english' ? L.articles.map((a)=>`
             <div style="margin-bottom:14px">
-              <div class="card-title" style="font-size:15px">${a.title}</div>
-              <div class="card-sub">${a.zh}</div>
-              ${a.paras.map(p=>`<div class="sentence"><div class="en">${p.en} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(p.en)}" data-l="${L.tts}">🔊</button></div><div class="zh">${p.zh}</div></div>`).join('')}
+              <div class="card-title" style="font-size:15px">${esc(a.title)}</div>
+              <div class="card-sub">${esc(a.zh)}</div>
+              ${a.paras.map(p=>`<div class="sentence"><div class="en">${esc(p.en)} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(p.en)}" data-l="${L.tts}">🔊</button></div><div class="zh">${esc(p.zh)}</div></div>`).join('')}
               <button class="btn sm outline" data-action="speak" data-t="${encodeURIComponent(a.paras.map(p=>p.en).join(' '))}" data-l="${L.tts}">🔊 朗读全文</button>
             </div>`).join('')
           : L.dialogues.map(d=>`<div class="sentence">
-              <div class="en">${d.ko} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(d.ko)}" data-l="${L.tts}">🔊</button></div>
-              <div class="zh">${d.zh}　<small style="color:var(--muted)">[${d.mp}]</small></div></div>`).join('')}
-        </div>
-        ${curLang==='english' && L.fullTexts ? `<div class="section-title">📖 英文全文阅读</div>
-          ${L.fullTexts.map(t=>`<div class="card"><div class="card-title">${t.title}</div><div class="card-sub">⏱ ${t.minutes} 分钟阅读</div>
-            ${t.paras.map(p=>`<div style="font-size:15px;line-height:1.8;margin:10px 0;text-align:justify">${p} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(p)}" data-l="${L.tts}" style="float:right">🔊</button></div>`).join('')}
+              <div class="en">${esc(d.ko)} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(d.ko)}" data-l="${L.tts}">🔊</button></div>
+              <div class="zh">${esc(d.zh)}　<small style="color:var(--muted)">[${esc(d.mp)}]</small></div></div>`).join(''));
+      const fullTextHtml = (curLang==='english' && L.fullTexts) ? `
+        <div class="sec-body">
+          ${L.fullTexts.map(t=>`<div class="card" style="margin-bottom:10px"><div class="card-title">${esc(t.title)}</div><div class="card-sub">⏱ ${t.minutes} 分钟阅读</div>
+            ${t.paras.map(p=>`<div style="font-size:15px;line-height:1.8;margin:10px 0;text-align:justify">${esc(p)} <button class="icon-btn inline" data-action="speak" data-t="${encodeURIComponent(p)}" data-l="${L.tts}" style="float:right">🔊</button></div>`).join('')}
             <button class="btn sm outline" data-action="speak" data-t="${encodeURIComponent(t.paras.join(' '))}" data-l="${L.tts}" style="margin-top:8px">🔊 朗读全文</button>
-          </div>`).join('')}` : ''}
-        ${L.vocabulary ? `<div class="section-title">🎴 单词卡片（每日自动轮播）</div>
-          <div class="card">
-            <div class="card-sub">点击卡片翻转看释义。每日根据日期轮播 ${Math.min(15, L.vocabulary.length)} 张，共 ${L.vocabulary.length} 张。</div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:12px">
-              ${(() => {
-                const day = Math.floor(Date.now() / 86400000);
-                const list = L.vocabulary;
-                const offset = day % list.length;
-                const pick = [];
-                for (let i = 0; i < Math.min(15, list.length); i++) pick.push(list[(offset + i) % list.length]);
-                return pick.map((w, i) => `<div class="video-card" data-action="flip-card" data-w="${encodeURIComponent(JSON.stringify(w))}" data-l="${L.tts}" style="cursor:pointer;background:var(--bg);text-align:center;flex-direction:column;padding:14px;min-height:90px;justify-content:center">
-                  <div class="card-front"><div style="font-size:18px;font-weight:700">${w.word}</div><div style="font-size:11px;color:var(--muted);margin-top:4px">[${L.name === '英语' ? w.level : ''}${w.level ? ' · ' : ''}点翻]</div></div>
-                </div>`).join('');
-              })()}
-            </div>
-          </div>` : ''}
-        ${L.translations ? `<div class="section-title">✍️ 翻译练习（输入 + AI 核对）</div>
-          <div class="card">
-            <div class="card-sub">根据 ${L.name} 语法点出题，输入翻译，系统智能核对（忽略大小写/标点/末尾句号差异）。每日 ${Math.min(5, L.translations.length)} 题。</div>
-            <div id="transList" style="margin-top:10px">
-              ${(() => {
-                const day = Math.floor(Date.now() / 86400000);
-                const list = L.translations;
-                const offset = day % list.length;
-                const pick = [];
-                for (let i = 0; i < Math.min(5, list.length); i++) pick.push(list[(offset + i) % list.length]);
-                return pick.map((t, i) => `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px" data-ti="${i}">
-                  <div style="font-weight:600;margin-bottom:6px">📝 第 ${i+1} 题：</div>
-                  <div style="margin-bottom:6px">${t.source}</div>
-                  <div style="font-size:12px;color:var(--muted);margin-bottom:8px">💡 ${t.hint} · ${t.note}</div>
-                  <div class="row"><input class="input" id="ti${i}" placeholder="输入翻译..." style="flex:1" /><button class="btn sm" data-action="check-trans" data-i="${i}" data-key="${encodeURIComponent(JSON.stringify(t))}">核对</button></div>
-                  <div id="tres${i}" style="margin-top:8px;font-size:13px"></div>
-                </div>`).join('');
-              })()}
-            </div>
-          </div>` : ''}
-        <div class="section-title">推荐资源</div>
-        <div class="card">${L.resources.map(r=>`<div class="video-card"><div class="play">🔗</div><div><div style="font-weight:600;font-size:14px">${r.title}</div><a href="${r.url}" data-action="open-link" data-url="${r.url}" target="_blank" rel="noopener">${r.url}</a></div></div>`).join('')}</div>`;
+          </div>`).join('')}
+        </div>` : '';
+      const vocabHtml = L.vocabulary ? `
+        <div class="sec-body">
+          <div class="card-sub">点击卡片翻转看释义。每日根据日期轮播 ${Math.min(15, L.vocabulary.length)} 张，共 ${L.vocabulary.length} 张。</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:12px">
+            ${(() => {
+              const list = L.vocabulary; const offset = day % list.length; const p2 = [];
+              for (let i = 0; i < Math.min(15, list.length); i++) p2.push(list[(offset + i) % list.length]);
+              return p2.map((w) => `<div class="video-card" data-action="flip-card" data-w="${encodeURIComponent(JSON.stringify(w))}" data-l="${L.tts}" style="cursor:pointer;background:var(--bg);text-align:center;flex-direction:column;padding:14px;min-height:90px;justify-content:center">
+                <div class="card-front"><div style="font-size:18px;font-weight:700">${esc(w.word)}</div><div style="font-size:11px;color:var(--muted);margin-top:4px">[${L.name === '英语' ? esc(w.level) : ''}${w.level ? ' · ' : ''}点翻]</div></div>
+              </div>`).join('');
+            })()}
+          </div>
+        </div>` : '';
+      const transHtml = L.translations ? `
+        <div class="sec-body">
+          <div class="card-sub">根据 ${esc(L.name)} 语法点出题，输入翻译，系统智能核对（忽略大小写/标点/末尾句号差异）。每日 ${Math.min(5, L.translations.length)} 题。</div>
+          <div id="transList" style="margin-top:10px">
+            ${(() => {
+              const list = L.translations; const offset = day % list.length; const p3 = [];
+              for (let i = 0; i < Math.min(5, list.length); i++) p3.push(list[(offset + i) % list.length]);
+              return p3.map((t, i) => `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px" data-ti="${i}">
+                <div style="font-weight:600;margin-bottom:6px">📝 第 ${i+1} 题：</div>
+                <div style="margin-bottom:6px">${esc(t.source)}</div>
+                <div style="font-size:12px;color:var(--muted);margin-bottom:8px">💡 ${esc(t.hint)} · ${esc(t.note)}</div>
+                <div class="row"><input class="input" id="ti${i}" placeholder="输入翻译..." style="flex:1" /><button class="btn sm" data-action="check-trans" data-i="${i}" data-key="${encodeURIComponent(JSON.stringify(t))}">核对</button></div>
+                <div id="tres${i}" style="margin-top:8px;font-size:13px"></div>
+              </div>`).join('');
+            })()}
+          </div>
+        </div>` : '';
+      const resHtml = `<div class="sec-body"><div class="card">${L.resources.map(r=>`<div class="video-card"><div class="play">🔗</div><div><div style="font-weight:600;font-size:14px">${esc(r.title)}</div><a href="${esc(r.url)}" data-action="open-link" data-url="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url)}</a></div></div>`).join('')}</div></div>`;
+
+      $('langBody').innerHTML = `
+        <div class="goal-banner">
+          <div class="gb-label">🎯 我的语言目标</div>
+          <div class="gb-text">${esc(L.goal)}</div>
+          <div class="gb-sub">已内置 ${sceneCnt} 个真实生活场景、${lineCnt} 句本地人对话，照着练就能无痛开口。</div>
+        </div>
+        ${dashHtml}
+        ${todayHtml}
+        <details class="lang-sec" open>
+          <summary><span class="sec-count">${sceneCnt} 场景</span>🗣 情景对话脚本（按真实生活场景）<span class="chev">▶</span></summary>
+          <div class="sec-body">${sceneHtml}</div>
+        </details>
+        <details class="lang-sec">
+          <summary><span class="sec-count">${lvTotal} 阶段</span>🧭 学习路径与阶段计划<span class="chev">▶</span></summary>
+          ${planHtml}
+        </details>
+        <details class="lang-sec">
+          <summary><span class="sec-count">${L.dialogues?L.dialogues.length:0} 句</span>🔁 随机对话跟读（单句 drill）<span class="chev">▶</span></summary>
+          <div class="sec-body">${drillHtml}</div>
+        </details>
+        ${curLang==='english'&&L.fullTexts?`<details class="lang-sec"><summary><span class="sec-count">${L.fullTexts.length} 篇</span>📖 英文全文阅读<span class="chev">▶</span></summary>${fullTextHtml}</details>`:''}
+        ${L.vocabulary?`<details class="lang-sec"><summary><span class="sec-count">${L.vocabulary.length} 词</span>🎴 单词卡片（每日轮播）<span class="chev">▶</span></summary>${vocabHtml}</details>`:''}
+        ${L.translations?`<details class="lang-sec"><summary><span class="sec-count">${L.translations.length} 题</span>✍️ 翻译练习<span class="chev">▶</span></summary>${transHtml}</details>`:''}
+        <details class="lang-sec">
+          <summary><span class="sec-count">${L.resources.length}</span>🔗 推荐资源<span class="chev">▶</span></summary>
+          ${resHtml}
+        </details>`;
     }
 
     // ============ 闯关练习（对标多邻国：交互作答 + 即时反馈）============
