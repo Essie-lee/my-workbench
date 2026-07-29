@@ -369,6 +369,27 @@
     .cardio-done-min small { font-size: 12px; font-weight: 500; margin-left: 3px; color: var(--muted); }
     .cardio-done-note { font-size: 14px; color: var(--ink-1); font-weight: 500; }
 
+    /* ===== 记账预算仪表盘 ===== */
+    .budget-dashboard { margin-top: 16px; padding: 14px; border-radius: var(--radius-sm); background: var(--bg-2, rgba(248,248,246,.7)); border: 1px solid var(--line-1); }
+    [data-theme="dark"] .budget-dashboard { background: rgba(45,45,45,.4); border-color: rgba(255,255,255,.08); }
+    .budget-dashboard.over { background: rgba(255,107,107,.08); border-color: rgba(255,107,107,.2); }
+    .budget-dashboard.warn { background: rgba(255,154,60,.08); border-color: rgba(255,154,60,.2); }
+    .budget-main { display: flex; gap: 10px; justify-content: space-between; }
+    .budget-block { flex: 1; text-align: center; }
+    .budget-num { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .budget-big { font-size: 22px; font-weight: 800; color: var(--ink-1); line-height: 1.1; }
+    .budget-big small { font-size: 11px; font-weight: 500; color: var(--muted); margin-left: 2px; }
+    .budget-big.over-num { color: var(--red); }
+    .budget-big.zero { color: var(--muted); }
+    .budget-bar-wrap { margin-top: 12px; }
+    .budget-bar-bg { height: 10px; background: var(--line-2); border-radius: 6px; overflow: hidden; }
+    .budget-bar-fill { height: 100%; background: linear-gradient(90deg, #5b8def, #7c5cff); border-radius: 6px; transition: width .3s ease; }
+    .budget-bar-fill.over { background: var(--red); }
+    .budget-bar-fill.warn { background: linear-gradient(90deg, #ff9a3c, #ff6b6b); }
+    .budget-status { margin-top: 8px; font-size: 12px; color: var(--muted); text-align: center; }
+    .budget-status.over-text { color: var(--red); font-weight: 600; }
+    .budget-status.warn-text { color: #ff9a3c; font-weight: 600; }
+
     /* ===== 运动卡片折叠 ===== */
     details.sport-sec {
       border: 1px solid var(--line);
@@ -23383,6 +23404,18 @@
       const budget = Number(b.budget) || 0;
       const budgetPct = budget > 0 ? Math.min(100, Math.round(exp/budget*100)) : 0;
       const over = budget > 0 && exp > budget;
+      const remaining = Math.max(0, budget - exp);
+      // 本月剩余天数（含今天）
+      const now = new Date();
+      const lastDay = new Date(now.getFullYear(), now.getMonth()+1, 0);
+      const daysLeft = Math.max(1, lastDay.getDate() - now.getDate() + 1);
+      const dailyLeft = remaining > 0 ? Math.floor(remaining / daysLeft) : 0;
+      // 按当前支出速度预测月底总支出
+      const passedDays = now.getDate();
+      const avgDaily = passedDays > 0 ? exp / passedDays : 0;
+      const forecast = Math.round(avgDaily * lastDay.getDate());
+      const overForecast = budget > 0 && forecast > budget;
+      const safeStatus = budget <= 0 ? '未设预算' : over ? `已超支 ${fmtMoney(exp - budget)}` : overForecast ? `按当前节奏将超支 ${fmtMoney(forecast - budget)}` : `预算充足，预计结余 ${fmtMoney(budget - forecast)}`;
 
       // 分类占比
       const byCat = {};
@@ -23429,13 +23462,27 @@
             <div style="flex:1;text-align:center"><div style="font-size:22px;font-weight:800;color:#2e9e5b">${fmtMoney(inc)}</div><div style="font-size:11px;color:var(--muted)">收入</div></div>
             <div style="flex:1;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--ink-1)">${fmtMoney(balance)}</div><div style="font-size:11px;color:var(--muted)">结余</div></div>
           </div>
-          <div style="margin-top:14px">
-            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted)">
-              <span>月度预算 ${fmtMoney(budget)}</span><span style="${over?'color:var(--red);font-weight:700':''}">${budgetPct}%${over?' · 超支!':''}</span>
+
+          <div class="budget-dashboard ${over?'over':overForecast?'warn':''}">
+            <div class="budget-main">
+              <div class="budget-block">
+                <div class="budget-num ${over?'over-num':''}">${over?'超支':remaining>0?'剩余':'剩余'}</div>
+                <div class="budget-big ${over?'over-num':remaining<=0?'zero':''}">${over?fmtMoney(exp-budget):fmtMoney(remaining)}</div>
+              </div>
+              ${remaining > 0 ? `
+                <div class="budget-block">
+                  <div class="budget-num">日均可用</div>
+                  <div class="budget-big">${fmtMoney(dailyLeft)}<small>/天</small></div>
+                </div>` : ''}
+              <div class="budget-block">
+                <div class="budget-num">已用预算</div>
+                <div class="budget-big">${budgetPct}%</div>
+              </div>
             </div>
-            <div style="height:10px;background:var(--line-2);border-radius:6px;overflow:hidden;margin-top:6px">
-              <div style="height:100%;width:${budgetPct}%;background:${over?'var(--red)':'linear-gradient(90deg,#5b8def,#7c5cff)'};border-radius:6px"></div>
+            <div class="budget-bar-wrap">
+              <div class="budget-bar-bg"><div class="budget-bar-fill ${over?'over':overForecast?'warn':''}" style="width:${budgetPct}%"></div></div>
             </div>
+            <div class="budget-status ${over?'over-text':overForecast?'warn-text':''}">${safeStatus}</div>
           </div>
         </div>
 
