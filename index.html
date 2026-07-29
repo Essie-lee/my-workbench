@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" id="htmlRoot">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -341,6 +341,59 @@
 
     /* ===== 强调卡(左侧色条) ===== */
     .accent-bar { border-left: 3px solid var(--primary); padding-left: 15px; }
+
+    /* ===== v14 优化：主题切换按钮 / 入场动画 / 反馈 ===== */
+    #themeBtn { transition: transform .2s ease, background .2s ease; }
+    #themeBtn:active { transform: scale(.9) rotate(-20deg); }
+    [data-theme="dark"] #themeBtn { background: rgba(45,45,45,.6); }
+
+    /* 全局过渡（深浅切换平滑） */
+    :root, body, .topbar, .drawer, .card, .btn, .icon-btn, .stat-card, .modal, .modal-mask {
+      transition: background-color .35s ease, color .35s ease, border-color .35s ease, box-shadow .35s ease;
+    }
+
+    /* 卡片入场：淡入 + 上浮（错峰） */
+    @keyframes cardIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    #main > .card,
+    #main > .section-title,
+    #main > .stat-grid,
+    #main > .btn { animation: cardIn .4s cubic-bezier(.2,.7,.3,1) both; }
+    #main > .card:nth-child(2) { animation-delay: .04s; }
+    #main > .card:nth-child(3) { animation-delay: .08s; }
+    #main > .card:nth-child(4) { animation-delay: .12s; }
+    #main > .card:nth-child(5) { animation-delay: .16s; }
+    #main > .card:nth-child(6) { animation-delay: .20s; }
+    @media (prefers-reduced-motion: reduce) { #main > * { animation: none !important; } }
+
+    /* 按钮点击反馈 */
+    .btn { transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease; }
+    .btn:active { transform: scale(.96); }
+    .icon-btn:active { transform: scale(.92); }
+
+    /* 抽屉导航语义色点 */
+    .drawer-nav button { position: relative; transition: background-color .2s ease, transform .12s ease; }
+    .drawer-nav button:active { transform: scale(.98); }
+    .drawer-nav button[data-view="home"]::before   { content:'';position:absolute;left:12px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--primary); }
+    .drawer-nav button[data-view="study"]::before  { content:'';position:absolute;left:12px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--accent); }
+    .drawer-nav button[data-view="sport"]::before  { content:'';position:absolute;left:12px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--green); }
+    .drawer-nav button[data-view="health"]::before { content:'';position:absolute;left:12px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--red); }
+    .drawer-nav button[data-view="topic"]::before  { content:'';position:absolute;left:12px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--pink); }
+    .drawer-nav button[data-view="book"]::before   { content:'';position:absolute;left:12px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--purple); }
+    .drawer-nav button[data-view="piano"]::before  { content:'';position:absolute;left:12px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#c239b3; }
+    .drawer-nav button { padding-left: 28px; }
+    .drawer-nav button:not([data-view])::before { display: none; }
+
+    /* 顶部条高度在刘海屏更舒适 */
+    .topbar { padding-top: max(14px, env(safe-area-inset-top)); }
+
+    /* 首访引导条 */
+    .onboard-tip { font-size:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap }
+    .onboard-tip b { color: var(--primary); }
+
+    /* 首页学习内容行 */
+    .learn-row { transition: background-color .15s ease; }
+    .learn-row:active { background: var(--line-2); }
+    @media (hover:hover){ .learn-row:hover { background: var(--line-3); } }
   </style>
 </head>
 <body>
@@ -349,7 +402,8 @@
       <button class="icon-btn" id="menuBtn">☰</button>
       <h1 id="pageTitle" title="点击重命名工作台">我的工作台</h1>
       <span class="date" id="topDate"></span>
-      <span id="appVer" style="font-size:10px;color:var(--muted);background:var(--line-2);padding:2px 6px;border-radius:8px;margin-left:4px" title="当前代码版本,如不是v11请长按桌面图标→删除→重新添加">v13</span>
+      <button class="icon-btn" id="themeBtn" title="切换深色 / 浅色" aria-label="切换主题">🌗</button>
+      <span id="appVer" style="font-size:10px;color:var(--muted);background:var(--line-2);padding:2px 6px;border-radius:8px;margin-left:4px" title="当前代码版本">v14</span>
     </header>
 
     <nav class="drawer" id="drawer">
@@ -377,7 +431,7 @@
         <button class="btn sm outline" data-action="import" style="width:100%">⬆️ 导入数据</button>
         <input type="file" id="importFile" accept="application/json,.json" hidden />
         <button class="btn sm outline" data-action="help-update" style="width:100%;margin-top:6px">🔄 PWA 没更新?点这里</button>
-        <div class="card-sub" style="margin:2px 0 0;font-size:11px">数据存在本机浏览器,换设备/清缓存会丢,记得常导出。当前版本:v9</div>
+        <div class="card-sub" style="margin:2px 0 0;font-size:11px">数据存在本机浏览器,换设备/清缓存会丢,记得常导出。当前版本:v14</div>
       </div>
     </nav>
     <div class="overlay" id="overlay"></div>
@@ -890,7 +944,7 @@
         ],
         videos:[
           { t:'B站：欧阳春晓芭杆运动全集', url:'https://search.bilibili.com/all?keyword=欧阳春晓芭杆运动' },
-          { t:'抖音：欧阳春晓沙漏腰芭杆', url:'https://m.douyin.com/search/?keyword=%E6%AC%A7%E9%98%B3%E6%98%A5%E6%99%93%E8%8A%AD%E6%9D%86%E8%BF%90%E5%8A%A8' },
+          { t:'抖音：欧阳春晓沙漏腰芭杆', url:'https://www.douyin.com/search?keyword=%E6%AC%A7%E9%98%B3%E6%98%A5%E6%99%93%E8%8A%AD%E6%9D%86%E8%BF%90%E5%8A%A8' },
           { t:'B站：Barre 芭杆上肢雕刻', url:'https://search.bilibili.com/all?keyword=Barre芭杆上肢雕刻' }
         ] }
     ];
@@ -918,12 +972,12 @@
       '长期主义：千万账号是 1000 条内容堆出来的，不是一条爆款。'
     ];
     const TOPIC_HOT = [
-      { t:'#钢琴版热门BGM 挑战', cat:'弹琴', url:'https://m.douyin.com/search/?keyword=%E9%92%A2%E7%90%B4%E7%89%88%E7%83%AD%E9%97%A8BGM' },
-      { t:'#30天学会一首歌', cat:'挑战', url:'https://m.douyin.com/search/?keyword=30天学会一首歌' },
-      { t:'#普通人学琴第N天', cat:'成长', url:'https://www.xiaohongshu.com/search_result?keyword=普通人学琴' },
-      { t:'#Barre芭杆塑形', cat:'运动', url:'https://m.douyin.com/search/?keyword=Barre芭杆塑形' },
-      { t:'#零基础学韩语', cat:'学习', url:'https://www.xiaohongshu.com/search_result?keyword=零基础学韩语' },
-      { t:'#粤语港剧打卡', cat:'语言', url:'https://m.douyin.com/search/?keyword=粤语港剧' }
+      { t:'#钢琴版热门BGM 挑战', cat:'弹琴', platform:'douyin' },
+      { t:'#30天学会一首歌', cat:'挑战', platform:'douyin' },
+      { t:'#普通人学琴第N天', cat:'成长', platform:'xiaohongshu', url:'https://www.xiaohongshu.com/search?keyword=普通人学琴' },
+      { t:'#Barre芭杆塑形', cat:'运动', platform:'douyin' },
+      { t:'#零基础学韩语', cat:'学习', platform:'xiaohongshu', url:'https://www.xiaohongshu.com/search?keyword=零基础学韩语' },
+      { t:'#粤语港剧打卡', cat:'语言', platform:'douyin' }
     ];
 
     const BOOKS = [
@@ -1045,6 +1099,54 @@
       clearTimeout(t._tm); t._tm = setTimeout(()=>{ t.style.opacity='0'; }, 2600);
     }
 
+    // 外部链接打开器（v14 修复：抖音/小红书/B站打不开、B站跳知乎回不来）
+    // 核心思路：在 PWA standalone / iOS 下，不能用 window.location.href 替换当前页
+    // （会丢失返回、且抖音小红书 webview 白屏拦截），必须开新窗口并保留本页。
+    function openExternal(url) {
+      if (!url) return;
+      // 抖音网页搜索已对网页端封锁(返回 404)，兜底：解析关键词并复制话题名，引导去 App 搜
+      if (/douyin\.com\/search/.test(url)) {
+        try {
+          const kw = new URL(url).searchParams.get('keyword') || '';
+          const txt = decodeURIComponent(kw);
+          if (txt) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(txt).then(()=>toast('抖音网页已封,已复制「'+txt+'」去 App 搜'), ()=>toast('去抖音 App 搜：'+txt));
+            } else { toast('去抖音 App 搜：'+txt); }
+            return;
+          }
+        } catch (_) { toast('抖音网页已封,请在 App 内搜索'); return; }
+      }
+      const isPWA = (window.navigator.standalone === true) ||
+                    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+      try {
+        // 策略1：新窗口打开，并保留源的 PWA 页面（有返回）
+        const w = window.open('about:blank', '_blank', 'noopener');
+        if (w) {
+          // 先写个跳转页，规避 iOS PWA 对 opener 的限制
+          try { w.opener = null; } catch (_) {}
+          w.location.href = url;
+          return;
+        }
+      } catch (_) {}
+      try {
+        // 策略2：兜底，用 a 标签触发（部分浏览器需要真实用户手势上下文）
+        const a = document.createElement('a');
+        a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        document.body.appendChild(a); a.click(); a.remove();
+        return;
+      } catch (_) {}
+      // 策略3：最终兜底，复制链接并提示用户手动打开
+      try {
+        const ta = document.createElement('textarea'); ta.value = url;
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); ta.remove();
+        toast('链接已复制，可粘贴到浏览器打开');
+      } catch (e) {
+        toast('无法打开，请长按复制：' + url);
+      }
+    }
+
     // ===================== 导航 =====================
     const VIEWS = { home:renderHome, daily:renderDaily, study:renderStudy, sport:renderSport, health:renderHealth,
       topic:renderTopic, book:renderBook, shoot:renderShoot, game:renderGame, piano:renderPiano };
@@ -1075,6 +1177,16 @@
       const mastered = state.pianoMastered.length;
       const todayBook = BOOKS.find(b => b.m === '2026-' + String(new Date().getMonth()+1).padStart(2,'0')) || BOOKS[0];
       const quote = (todayBook.q[new Date().getDate() % todayBook.q.length]);
+      // 首次访问轻量引导（v14 新增，基于 localStorage，不影响数据模型）
+      let onboard = '';
+      let seenOnboard = false;
+      try { seenOnboard = localStorage.getItem('growth-os-onboard') === '1'; } catch (_) {}
+      if (!seenOnboard) {
+        onboard = `<div class="card onboard-tip" style="border:1px solid var(--primary);background:var(--primary-soft);align-items:center;display:flex;justify-content:space-between">
+          <span>👋 欢迎！点左上角 <b>☰</b> 切换模块，右上角 <b>🌗</b> 切换深浅色。</span>
+          <button class="btn sm subtle" id="onboardClose" style="flex-shrink:0;margin-left:8px">知道了</button>
+        </div>`;
+      }
       // 每日学习内容更新提醒
       const tdy = today();
       const lastUpd = state.lastLearnUpdate;
@@ -1101,8 +1213,36 @@
           <div class="card-sub">上次更新：${lastUpd}。已经停更多天了，今天让 AI 加点新内容吧 → 说 "帮我更新学习内容"。</div>
         </div>`;
       }
+      // 今日学习内容一览（v14 新增：从现有数据源聚合，让首页成为真正的"今日一览"）
+      const eng = (LANG.english.fullTexts && LANG.english.fullTexts[0]) || null;
+      const kor = (LANG.korean && LANG.korean.dialogs && LANG.korean.dialogs[0]) || null;
+      const can = (LANG.cantonese && LANG.cantonese.dialogs && LANG.cantonese.dialogs[0]) || null;
+      const pianoStage = PIANO_STAGES.find(s => s.id === (state.pianoStage || 's1')) || PIANO_STAGES[0];
+      const pianoExs = (state.pianoEx && state.pianoEx[pianoStage.id]) || pianoStage.ex || [];
+      const pianoNext = pianoExs.find(e => !state.pianoMastered.includes(e.id)) || pianoExs[0] || null;
+      const topicSaved = Array.isArray(state.topicSaved) ? state.topicSaved : [];
+      const learnPreview = [
+        eng ? { ic:'🇬🇧', tag:'英语', t: eng.title, go:'study' } : null,
+        kor ? { ic:'🇰🇷', tag:'韩语', t: kor.title || '今日会话', go:'study' } : null,
+        can ? { ic:'🇭🇰', tag:'粤语', t: can.title || '今日会话', go:'study' } : null,
+        pianoNext ? { ic:'🎹', tag:'钢琴', t: pianoNext.title, go:'piano' } : null,
+        topicSaved[0] ? { ic:'💡', tag:'选题', t: topicSaved[0], go:'topic' } : null
+      ].filter(Boolean);
+      const learnPreviewHtml = learnPreview.length ? `
+        <div class="section-title">今日学习内容</div>
+        <div class="card" style="padding:6px">
+          ${learnPreview.map(x => `
+            <div data-action="go" data-v="${x.go}" style="display:flex;align-items:center;gap:10px;padding:10px 8px;cursor:pointer;border-bottom:1px solid var(--line-2)" class="learn-row">
+              <span style="font-size:18px">${x.ic}</span>
+              <span style="font-size:11px;color:var(--muted);min-width:30px">${x.tag}</span>
+              <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;color:var(--ink-1)">${esc(x.t)}</span>
+              <span style="color:var(--primary);font-size:13px">›</span>
+            </div>`).join('')}
+        </div>` : '';
       $('main').innerHTML = `
+        ${onboard}
         ${learnReminder}
+        ${learnPreviewHtml}
         <div class="section-title">今日进度</div>
         <div class="stat-grid">
           <div class="stat-card"><div class="num">${done}/${r.length}</div><div class="lbl">今日计划完成</div></div>
@@ -1125,6 +1265,8 @@
             <button class="btn sm" data-action="go" data-v="game" style="width:100%;justify-content:center">🎮 游戏</button>
           </div>
         </div>`;
+      const ob = $('onboardClose');
+      if (ob) ob.addEventListener('click', () => { try { localStorage.setItem('growth-os-onboard','1'); } catch(_){} navigate('home'); });
     }
 
     // ===================== 每日计划 =====================
@@ -1308,7 +1450,7 @@
             </div>
           </div>` : ''}
         <div class="section-title">推荐资源</div>
-        <div class="card">${L.resources.map(r=>`<div class="video-card"><div class="play">🔗</div><div><div style="font-weight:600;font-size:14px">${r.title}</div><a href="${r.url}" target="_blank" rel="noopener">${r.url}</a></div></div>`).join('')}</div>`;
+        <div class="card">${L.resources.map(r=>`<div class="video-card"><div class="play">🔗</div><div><div style="font-weight:600;font-size:14px">${r.title}</div><a href="${r.url}" data-action="open-link" data-url="${r.url}" target="_blank" rel="noopener">${r.url}</a></div></div>`).join('')}</div>`;
     }
     function startAssess() {
       const L = LANG[curLang];
@@ -1404,7 +1546,7 @@
                 ${p.items.map(it=>`<div class="item" style="padding:7px 0"><span class="tag gray" style="margin-right:8px">▪</span>${it}</div>`).join('')}
               </div>`).join('')}
             <div class="card-sub" style="margin-top:6px">教学视频：</div>
-            ${s.videos.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}
+            ${s.videos.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" data-action="open-link" data-url="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}
           </div>
         `).join('')}
       `;
@@ -1482,14 +1624,14 @@
       },
       items: {
         toutiao: [
-          { title:'#普通人学琴第N天', url:'https://m.douyin.com/search/?keyword=%E6%99%AE%E9%80%9A%E4%BA%BA%E5%AD%A6%E7%90%B4', hot:520000 },
-          { title:'#30天学会一首歌', url:'https://m.douyin.com/search/?keyword=30%E5%A4%A9%E5%AD%A6%E4%BC%9A%E4%B8%80%E9%A6%96%E6%AD%8C', hot:480000 },
-          { title:'#钢琴版热门BGM挑战', url:'https://m.douyin.com/search/?keyword=%E9%92%A2%E7%90%B4%E7%89%88BGM%E6%8C%91%E6%88%98', hot:410000 }
+          { title:'#普通人学琴第N天', url:'https://www.douyin.com/search?keyword=%E6%99%AE%E9%80%9A%E4%BA%BA%E5%AD%A6%E7%90%B4', hot:520000 },
+          { title:'#30天学会一首歌', url:'https://www.douyin.com/search?keyword=30%E5%A4%A9%E5%AD%A6%E4%BC%9A%E4%B8%80%E9%A6%96%E6%AD%8C', hot:480000 },
+          { title:'#钢琴版热门BGM挑战', url:'https://www.douyin.com/search?keyword=%E9%92%A2%E7%90%B4%E7%89%88BGM%E6%8C%91%E6%88%98', hot:410000 }
         ],
         xiaohongshu: [
-          { title:'#零基础学韩语', url:'https://www.xiaohongshu.com/search_result?keyword=%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%AD%A6%E9%9F%A9%E8%AF%AD', hot:380000 },
-          { title:'#Barre芭杆塑形', url:'https://www.xiaohongshu.com/search_result?keyword=Barre%E8%8A%AD%E6%9D%86', hot:320000 },
-          { title:'#粤语港剧打卡', url:'https://www.xiaohongshu.com/search_result?keyword=%E7%B2%A4%E8%AF%AD%E6%B8%AF%E5%89%A7', hot:280000 }
+          { title:'#零基础学韩语', url:'https://www.xiaohongshu.com/search?keyword=%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%AD%A6%E9%9F%A9%E8%AF%AD', hot:380000 },
+          { title:'#Barre芭杆塑形', url:'https://www.xiaohongshu.com/search?keyword=Barre%E8%8A%AD%E6%9D%86', hot:320000 },
+          { title:'#粤语港剧打卡', url:'https://www.xiaohongshu.com/search?keyword=%E7%B2%A4%E8%AF%AD%E6%B8%AF%E5%89%A7', hot:280000 }
         ],
         bilibili: [
           { title:'钢琴入门 30 课', url:'https://search.bilibili.com/all?keyword=%E9%92%A2%E7%90%B4%E5%85%A5%E9%97%A8', hot:560000 },
@@ -1526,7 +1668,7 @@
           <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.title)}</div>
           <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;align-items:center">
             <span class="tag gray">🔥 ${(it.hot/10000).toFixed(0)} 万</span>
-            <button class="btn sm outline" data-action="open-link" data-url="${esc(it.url)}" style="padding:3px 10px;font-size:12px">查看 →</button>
+            ${ /douyin\.com/.test(it.url) ? `<button class="btn sm outline" data-action="copy-topic" data-t="${esc(it.title)}" style="padding:3px 10px;font-size:12px">📋 复制话题</button><span class="tag gray" style="font-size:11px">抖音网页已封,去 App 搜</span>` : `<button class="btn sm outline" data-action="open-link" data-url="${esc(it.url)}" style="padding:3px 10px;font-size:12px">查看 →</button>` }
             <button class="btn sm outline" data-action="save-topic" data-t="${esc(it.title)}" style="padding:3px 10px;font-size:12px">⭐ 存灵感</button>
           </div>
         </div>
@@ -1553,10 +1695,13 @@
             <div class="item-desc" style="margin:6px 0 8px">${t.a}</div>
             <div class="item-actions">
               ${t.tags.map(x=>{
-                const u = x === '抖音' ? 'https://m.douyin.com/search/?keyword=' + encodeURIComponent(t.t)
-                  : x === '小红书' ? 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent(t.t)
+                const u = x === '抖音' ? 'https://www.douyin.com/search?keyword=' + encodeURIComponent(t.t)
+                  : x === '小红书' ? 'https://www.xiaohongshu.com/search?keyword=' + encodeURIComponent(t.t)
                   : x === 'B站' ? 'https://search.bilibili.com/all?keyword=' + encodeURIComponent(t.t) : '';
-                return u ? `<button class="tag gray" data-action="open-platform" data-u="${u}" style="cursor:pointer;border:1px solid var(--line-1)">${x} →</button>` : `<span class="tag gray">${x}</span>`;
+                if (x === '抖音') {
+                  return `<button class="tag gray" data-action="copy-topic" data-t="${esc(t.t)}" style="cursor:pointer;border:1px solid var(--line-1)">📋 抖音话题</button>`;
+                }
+                return u ? `<button class="tag gray" data-action="open-link" data-url="${esc(u)}" style="cursor:pointer;border:1px solid var(--line-1)">${x} →</button>` : `<span class="tag gray">${x}</span>`;
               }).join('')}
               <button class="btn sm outline" data-action="save-topic" data-t="${t.t}">⭐ 存灵感</button>
             </div>
@@ -1570,7 +1715,7 @@
         <div class="card">
           <div class="card-title">🔥 可点击热点</div>
           <div class="card-sub">点链接直接跳到抖音 / 小红书查看相关视频。</div>
-          ${TOPIC_HOT.map(h=>`<div class="video-card"><div class="play">🔥</div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">${h.t} <span class="tag accent">${h.cat}</span></div><button class="btn sm outline" data-action="open-link" data-url="${h.url}" style="margin-top:6px;padding:3px 10px;font-size:12px">查看 → ${h.url.slice(0,30)}${h.url.length>30?'...':''}</button></div></div>`).join('')}
+          ${TOPIC_HOT.map(h=>{ const u=(h.url||''); const isDouyin = h.platform==='douyin' || /douyin\.com/.test(u); return `<div class="video-card"><div class="play">🔥</div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">${esc(h.t)} <span class="tag accent">${esc(h.cat||'')}</span></div>${ isDouyin ? `<button class="btn sm outline" data-action="copy-topic" data-t="${esc(h.t)}" style="margin-top:6px;padding:3px 10px;font-size:12px">📋 复制话题(抖音App搜)</button>` : u ? `<button class="btn sm outline" data-action="open-link" data-url="${esc(u)}" style="margin-top:6px;padding:3px 10px;font-size:12px">查看 → ${u.slice(0,30)}${u.length>30?'...':''}</button>` : `<span class="tag gray" style="margin-top:6px">敬请期待</span>` }</div></div>`; }).join('')}
         </div>`;
     }
 
@@ -1646,9 +1791,9 @@
           <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
           <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(authors)} · ${year}</div>
           <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
-            <a href="${olink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">📖 Open Library</a>
-            ${alink ? `<a href="${alink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">📚 Archive 阅读</a>` : ''}
-            <a href="${glink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">🔍 Google Books</a>
+            <a href="${olink}" data-action="open-link" data-url="${olink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">📖 Open Library</a>
+            ${alink ? `<a href="${alink}" data-action="open-link" data-url="${alink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">📚 Archive 阅读</a>` : ''}
+            <a href="${glink}" data-action="open-link" data-url="${glink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">🔍 Google Books</a>
           </div>
         </div>
       </div>`;
@@ -1845,7 +1990,7 @@
         <div class="section-title">全部阶段</div>
         ${PIANO_STAGES.map(s=>stageCard(s, s.id>state.pianoUnlocked)).join('')}
         <div class="section-title">教学视频</div>
-        <div class="card">${PIANO_VIDEO.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}</div>`;
+        <div class="card">${PIANO_VIDEO.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" data-action="open-link" data-url="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}</div>`;
     }
     function stageCard(s, locked){
       const mastered = state.pianoMastered.includes(s.id);
@@ -1917,7 +2062,7 @@
               <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.title)}</div>
               <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;align-items:center">
                 <span class="tag gray">🔥 ${(it.hot/10000).toFixed(0)} 万</span>
-                <a href="${esc(it.url)}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">查看 →</a>
+                <a href="${esc(it.url)}" data-action="open-link" data-url="${esc(it.url)}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">查看 →</a>
                 <button class="btn sm outline" data-action="save-topic" data-t="${esc(it.title)}" style="padding:3px 10px;font-size:12px">⭐ 存灵感</button>
               </div>
             </div>
@@ -2008,6 +2153,25 @@
           state.pianoEx[sId].push({ id: uid(), title: title.trim(), desc: desc.trim() });
           save(); renderPiano(); toast('已添加'); break;
         }
+        case 'copy-topic': {
+          // 抖音网页搜索已被平台封锁(404)，改为复制话题名，引导用户去 App 搜索
+          const txt = (t.dataset.t || '').replace(/^#/, '');
+          if (!txt) break;
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(txt).then(()=>toast('已复制「' + txt + '」，去抖音 App 搜索框粘贴'), ()=>fallbackCopy(txt));
+            } else { fallbackCopy(txt); }
+          } catch (_) { fallbackCopy(txt); }
+          function fallbackCopy(s) {
+            try {
+              const ta = document.createElement('textarea'); ta.value = s;
+              ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select();
+              document.execCommand('copy'); ta.remove();
+              toast('已复制「' + s + '」，去抖音 App 搜索框粘贴');
+            } catch (e) { toast('请手动复制：' + s); }
+          }
+          break;
+        }
         case 'export': exportData(); break;
         case 'import': $('importFile').click(); break;
         case 'help-update': {
@@ -2041,15 +2205,13 @@
           break;
         }
         case 'open-link': {
-          // 跳外部链接:PWA 模式要特殊处理,iOS 不允许 PWA 直接跳外部域,改用打开新窗口
+          // 跳外部链接（抖音/小红书/B站/豆瓣等）
+          // 关键修复：PWA standalone 下不能用 window.location.href 替换整个页面，
+          // 否则页面栈被替换、丢失返回按钮，且抖音/小红书 webview 会白屏拦截。
+          // 正确做法：始终用新窗口打开，并保留 PWA 自身页面（可返回）。
           const url = t.dataset.url;
           if (!url) break;
-          try {
-            // 尝试直接跳转(PWA 会拒绝并提示);如果失败,弹一个新窗口
-            window.location.href = url;
-          } catch(e) {
-            window.open(url, '_blank');
-          }
+          openExternal(url);
           break;
         }
         case 'open-platform': {
@@ -2138,6 +2300,36 @@
     }
     $('pageTitle').addEventListener('click', rename);
     $('drawerName').addEventListener('click', rename);
+
+    // ===================== 深色模式（v14 新增：此前样式已写好但无切换入口） =====================
+    function applyTheme(mode) {
+      const root = document.getElementById('htmlRoot');
+      const btn = $('themeBtn');
+      if (mode === 'dark') { root.setAttribute('data-theme', 'dark'); if (btn) btn.textContent = '☀️'; }
+      else { root.removeAttribute('data-theme'); if (btn) btn.textContent = '🌗'; }
+      try { localStorage.setItem('growth-os-theme', mode); } catch (_) {}
+    }
+    // 首次：优先用 localStorage，否则跟随系统
+    (function initTheme() {
+      let saved;
+      try { saved = localStorage.getItem('growth-os-theme'); } catch (_) {}
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyTheme(saved || (prefersDark ? 'dark' : 'light'));
+    })();
+    if ($('themeBtn')) {
+      $('themeBtn').addEventListener('click', () => {
+        const isDark = document.getElementById('htmlRoot').getAttribute('data-theme') === 'dark';
+        applyTheme(isDark ? 'light' : 'dark');
+        toast(isDark ? '已切换到浅色' : '已切换到深色');
+      });
+    }
+    // 跟随系统变化（用户未手动设置时）
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        let saved; try { saved = localStorage.getItem('growth-os-theme'); } catch (_) {}
+        if (!saved) applyTheme(e.matches ? 'dark' : 'light');
+      });
+    }
 
     // ===================== 初始化 =====================
     warmVoices();
