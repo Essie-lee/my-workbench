@@ -22842,13 +22842,101 @@ function applyPmodTheme(t){
       { m:'2026-12', t:'《心流》', a:'米哈里·契克森米哈赖', q:['幸福不是拥有，而是全神贯注时的忘我。','最佳体验，发生在挑战与能力恰好匹配时。'] }
     ];
 
-    const SHOOT_PLAN = [
-      { t:'拍完即导出', d:'相机/手机拍完，当天连电脑/云盘导出，绝不「等有空」', tag:'防拖延' },
-      { t:'当日粗剪 1 条', d:'哪怕只剪 15 秒，先出一条，避免素材积压', tag:'日更' },
-      { t:'建立素材文件夹', d:'按日期+主题命名，如 0724_钢琴练习，找素材不再翻半天', tag:'整理' },
-      { t:'每周固定发布 3 条', d:'周一到周日排期，设手机提醒，到点就发', tag:'节奏' },
-      { t:'周末 30 分钟复盘', d:'看哪条数据好，记一句原因，下周复用', tag:'复盘' },
-      { t:'设置「导出日」闹钟', d:'每天 21:00 闹钟：导出+备份，形成肌肉记忆', tag:'提醒' }
+    // ===== 拍摄计划数据（基于 iPhone 15 Pro + 富士 X-M5） =====
+    const SHOOT_DEVICES = [
+      { name:'iPhone 15 Pro', emoji:'📱', role:'随手 / 扫街 / 社交直出 / 练参数',
+        points:['便携即时、计算摄影、夜间强、3× 长焦','用 Halide 当「手动练习场」学曝光三要素','ProRAW 轻后期'] },
+      { name:'富士 X-M5', emoji:'📷', role:'人像虚化 / 胶片直出 / Vlog 主战机',
+        points:['2610 万 X-Trans + X-Processor 5，20 种胶片模拟','6.2K/30P 视频、翻转屏、3.5mm 麦口','⚠️ 无机身防抖：靠 OIS 镜头 / 电子防抖 / 三脚架'] }
+    ];
+    const SHOOT_APPS = [
+      { g:'富士官方（必装·免费）', list:[
+        { n:'FUJIFILM XApp', d:'联机图传 / 参数备份 / 固件提醒 / 遥控拍摄' },
+        { n:'X RAW Studio', d:'USB 连机，用机身引擎转 RAW，胶片模拟一致' } ] },
+      { g:'iPhone 专业拍摄', list:[
+        { n:'Halide Mark III', d:'全手动+RAW+可关计算处理，练参数首选' },
+        { n:'ProCamera', d:'专业模式 + 低光，Halide 备选' },
+        { n:'Camera M', d:'胶片风预设，手机端找富士感' } ] },
+      { g:'摄影学习平台', list:[
+        { n:'Photoskop', d:'互动式曝光模拟器，免费神器，学原理零成本' },
+        { n:'摄影之友 / 蚂蚁摄影', d:'系统教程 + 社区发片求评' },
+        { n:'B站 / YouTube', d:'搜「富士 X-M5 上手」「曝光三要素」跟练' } ] }
+    ];
+    const SHOOT_FILM = [
+      { n:'PROVIA', u:'自然均衡，日常万能底' },
+      { n:'Classic Neg (NC)', u:'街头胶片感 · 扫街 ⭐' },
+      { n:'Reala Ace (RT)', u:'真实柔和 · 人像旅行 ⭐' },
+      { n:'Velvia', u:'高饱和 · 风光花草' },
+      { n:'Astia', u:'柔和 · 妹子人像' },
+      { n:'Classic Chrome', u:'低调电影感 · 纪实' },
+      { n:'Nostalgic Neg', u:'复古暖调 · 生活' },
+      { n:'ACROS', u:'高级黑白 · 建筑光影' }
+    ];
+    const SHOOT_WEEKS = [
+      { wk:'第1周 · 曝光三要素', items:[
+        { t:'Photoskop 玩 30 分钟曝光模拟', d:'拖光圈/快门/ISO 看画面变化，搞懂三角关系', tag:'原理' },
+        { t:'自动档拍 20 张并记录参数', d:'每张记下光圈/快门/ISO，建立手感', tag:'实拍' },
+        { t:'练习安全快门', d:'X-M5 无防抖，静物≥1/60s，对比糊/不糊', tag:'防抖' },
+        { t:'iPhone 装 Halide 手动拍 10 张', d:'强迫手动定参数，比原生相机学得快', tag:'手机' } ] },
+      { wk:'第2周 · 胶片模拟', items:[
+        { t:'20 种模拟各拍 1 张同场景', d:'横向对比，找到自己的口味', tag:'模拟' },
+        { t:'吃透 NC / RT / Velvia / ACROS', d:'四支主力先玩熟', tag:'模拟' },
+        { t:'存 3 个自定义档位配方', d:'如 NC+阴影青、RT+肤色柔，转盘一键切', tag:'配方' },
+        { t:'A 档 + 模拟拍人像/扫街各 10 张', d:'用光圈优先控虚化', tag:'实拍' } ] },
+      { wk:'第3周 · M 档与弱光', items:[
+        { t:'手动模式拍静物脱离自动', d:'M 档定参数，理解曝光补偿', tag:'M档' },
+        { t:'弱光 ISO 与快门取舍', d:'优先提高 ISO 而非压低快门（无防抖）', tag:'弱光' },
+        { t:'三脚架长曝光拍夜景/光轨', d:'固定机位 + 低 ISO 出纯净夜景', tag:'长曝' },
+        { t:'主体检测 AF 拍人/宠物', d:'开人眼/动物识别，省去手动追焦', tag:'对焦' } ] },
+      { wk:'第4周 · 视频与后期', items:[
+        { t:'Vlog 模式拍 1 条 1 分钟短片', d:'翻转屏 + 美肤，走起来拍', tag:'视频' },
+        { t:'电子防抖 vs 稳定器对比', d:'手持走动用电子防抖，固定关掉保画质', tag:'视频' },
+        { t:'X RAW Studio 转 10 张 RAW', d:'机内引擎套模拟配方，轻后期', tag:'后期' },
+        { t:'整理最佳进「选题灵感」', d:'好图/想法沉淀，反哺拍摄', tag:'复盘' } ] },
+      { wk:'发布节奏', items:[
+        { t:'拍完即导出', d:'当天连电脑/云盘导出，绝不「等有空」', tag:'防拖延' },
+        { t:'当日粗剪 1 条', d:'哪怕 15 秒，先出一条避免积压', tag:'日更' },
+        { t:'建立素材文件夹', d:'按日期+主题命名，如 0724_扫街', tag:'整理' },
+        { t:'每周固定发布 3 条', d:'排期 + 手机提醒，到点就发', tag:'节奏' },
+        { t:'周末 30 分钟复盘', d:'看哪条数据好，记一句原因', tag:'复盘' },
+        { t:'设「导出日」闹钟', d:'每天 21:00 导出+备份，成肌肉记忆', tag:'提醒' } ] }
+    ];
+    const SHOOT_PLAN = SHOOT_WEEKS.flatMap(w => w.items.map(it => ({ ...it, week:w.wk })));
+    // 胶片模拟周 · 每日分解（7 天可勾选任务）
+    // 全部 4 周 · 各拆成 7 天每日任务（带 wk 字段，按周分组渲染）
+    const SHOOT_DAILY = [
+      // 第1周 · 曝光三要素
+      { wk:'第1周 · 曝光三要素', t:'周一 · Photoskop 曝光模拟 30 分', d:'拖光圈/快门/ISO 看画面变化，搞懂三角关系', tag:'Day1' },
+      { wk:'第1周 · 曝光三要素', t:'周二 · 自动档拍 20 张记参数', d:'每张记下光圈/快门/ISO，建立手感', tag:'Day2' },
+      { wk:'第1周 · 曝光三要素', t:'周三 · 练习安全快门', d:'X-M5 无防抖，静物≥1/60s，对比糊/不糊', tag:'Day3' },
+      { wk:'第1周 · 曝光三要素', t:'周四 · 光圈优先 A 档拍 10 张', d:'体会大/小光圈对虚化的影响', tag:'Day4' },
+      { wk:'第1周 · 曝光三要素', t:'周五 · 快门优先 S 档拍 10 张', d:'定格动作 / 拉丝水流各试一张', tag:'Day5' },
+      { wk:'第1周 · 曝光三要素', t:'周六 · ISO 与噪点实验', d:'同场景 ISO100 vs 3200 对比观感', tag:'Day6' },
+      { wk:'第1周 · 曝光三要素', t:'周日 · 综合拍 20 张 + 挑 3 张', d:'用三要素自我点评哪张最稳', tag:'Day7' },
+      // 第2周 · 胶片模拟
+      { wk:'第2周 · 胶片模拟', t:'周一 · 认识 20 种胶片模拟', d:'翻机顶胶片模拟转盘，记住 NC / RT / Velvia / ACROS 在哪', tag:'Day1' },
+      { wk:'第2周 · 胶片模拟', t:'周二 · Classic Neg 扫街 10 张', d:'NC + 阴影青，出门扫街找街头胶片感', tag:'Day2' },
+      { wk:'第2周 · 胶片模拟', t:'周三 · Reala Ace 人像 10 张', d:'RT + 肤色柔，拍朋友或自拍', tag:'Day3' },
+      { wk:'第2周 · 胶片模拟', t:'周四 · Velvia 风光 10 张', d:'高饱和拍花草 / 天空 / 城市', tag:'Day4' },
+      { wk:'第2周 · 胶片模拟', t:'周五 · ACROS 黑白 10 张', d:'找光影 / 建筑 / 极简，练眼力', tag:'Day5' },
+      { wk:'第2周 · 胶片模拟', t:'周六 · 存 3 个自定义档位', d:'NC+青、RT+柔、CC+电影感，转盘一键切', tag:'Day6' },
+      { wk:'第2周 · 胶片模拟', t:'周日 · A 档综合拍 20 张', d:'模拟 + 光圈优先，挑 3 张最佳', tag:'Day7' },
+      // 第3周 · M 档与弱光
+      { wk:'第3周 · M 档与弱光', t:'周一 · M 档拍静物脱离自动', d:'手动定光圈/快门/ISO，理解曝光补偿', tag:'Day1' },
+      { wk:'第3周 · M 档与弱光', t:'周二 · 曝光补偿练习', d:'+1 / -1 看明暗变化与氛围', tag:'Day2' },
+      { wk:'第3周 · M 档与弱光', t:'周三 · 弱光 ISO 取舍', d:'优先提 ISO 而非压快门（无防抖）', tag:'Day3' },
+      { wk:'第3周 · M 档与弱光', t:'周四 · 三脚架长曝光夜景', d:'固定机位 + 低 ISO 出纯净夜景', tag:'Day4' },
+      { wk:'第3周 · M 档与弱光', t:'周五 · 主体检测 AF 拍人', d:'开人眼识别，省去手动追焦', tag:'Day5' },
+      { wk:'第3周 · M 档与弱光', t:'周六 · 主体检测拍宠物', d:'开动物识别，抓拍跑动瞬间', tag:'Day6' },
+      { wk:'第3周 · M 档与弱光', t:'周日 · M 档综合 20 张 + 挑 3 张', d:'自检曝光是否精准', tag:'Day7' },
+      // 第4周 · 视频与后期
+      { wk:'第4周 · 视频与后期', t:'周一 · Vlog 模式拍 30 秒', d:'翻转屏 + 美肤，走起来拍', tag:'Day1' },
+      { wk:'第4周 · 视频与后期', t:'周二 · 电子防抖 vs 稳定器', d:'手持走动用电子防抖，固定关掉保画质', tag:'Day2' },
+      { wk:'第4周 · 视频与后期', t:'周三 · 6.2K/4K 参数熟悉', d:'帧率 / 码率 / 采样设置走一遍', tag:'Day3' },
+      { wk:'第4周 · 视频与后期', t:'周四 · 运镜练习', d:'推 / 拉 / 平移各拍一条', tag:'Day4' },
+      { wk:'第4周 · 视频与后期', t:'周五 · X RAW Studio 转 5 张', d:'机内引擎套模拟配方，轻后期', tag:'Day5' },
+      { wk:'第4周 · 视频与后期', t:'周六 · 剪辑 1 条成片', d:'粗剪 + 配乐，先出一条', tag:'Day6' },
+      { wk:'第4周 · 视频与后期', t:'周日 · 整理最佳进「选题灵感」', d:'好图/想法沉淀，并发布一条', tag:'Day7' }
     ];
 
     const PIANO_VIDEO = [
@@ -22867,7 +22955,8 @@ function applyPmodTheme(t){
           { id:'r1', title:'语言学习 30 分钟', tag:'每日必做', done:false },
           { id:'r2', title:'钢琴练习 1 小时', tag:'每日必做', done:false },
           { id:'r3', title:'运动（网球/游泳/芭杆）', tag:'每日必做', done:false },
-          { id:'r4', title:'阅读 20 分钟', tag:'每日必做', done:false }
+          { id:'r4', title:'阅读 20 分钟', tag:'每日必做', done:false },
+          { id:'r5', title:'拍照练习 10 张', tag:'每日必做', done:false, goto:'shoot' }
         ], tasks:[
           { id:'t1', title:'内容拍摄/剪辑', tag:'创作任务', done:false },
           { id:'t2', title:'选题与复盘', tag:'创作任务', done:false }
@@ -22877,6 +22966,7 @@ function applyPmodTheme(t){
         health: { profile:{}, records:{} },   // records[date]={sleep,mood,exercise,weight,note}
         topicSaved: [], bookNotes: [], bookSaved: [], bookApi: null,
         shoot: SHOOT_PLAN.map((s,i)=>({ id:'s'+i, ...s, done:false })),
+        shootDaily: SHOOT_DAILY.map((s,i)=>({ id:'d'+i, ...s, done:false })),
         gameHistory: {},
         pianoUnlocked: 1, pianoMastered: [], pianoLog: {}, studyLog: {}, studyQuiz: {}, flashDone: {},
         memos: [],
@@ -23136,12 +23226,15 @@ function applyPmodTheme(t){
       const pianoToday = !!(state.pianoLog && state.pianoLog[today()]);
       const studyToday = !!(state.studyLog && state.studyLog[today()]);
       const sleepRec = (state.health && state.health.records && state.health.records[today()]) || {};
+      const shootDone = Array.isArray(state.shoot) ? state.shoot.filter(s=>s.done).length : 0;
+      const shootTotal = Array.isArray(state.shoot) ? state.shoot.length : 0;
       const dashItems = [
         { ic:'📝', num:`${done}/${r.length}`, lbl:'今日计划', v:'daily', ok: r.length>0 && done>=r.length },
         { ic:'💡', num: topicN, lbl:'选题灵感', v:'topic' },
         { ic:'🎹', num: pianoToday?'已练 ✓':`${mastered}/18`, lbl:'钢琴练习', v:'piano', ok: pianoToday },
         { ic:'📖', num: bookStreakN ? ('🔥' + bookStreakN) : (bookReadingN || '0'), lbl:'连续阅读', v:'book', ok: bookTodayDone },
         { ic:'📚', num: studyToday?'已学 ✓':`连续${learnActive}`, lbl:'学习成长', v:'study', ok: studyToday },
+        { ic:'📷', num: shootTotal?`${shootDone}/${shootTotal}`:'0', lbl:'拍摄计划', v:'shoot', ok: shootTotal>0 && shootDone>=shootTotal },
         { ic:'💰', num: fmtMoney(billExp), lbl:'本月记账', v:'bill' },
         { ic:'😴', num: sleepRec.sleep?`${sleepRec.sleep}h`:'未记', lbl:'昨晚睡眠', v:'health' }
       ];
@@ -23167,6 +23260,7 @@ function applyPmodTheme(t){
         kor ? { ic:'🇰🇷', tag:'韩语', t: kor.title || '今日会话', go:'study' } : null,
         can ? { ic:'🇭🇰', tag:'粤语', t: can.title || '今日会话', go:'study' } : null,
         { ic:'🎹', tag:'钢琴', t:'钢琴练习模块 · 跟弹 + 18 曲库 + 双手模式', go:'piano' },
+        { ic:'📷', tag:'拍摄', t:'拍摄计划 · '+(SHOOT_WEEKS[0]?SHOOT_WEEKS[0].wk:'曝光三要素'), go:'shoot' },
         topicSaved[0] ? { ic:'💡', tag:'选题', t: topicSaved[0], go:'topic' } : null
       ].filter(Boolean);
       const learnPreviewHtml = learnPreview.length ? `
@@ -23255,9 +23349,14 @@ function applyPmodTheme(t){
           </div>
         </div>`;
     }
-    function taskItem(i,g){ return `<div class="item ${i.done?'done':''}">
+    function taskItem(i,g){
+      const goV = i.goto || (g==='routine' && i.id==='r5' ? 'shoot' : null);
+      const titleHtml = goV
+        ? `<div class="item-title" data-action="go" data-v="${goV}" style="cursor:pointer">${i.title} <span style="font-size:11px;color:var(--primary);font-weight:400">↗ 去拍摄</span></div>`
+        : `<div class="item-title">${i.title}</div>`;
+      return `<div class="item ${i.done?'done':''}">
       <div class="check" data-action="toggle-task" data-g="${g}" data-id="${i.id}">${i.done?'✓':''}</div>
-      <div class="item-body"><div class="item-title">${i.title}</div>
+      <div class="item-body">${titleHtml}
         <div class="item-desc"><span class="tag ${g==='routine'?'primary':'accent'}">${i.tag}</span></div></div>
       <button class="icon-btn inline" data-action="del-task" data-g="${g}" data-id="${i.id}">✕</button></div>`; }
     function completion(){ const all=[...state.daily.routine,...state.daily.tasks]; return all.length?Math.round(all.filter(i=>i.done).length/all.length*100):0; }
@@ -25079,17 +25178,78 @@ function applyPmodTheme(t){
 
     // ===================== 拍摄计划 =====================
     function renderShoot() {
-      // 防御性初始化
-      if (!Array.isArray(state.shoot)) { state.shoot = SHOOT_PLAN.map((s,i)=>({ id:'s'+i, ...s, done:false })); save(); }
+      // 防御性初始化（结构变更时重新播种，兼容旧数据）
+      if (!Array.isArray(state.shoot) || !(state.shoot[0] && 'week' in state.shoot[0])) {
+        state.shoot = SHOOT_PLAN.map((s,i)=>({ id:'s'+i, ...s, done:false })); save();
+      }
+      if (!Array.isArray(state.shootDaily) || state.shootDaily.length !== SHOOT_DAILY.length) {
+        state.shootDaily = SHOOT_DAILY.map((s,i)=>({ id:'d'+i, ...s, done:false })); save();
+      }
+      const total = state.shoot.length;
+      const done = state.shoot.filter(s=>s.done).length;
+      const dTotal = state.shootDaily.length;
+      const dDone = state.shootDaily.filter(s=>s.done).length;
+      const weeks = SHOOT_WEEKS.map(w => ({ wk:w.wk, items: state.shoot.filter(s => s.week === w.wk) }));
       $('main').innerHTML = `
         <div class="card">
-          <div class="card-title">📷 改善「拍完不导出/不发布」</div>
-          <div class="card-sub">把动作拆小、设提醒，让「导出—剪辑—发布」变成每天自动发生的事。</div>
-          ${state.shoot.map(s=>`<div class="item ${s.done?'done':''}">
-            <div class="check" data-action="shoot-done" data-id="${s.id}">${s.done?'✓':''}</div>
+          <div class="card-title">📷 拍摄计划 · iPhone 15 Pro + 富士 X-M5</div>
+          <div class="card-sub">目标：把参数调明白、把富士玩熟。进度 <b>${done}/${total}</b>。每天 5–15 分钟，和工作台「今日计划」一起打卡。</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+            <span style="font-size:12.5px;padding:3px 10px;border-radius:20px;background:rgba(58,134,255,.15);color:#8ab4ff;border:1px solid rgba(58,134,255,.4)">📱 iPhone 15 Pro：随手 / 直出 / 练参数</span>
+            <span style="font-size:12.5px;padding:3px 10px;border-radius:20px;background:rgba(230,67,58,.15);color:#ff8a82;border:1px solid rgba(230,67,58,.4)">📷 富士 X-M5：虚化 / 胶片 / Vlog（无机身防抖）</span>
+          </div>
+        </div>
+
+        <div class="section-title">设备分工</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          ${SHOOT_DEVICES.map(d=>`
+            <div class="card" style="margin:0">
+              <div class="card-title" style="margin:0 0 4px">${d.emoji} ${d.name}</div>
+              <div class="card-sub" style="margin-bottom:6px">${d.role}</div>
+              <ul style="margin:0;padding-left:18px;font-size:12.5px;color:var(--sub)">${d.points.map(p=>`<li>${p}</li>`).join('')}</ul>
+            </div>`).join('')}
+        </div>
+
+        <div class="section-title">App 推荐（分三类）</div>
+        ${SHOOT_APPS.map(g=>`
+          <div class="card" style="margin:10px 0">
+            <div class="card-title" style="margin:0 0 8px">${g.g}</div>
+            ${g.list.map(a=>`<div style="padding:7px 0;border-bottom:1px solid var(--line)">
+              <div style="font-weight:600;font-size:13.5px">${a.n}</div>
+              <div class="card-sub" style="margin-top:1px">${a.d}</div></div>`).join('')}
+          </div>`).join('')}
+
+        <div class="section-title">胶片模拟配方库（X-M5 杀手锏 · 20 种）</div>
+        <div class="card" style="margin:10px 0">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px">
+            ${SHOOT_FILM.map(f=>`<div style="font-size:12.5px"><b style="color:#e6433a">${f.n}</b> · <span class="sub">${f.u}</span></div>`).join('')}
+          </div>
+          <div class="card-sub" style="margin-top:8px">机顶胶片模拟转盘 + 3 个可自定义档位，把常用配方存进去一键切换。</div>
+        </div>
+
+        ${weeks.map(w=>`
+          <div class="section-title">${w.wk}</div>
+          <div class="card" style="margin:10px 0">
+            ${w.items.map(s=>`<div class="item ${s.done?'done':''}">
+              <div class="check" data-action="shoot-done" data-id="${s.id}">${s.done?'✓':''}</div>
+              <div class="item-body"><div class="item-title">${s.t}</div><div class="item-desc">${s.d}</div>
+                <span class="tag accent">${s.tag}</span></div>            </div>`).join('')}
+          </div>`).join('')}
+
+        ${['第1周 · 曝光三要素','第2周 · 胶片模拟','第3周 · M 档与弱光','第4周 · 视频与后期'].map(wk=>{
+          const dw = state.shootDaily.filter(s=>s.wk===wk);
+          const dwDone = dw.filter(s=>s.done).length;
+          return `
+        <div class="section-title">🗓 ${wk} · 每日分解（7 天）</div>
+        <div class="card" style="margin:10px 0">
+          <div class="card-sub" style="margin-bottom:8px">把本周拆成每天一个小任务，进度 <b>${dwDone}/${dw.length}</b>。</div>
+          ${dw.map(s=>`<div class="item ${s.done?'done':''}">
+            <div class="check" data-action="shoot-daily-done" data-id="${s.id}">${s.done?'✓':''}</div>
             <div class="item-body"><div class="item-title">${s.t}</div><div class="item-desc">${s.d}</div>
               <span class="tag accent">${s.tag}</span></div></div>`).join('')}
         </div>`;
+        }).join('')}
+      `;
     }
 
     // ===================== 益智游戏 =====================
@@ -25689,6 +25849,7 @@ function applyPmodTheme(t){
         }
         case 'del-note': state.bookNotes=state.bookNotes.filter(n=>n.id!==t.dataset.id); save(); renderBook(); break;
         case 'shoot-done': { const id=t.dataset.id; const it=state.shoot.find(s=>s.id===id); if(it){it.done=!it.done;save();renderShoot();} break; }
+        case 'shoot-daily-done': { const id=t.dataset.id; const it=state.shootDaily.find(s=>s.id===id); if(it){it.done=!it.done;save();renderShoot();} break; }
         case 'gtype': gameType=t.dataset.t; renderGameArea(); break;
         case 'gdiff': state.gameDiff=t.dataset.d; save(); renderGame(); break;
         case 'master': { const id=+t.dataset.id; if(!state.pianoMastered.includes(id))state.pianoMastered.push(id); if(state.pianoUnlocked===id&&state.pianoUnlocked<5)state.pianoUnlocked++; save(); renderPiano(); break; }
