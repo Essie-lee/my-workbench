@@ -21929,10 +21929,18 @@
     function closeDrawer() { $('drawer').classList.remove('open'); $('overlay').classList.remove('show'); }
 
     // ===================== 首页 =====================
+    // 读取优化版钢琴模块（iframe 内）的本地进度，用于在首页统一展示
+    function pianoModuleStat(){
+      try {
+        const s = JSON.parse(localStorage.getItem('myWorkbenchPianoV2'));
+        if (s && Array.isArray(s.pianoMastered)) return { mastered: s.pianoMastered.length, total: 18 };
+      } catch(e){}
+      return { mastered: 0, total: 18 };
+    }
     function renderHome() {
       const r = [...state.daily.routine, ...state.daily.tasks];
       const done = r.filter(i=>i.done).length;
-      const mastered = state.pianoMastered.length;
+      const pianoStat = pianoModuleStat(); const mastered = pianoStat.mastered;
       const todayBook = BOOKS.find(b => b.m === '2026-' + String(new Date().getMonth()+1).padStart(2,'0')) || BOOKS[0];
       const quote = (todayBook.q[new Date().getDate() % todayBook.q.length]);
       // 首次访问轻量引导（v14 新增，基于 localStorage，不影响数据模型）
@@ -21984,7 +21992,7 @@
       const dashItems = [
         { ic:'📝', num:`${done}/${r.length}`, lbl:'今日计划', v:'daily', ok: r.length>0 && done>=r.length },
         { ic:'💡', num: topicN, lbl:'选题灵感', v:'topic' },
-        { ic:'🎹', num: pianoToday?'已练 ✓':`${mastered}/${totalPiano}`, lbl:'钢琴练习', v:'piano', ok: pianoToday },
+        { ic:'🎹', num: pianoToday?'已练 ✓':`${mastered}/18`, lbl:'钢琴练习', v:'piano', ok: pianoToday },
         { ic:'📖', num: bookN, lbl:'读书笔记', v:'book' },
         { ic:'📚', num: studyToday?'已学 ✓':`连续${learnActive}`, lbl:'学习成长', v:'study', ok: studyToday },
         { ic:'💰', num: fmtMoney(billExp), lbl:'本月记账', v:'bill' },
@@ -22011,7 +22019,7 @@
         eng ? { ic:'🇬🇧', tag:'英语', t: eng.title, go:'study' } : null,
         kor ? { ic:'🇰🇷', tag:'韩语', t: kor.title || '今日会话', go:'study' } : null,
         can ? { ic:'🇭🇰', tag:'粤语', t: can.title || '今日会话', go:'study' } : null,
-        pianoNext ? { ic:'🎹', tag:'钢琴', t: pianoNext.title, go:'piano' } : null,
+        { ic:'🎹', tag:'钢琴', t:'钢琴练习模块 · 跟弹 + 18 曲库 + 双手模式', go:'piano' },
         topicSaved[0] ? { ic:'💡', tag:'选题', t: topicSaved[0], go:'topic' } : null
       ].filter(Boolean);
       const learnPreviewHtml = learnPreview.length ? `
@@ -22033,7 +22041,7 @@
         <div class="section-title">今日进度</div>
         <div class="stat-grid">
           <div class="stat-card"><div class="num">${done}/${r.length}</div><div class="lbl">今日计划完成</div></div>
-          <div class="stat-card"><div class="num">${mastered}/5</div><div class="lbl">钢琴阶段掌握</div></div>
+          <div class="stat-card"><div class="num">${mastered}/18</div><div class="lbl">钢琴曲已掌握</div></div>
         </div>
         <div class="section-title">今日阅读</div>
         <div class="card">
@@ -23811,6 +23819,8 @@
       </div>`).join('');
       const pstreak = (()=>{ let s=0; for(let i=0;i<365;i++){ const d=new Date(); d.setDate(d.getDate()-i); if(state.pianoLog[dateStr(d)]) s++; else if(i>0) break; } return s; })();
             const pToday = !!(state.pianoLog && state.pianoLog[today()]);
+      const pRoot = document.getElementById('htmlRoot') || document.documentElement;
+      const ptheme = pRoot.getAttribute('data-theme')==='dark' ? 'dark' : 'light';
       $('main').innerHTML = `
         <div class="card">
           <div class="card-title">🎹 钢琴练习 · 优化版</div>
@@ -23820,12 +23830,19 @@
             <span class="tag ${pToday?'primary':'gray'}" style="align-self:center">${pToday?'今日已打卡':'今日未打卡'}</span>
           </div>
         </div>
-        <iframe id="pianoFrame" src="piano.html" style="width:100%;border:0;display:block;min-height:1200px" loading="lazy"></iframe>
+        <iframe id="pianoFrame" src="piano.html?theme=${ptheme}" style="width:100%;border:0;display:block;min-height:1200px" loading="lazy"></iframe>
       `;
       const f = document.getElementById('pianoFrame');
       if (f) f.addEventListener('load', () => setTimeout(() => {
         try { f.contentWindow.postMessage({ __pianoAskHeight: true }, '*'); } catch (e) {}
       }, 200));
+      // 主题同步：工作台切换深/浅色时，通知 iframe 内模块一并切换，保持视觉一致
+      if (window.__pianoThemeObs) try { window.__pianoThemeObs.disconnect(); } catch(e){}
+      window.__pianoThemeObs = new MutationObserver(() => {
+        const t = pRoot.getAttribute('data-theme')==='dark' ? 'dark' : 'light';
+        if (f && f.contentWindow) { try { f.contentWindow.postMessage({ __pianoTheme: t }, '*'); } catch(e){} }
+      });
+      window.__pianoThemeObs.observe(pRoot, { attributes: true, attributeFilter: ['data-theme'] });
 
     }
 

@@ -11,6 +11,19 @@
     --green:#46c98b; --red:#ff6b6b; --gold:#ffce5c; --radius:16px;
     --shadow:0 8px 30px rgba(0,0,0,.35);
   }
+  /* 浅色主题：与工作台（Fluent/Mica 浅色）保持一致 */
+  :root.pmod-light{
+    --bg:#f3f2f1; --panel:#ffffff; --panel-2:#faf9f8; --line:#e1dfdd;
+    --ink:#201f1e; --muted:#8a8886; --primary:#2b88d8; --primary-2:#5b8def;
+    --green:#1f9e6b; --red:#d13438; --gold:#b8860b; --shadow:0 8px 30px rgba(0,0,0,.08);
+  }
+  :root.pmod-light body{background:radial-gradient(1200px 600px at 70% -10%, #e9eff7 0%, var(--bg) 55%) fixed;color:var(--ink)}
+  :root.pmod-light .piano-shell{background:linear-gradient(180deg,#fbfbfc,#eef0f3);border-color:#d8dadf}
+  :root.pmod-light .chip.on{background:rgba(43,136,216,.12);border-color:var(--primary);color:var(--primary)}
+  :root.pmod-light .btn.ghost.on{background:rgba(43,136,216,.14);border-color:var(--primary);color:var(--primary)}
+  :root.pmod-light .stage .std{color:#5a5a5a}
+  :root.pmod-light .ex .e{color:#444}
+  :root.pmod-light .toast{background:#fff;color:#201f1e;border-color:#e1dfdd;box-shadow:0 8px 30px rgba(0,0,0,.14)}
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
@@ -71,6 +84,10 @@
 
   /* 跟弹 */
   .song-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .song-tools{display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap}
+  .song-select{flex:1;min-width:150px;max-width:340px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font-size:13px;font-family:inherit}
+  .song-hint{font-size:12px;color:var(--muted);margin-top:6px}
+  .btn.mini{padding:6px 10px;font-size:12px}
   .chip{padding:8px 12px;border-radius:11px;border:1px solid var(--line);background:var(--panel-2);
     color:var(--ink);font-size:13px;cursor:pointer;transition:.15s}
   .chip.on{border-color:var(--primary);background:rgba(124,92,255,.18);color:#fff}
@@ -175,7 +192,12 @@
   <div class="card">
     <div class="card-title">🎯 跟弹练习</div>
     <div class="card-sub">选一首，先听「示范」，再点「开始跟弹」照着弹。弹对自动前进，弹完给评测。</div>
-    <div class="song-row" id="songRow"></div>
+    <div class="song-tools">
+      <select id="songSelect" class="song-select" aria-label="选择曲目"></select>
+      <button class="btn ghost mini" id="songToggle">🎵 全部曲目 (18)</button>
+    </div>
+    <div class="song-row" id="songRow" style="display:none"></div>
+    <div class="song-hint" id="songHint"></div>
     <div class="toolbar">
       <button class="btn ghost" id="demoBtn">▶ 示范</button>
       <button class="btn green" id="followBtn">🎯 开始跟弹</button>
@@ -493,10 +515,24 @@ function renderSongRow(){
   const row=document.getElementById('songRow'); row.innerHTML='';
   SONGS.forEach(s=>{
     const b=document.createElement('button'); b.className='chip'+(s.id===curSong.id?' on':'');
-    b.innerHTML=`${s.name}<small>${s.composer} · ${s.melody.length}音 · Lv${s.level}</small>`;
-    b.onclick=()=>{ curSong=s; renderSongRow(); renderNotestrip(); resetFollow(); };
+    b.innerHTML=`${s.name}<small>Lv${s.level}</small>`;
+    b.onclick=()=>selectSong(s);
     row.appendChild(b);
   });
+  // 下拉菜单：可任选任意曲目
+  const sel=document.getElementById('songSelect');
+  if(sel && sel.options.length===0){
+    SONGS.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=`${s.name} · Lv${s.level}`; sel.appendChild(o); });
+    sel.onchange=()=>{ const s=SONGS.find(x=>x.id===sel.value); if(s) selectSong(s); };
+  }
+  if(sel) sel.value=curSong.id;
+  const hint=document.getElementById('songHint');
+  if(hint) hint.textContent=`${curSong.composer} · ${curSong.bpm} BPM · ${curSong.melody.length} 音`;
+}
+function selectSong(s){
+  curSong=s;
+  const sel=document.getElementById('songSelect'); if(sel) sel.value=s.id;
+  renderSongRow(); renderNotestrip(); resetFollow();
 }
 function renderNotestrip(){
   const strip=document.getElementById('notestrip'); strip.innerHTML='';
@@ -1010,6 +1046,12 @@ document.getElementById('showMapBtn').addEventListener('click',()=>{
 document.getElementById('demoBtn').onclick=playDemo;
 document.getElementById('followBtn').onclick=()=>{ if(follow) resetFollow(); else startFollow(); };
 document.getElementById('resetFollowBtn').onclick=resetFollow;
+document.getElementById('songToggle').onclick=()=>{
+  const row=document.getElementById('songRow'); const b=document.getElementById('songToggle');
+  const hidden=row.style.display==='none'||!row.style.display;
+  row.style.display=hidden?'':'none';
+  b.textContent=hidden?'🎵 收起曲目':'🎵 全部曲目 (18)';
+};
 let dualMode=false;
 document.getElementById('dualBtn').onclick=()=>{
   dualMode=!dualMode;
@@ -1053,6 +1095,22 @@ if(window.parent !== window){
     if(e.data && e.data.__pianoAskHeight) postPianoHeight();
   });
 }
+
+/* ===================== 主题同步（与父页面工作台保持一致） ===================== */
+function applyPmodTheme(t){
+  const light = (t !== 'dark');
+  document.documentElement.classList.toggle('pmod-light', light);
+}
+(function(){
+  try {
+    const params = new URLSearchParams(location.search);
+    const t = params.get('theme');
+    if (t) applyPmodTheme(t);
+  } catch(e){}
+  window.addEventListener('message', e => {
+    if (e.data && e.data.__pianoTheme) applyPmodTheme(e.data.__pianoTheme);
+  });
+})();
 </script>
 </body>
 </html>
