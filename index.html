@@ -24535,7 +24535,7 @@ function applyPmodTheme(t){
           }
           const isToday = (k === todayKey);
           const txtColor = lvl >= 2 ? '#fff' : 'rgba(0,0,0,.55)';
-          const base = `aspect-ratio:1;border-radius:3px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:${txtColor};overflow:hidden`;
+          const base = `width:18px;height:18px;border-radius:3px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:${txtColor};overflow:hidden`;
           const cellStyle = isToday
             ? `${base};background:${lvColor[lvl]};border:1px solid rgba(0,120,212,.65);box-shadow:0 0 0 2px var(--primary)`
             : `${base};background:${lvColor[lvl]};border:1px solid rgba(0,0,0,.08)`;
@@ -24550,9 +24550,9 @@ function applyPmodTheme(t){
       }
       // body rows with weekday labels on the left
       const rowsHtml = grid.map((cells, ri) =>
-        `<div style="display:flex;align-items:center;gap:4px"><span style="width:16px;font-size:10px;color:var(--muted);text-align:right;flex-shrink:0;line-height:1">${wdLabel[ri]}</span><div style="display:grid;grid-template-columns:repeat(${WEEKS},1fr);gap:4px;flex:1">${cells.join('')}</div></div>`
+        `<div style="display:flex;align-items:center;gap:4px"><span style="width:16px;font-size:10px;color:var(--muted);text-align:right;flex-shrink:0;line-height:1">${wdLabel[ri]}</span><div style="display:grid;grid-template-columns:repeat(${WEEKS},18px);gap:4px">${cells.join('')}</div></div>`
       ).join('');
-      return `<div>${mlCells?`<div style="display:grid;grid-template-columns:repeat(${WEEKS},1fr);gap:3px;margin-bottom:4px;margin-left:20px">${mlCells}</div>`:''}<div>${rowsHtml}</div><div style="font-size:11px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px"><span style="width:13px;height:13px;border-radius:2px;background:var(--line-2);box-shadow:0 0 0 2px var(--primary);display:inline-block"></span> 蓝框 = 今天（${todayKey}）</div></div>`;
+      return `<div>${mlCells?`<div style="display:grid;grid-template-columns:repeat(${WEEKS},18px);gap:4px;margin-bottom:4px;margin-left:20px">${mlCells}</div>`:''}<div>${rowsHtml}</div><div style="font-size:11px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px"><span style="width:13px;height:13px;border-radius:2px;background:var(--line-2);box-shadow:0 0 0 2px var(--primary);display:inline-block"></span> 蓝框 = 今天（${todayKey}）</div></div>`;
     }
     function bookGoalRing() {
       const total = state.books.goal.yearTarget || 24;
@@ -24899,7 +24899,7 @@ function applyPmodTheme(t){
         <div class="card">
           <div class="card-title">🔥 阅读热力图</div>
           <div class="card-sub">颜色越深，当天读得越久。坚持看得见。</div>
-          <div style="max-width:260px;margin:0 auto">
+          <div style="width:fit-content;margin:0 auto">
           <div style="margin-top:10px;padding-bottom:4px">${bookHeatmap()}</div>
           <div style="display:flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;color:var(--muted);padding-left:22px">
             <span>少</span><span style="width:13px;height:13px;border-radius:2px;background:var(--line-2);display:inline-block;vertical-align:middle"></span>
