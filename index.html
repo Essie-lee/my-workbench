@@ -23810,31 +23810,33 @@
         <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.k.slice(5)}</div>
       </div>`).join('');
       const pstreak = (()=>{ let s=0; for(let i=0;i<365;i++){ const d=new Date(); d.setDate(d.getDate()-i); if(state.pianoLog[dateStr(d)]) s++; else if(i>0) break; } return s; })();
+            const pToday = !!(state.pianoLog && state.pianoLog[today()]);
       $('main').innerHTML = `
         <div class="card">
-          <div class="card-title">🎹 钢琴练习 · 进阶路线</div>
-          <div class="card-sub">从认识琴键到即兴伴奏，5 阶段循序渐进；练到「过关标准」点「标记掌握」解锁下一阶段。</div>
-          <div class="progress-wrap"><div class="progress"><span style="width:${state.pianoMastered.length/5*100}%"></span></div>${Math.round(state.pianoMastered.length/5*100)}%</div>
-        </div>
-        <div class="card" style="border:1px solid var(--primary);background:var(--primary-soft)">
-          <div class="card-title" style="color:var(--primary-dark)">⚡ 即学即弹（参考 Flowkey / Simply Piano）</div>
-          <div class="card-sub">成人零基础也能几小时弹出第一首——关键是<b>先弹起来，再抠细节</b>：选一首你真的想弹的，慢速跟手型，每天 15 分钟胜过周末猛练 2 小时。</div>
+          <div class="card-title">🎹 钢琴练习 · 优化版</div>
+          <div class="card-sub">可弹奏键盘 + 跟弹练习 + 乐理课堂 + 识谱 + 18 首曲库 + 双手模式。进度独立保存在本浏览器。</div>
           <div style="display:flex;gap:8px;margin-top:8px">
             <button class="btn sm" data-action="piano-checkin" style="flex:1;justify-content:center">✅ 今天练过了</button>
-            <span class="tag primary" style="align-self:center">🔥 连续 ${pstreak} 天</span>
+            <span class="tag ${pToday?'primary':'gray'}" style="align-self:center">${pToday?'今日已打卡':'今日未打卡'}</span>
           </div>
         </div>
-        <div class="card">
-          <div class="card-title">📅 近 7 天练习打卡</div>
-          <div style="display:flex;gap:6px;margin-top:10px">${pcalHtml}</div>
-        </div>
-        <div class="section-title">当前阶段</div>
-        ${cur?stageCard(cur,false):'<div class="card"><div class="empty">🎉 全部阶段已掌握</div></div>'}
-        <div class="section-title">全部阶段</div>
-        ${PIANO_STAGES.map(s=>stageCard(s, s.id>state.pianoUnlocked)).join('')}
-        <div class="section-title">教学视频</div>
-        <div class="card">${PIANO_VIDEO.map(v=>`<div class="video-card"><div class="play">▶</div><div><div style="font-weight:600;font-size:14px">${v.t}</div><a href="${v.url}" data-action="open-link" data-url="${v.url}" target="_blank" rel="noopener">${v.url}</a></div></div>`).join('')}</div>`;
+        <iframe id="pianoFrame" src="piano.html" style="width:100%;border:0;display:block;min-height:1200px" loading="lazy"></iframe>
+      `;
+      const f = document.getElementById('pianoFrame');
+      if (f) f.addEventListener('load', () => setTimeout(() => {
+        try { f.contentWindow.postMessage({ __pianoAskHeight: true }, '*'); } catch (e) {}
+      }, 200));
+
     }
+
+    // 钢琴 iframe 高度自适应（接收 piano.html 的 postMessage 上报）
+    window.addEventListener('message', e => {
+      if (e.data && e.data.__pianoHeight) {
+        const f = document.getElementById('pianoFrame');
+        if (f) f.style.height = (e.data.__pianoHeight + 24) + 'px';
+      }
+    });
+
     function stageCard(s, locked){
       const mastered = state.pianoMastered.includes(s.id);
       const isCur = s.id===state.pianoUnlocked && !mastered;
