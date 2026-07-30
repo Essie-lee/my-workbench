@@ -6,16 +6,19 @@
 <title>🎹 钢琴练习 · 优化版工作台</title>
 <style>
   :root{
-    --bg:#0f1115; --panel:#181b22; --panel-2:#1f232c; --line:#2a2f3a;
-    --ink:#eef1f6; --muted:#9aa3b2; --primary:#7c5cff; --primary-2:#5b8def;
-    --green:#46c98b; --red:#ff6b6b; --gold:#ffce5c; --radius:16px;
-    --shadow:0 8px 30px rgba(0,0,0,.35);
+    --bg:#1f1f1f; --panel:rgba(45,45,45,.62); --panel-2:#2a2a2a; --line:#3a3a3a;
+    --ink:#f0f0f0; --muted:#9b948b; --primary:#0078d4; --primary-2:#106ebe;
+    --primary-hover:#106ebe; --primary-pressed:#005a9e; --primary-soft:rgba(0,120,212,.18);
+    --green:#107c10; --red:#d83b01; --gold:#f0c040; --radius:8px; --radius-sm:6px;
+    --shadow:0 2px 4px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.18);
   }
   /* 浅色主题：与工作台（Fluent/Mica 浅色）保持一致 */
   :root.pmod-light{
-    --bg:#f3f2f1; --panel:#ffffff; --panel-2:#faf9f8; --line:#e1dfdd;
-    --ink:#201f1e; --muted:#8a8886; --primary:#2b88d8; --primary-2:#5b8def;
-    --green:#1f9e6b; --red:#d13438; --gold:#b8860b; --shadow:0 8px 30px rgba(0,0,0,.08);
+    --bg:#f3f2f1; --panel:rgba(255,255,255,.72); --panel-2:#faf9f8; --line:#e1dfdd;
+    --ink:#201f1e; --muted:#8a8886; --primary:#0078d4; --primary-2:#106ebe;
+    --primary-hover:#106ebe; --primary-pressed:#005a9e; --primary-soft:#deecf9;
+    --green:#107c10; --red:#d83b01; --gold:#b8860b; --radius:8px; --radius-sm:6px;
+    --shadow:0 2px 4px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
   }
   :root.pmod-light body{background:radial-gradient(1200px 600px at 70% -10%, #e9eff7 0%, var(--bg) 55%) fixed;color:var(--ink)}
   :root.pmod-light .piano-shell{background:linear-gradient(180deg,#fbfbfc,#eef0f3);border-color:#d8dadf}
@@ -27,7 +30,7 @@
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
-    background:radial-gradient(1200px 600px at 70% -10%, #1b2030 0%, var(--bg) 55%) fixed;
+    background:radial-gradient(1200px 600px at 70% -10%, #2a2a2a 0%, var(--bg) 55%) fixed;
     color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
     line-height:1.55; -webkit-font-smoothing:antialiased; padding:18px 14px 60px;
   }
@@ -37,47 +40,53 @@
   header.top .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
   .badge{font-size:11px;color:var(--muted);border:1px solid var(--line);padding:4px 9px;border-radius:999px;white-space:nowrap}
 
-  .card{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);
-    border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
-  .card-title{font-weight:800;font-size:15.5px;display:flex;align-items:center;gap:8px}
-  .card-sub{color:var(--muted);font-size:13px;margin-top:6px}
-  .section-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.12em;margin:18px 4px 8px}
+  .card{background:var(--panel);border:1px solid var(--line);
+    border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px;
+    -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%)}
+  .card-title{font-weight:600;font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:8px;color:var(--ink)}
+  .card-sub{color:var(--muted);font-size:13px;margin-top:6px;line-height:1.5}
+  .section-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.08em;margin:20px 6px 10px;display:flex;align-items:center;gap:8px}
+  .section-title::before{content:'';width:3px;height:12px;background:var(--primary);border-radius:2px}
 
   /* 控制条 */
   .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
   .seg{display:inline-flex;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
   .seg button{background:transparent;border:0;color:var(--muted);padding:7px 12px;font-size:13px;cursor:pointer}
-  .seg button.on{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff}
-  .btn{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border:0;
-    padding:9px 14px;border-radius:11px;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
-  .btn:hover{filter:brightness(1.08)}
-  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
-  .btn.ghost.on{background:rgba(124,92,255,.18);border-color:var(--primary);color:#fff}
-  .btn.green{background:linear-gradient(135deg,#2faf78,var(--green))}
+  .seg button.on{background:var(--primary);color:#fff}
+  .btn{background:var(--primary);color:#fff;border:1px solid transparent;border-radius:var(--radius-sm);
+    padding:10px 16px;font-size:13.5px;font-weight:600;cursor:pointer;transition:.1s;
+    display:inline-flex;align-items:center;gap:6px;font-family:inherit}
+  .btn:hover{background:var(--primary-hover)}
+  .btn:active{transform:scale(.98);background:var(--primary-pressed)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:var(--radius-sm);padding:9px 14px;font-size:13.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.1s}
+  .btn.ghost:hover{background:rgba(127,127,127,.12)}
+  .btn.ghost.on{background:var(--primary-soft);border-color:var(--primary);color:var(--primary)}
+  .btn.green{background:var(--green)}
+  .btn.green:hover{filter:brightness(1.06)}
   .btn:disabled{opacity:.45;cursor:not-allowed}
   .slider{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
   input[type=range]{accent-color:var(--primary)}
 
   /* 钢琴 */
-  .piano-shell{position:relative;margin-top:14px;padding:14px 12px 12px;border-radius:14px;
-    background:linear-gradient(180deg,#23262f,#15171d);border:1px solid var(--line);overflow:hidden}
+  .piano-shell{position:relative;margin-top:14px;padding:14px 12px 12px;border-radius:var(--radius);
+    background:linear-gradient(180deg,#23262f,#15171d);border:1px solid var(--line);overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
   .piano-shell::after{content:"";position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(180deg,rgba(255,255,255,.05),transparent 30%)}
-  .piano{position:relative;display:flex;height:190px;user-select:none;touch-action:none}
+  .piano{position:relative;display:flex;height:190px;user-select:none;touch-action:none;min-width:max(100%,520px)}
   .wkey{flex:1;background:linear-gradient(180deg,#fdfdfd,#e9ecf2);border:1px solid #c9ced8;
     border-radius:0 0 7px 7px;margin:0 1px;position:relative;display:flex;flex-direction:column;
     justify-content:flex-end;align-items:center;padding-bottom:8px;cursor:pointer;z-index:1;transition:background .05s}
-  .wkey.active{background:linear-gradient(180deg,#d9cfff,#b9a6ff)}
+  .wkey.active{background:linear-gradient(180deg,#cfe4fb,#9ec8f0)}
   .wkey.target{background:linear-gradient(180deg,#fff2c2,#ffd766)}
   .wkey.targetL{background:linear-gradient(180deg,#bff7ec,#5fe0c8);box-shadow:inset 0 0 0 2px #2fd3b6}
   .bkey{position:absolute;top:0;width:4.2%;height:62%;background:linear-gradient(180deg,#2a2d34,#05070b);
     border:1px solid #000;border-radius:0 0 5px 5px;transform:translateX(-50%);z-index:3;cursor:pointer;
     display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding-bottom:6px;transition:background .05s}
-  .bkey.active{background:linear-gradient(180deg,#6a4fe0,#3b2c8f)}
+  .bkey.active{background:linear-gradient(180deg,#2b88d8,#005a9e)}
   .bkey.target{background:linear-gradient(180deg,#caa12f,#9c7a17)}
   .bkey.targetL{background:linear-gradient(180deg,#1f9e8a,#0c6b5c);box-shadow:0 0 12px #2fd3b6}
-  .nbox.lhand{background:linear-gradient(180deg,rgba(124,92,255,.18),rgba(91,141,239,.18));border-color:var(--primary)}
+  .nbox.lhand{background:var(--primary-soft);border-color:var(--primary)}
   .klabel{font-size:10px;font-weight:700;color:#5a6172;pointer-events:none}
   .bkey .klabel{color:#cfd4df;font-size:9px}
   .keymap{font-size:9px;color:#babfcb;opacity:.7;margin-top:2px;pointer-events:none}
@@ -90,7 +99,7 @@
   .btn.mini{padding:6px 10px;font-size:12px}
   .chip{padding:8px 12px;border-radius:11px;border:1px solid var(--line);background:var(--panel-2);
     color:var(--ink);font-size:13px;cursor:pointer;transition:.15s}
-  .chip.on{border-color:var(--primary);background:rgba(124,92,255,.18);color:#fff}
+  .chip.on{border-color:var(--primary);background:var(--primary-soft);color:var(--primary)}
   .chip small{display:block;color:var(--muted);font-size:10.5px;margin-top:1px}
   .notestrip{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;min-height:34px}
   .nbox{width:30px;height:30px;border-radius:8px;background:var(--panel-2);border:1px solid var(--line);
@@ -103,7 +112,7 @@
   .fstat{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:8px 14px;text-align:center;min-width:78px}
   .fstat .n{font-size:18px;font-weight:800}
   .fstat .l{font-size:11px;color:var(--muted)}
-  .result{margin-top:12px;padding:14px;border-radius:12px;background:rgba(124,92,255,.12);border:1px solid var(--primary);display:none}
+  .result{margin-top:12px;padding:14px;border-radius:12px;background:var(--primary-soft);border:1px solid var(--primary);display:none}
   .result.show{display:block}
   .stars{font-size:24px;letter-spacing:4px;color:var(--gold)}
 
@@ -116,14 +125,14 @@
 
   /* 阶段/打卡 */
   .progress{height:10px;background:var(--panel-2);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
-  .progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-2));border-radius:999px}
+  .progress>span{display:block;height:100%;background:var(--primary);border-radius:999px}
   .cal{display:flex;gap:6px;margin-top:10px}
   .cal .day{flex:1;text-align:center}
   .cal .dnum{width:34px;height:34px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;background:var(--panel-2);color:var(--muted);border:1px solid var(--line)}
-  .cal .day.on .dnum{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border-color:transparent}
+  .cal .day.on .dnum{background:var(--primary);color:#fff;border-color:transparent}
   .cal .dlbl{font-size:10px;color:var(--muted);margin-top:4px}
   .stage{border:1px solid var(--line);border-radius:13px;padding:14px;background:var(--panel-2);margin-bottom:10px}
-  .stage.cur{border-color:var(--primary);box-shadow:0 0 0 2px rgba(124,92,255,.25)}
+  .stage.cur{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-soft)}
   .stage.locked{opacity:.55}
   .stage .hd{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .stage .ttl{font-weight:800;font-size:14.5px}
@@ -254,15 +263,7 @@
     <div style="font-size:12.5px;color:var(--muted);margin-top:6px" id="stagePct">0% 已掌握</div>
   </div>
 
-  <div class="card" style="border:1px solid var(--primary);background:rgba(124,92,255,.10)">
-    <div class="card-title" style="color:#cdbcff">⚡ 今天练了吗</div>
-    <div style="display:flex;gap:10px;margin-top:8px;align-items:center;flex-wrap:wrap">
-      <button class="btn" id="checkinBtn" style="flex:1;justify-content:center">✅ 今天练过了</button>
-      <span class="tag on" id="streakTag">🔥 连续 0 天</span>
-    </div>
-    <div class="section-title" style="margin-top:14px">近 7 天</div>
-    <div class="cal" id="cal"></div>
-  </div>
+  <!-- 手动打卡已移除：与工作台「钢琴练习」页上方的打卡卡片合并，避免重复。跟弹练习仍会自动记时。 -->
 
   <div class="section-title">当前阶段</div>
   <div id="curStage"></div>
@@ -1014,19 +1015,24 @@ function stageCard(s,locked){
 }
 function renderCheckin(){
   const t=today(); const done=!!state.pianoLog[t];
-  document.getElementById('todayBadge').textContent = done?'今天已练 ✓':'今天还没练';
-  document.getElementById('todayBadge').style.color = done?'var(--green)':'var(--muted)';
+  const badge=document.getElementById('todayBadge');
+  if(badge){ badge.textContent = done?'今天已练 ✓':'今天还没练'; badge.style.color = done?'var(--green)':'var(--muted)'; }
+  // 下方手动打卡卡片已合并到工作台「钢琴练习」页（renderPiano），此处仅保留头部状态与跟弹自动记时
   const btn=document.getElementById('checkinBtn');
-  if(done){ btn.textContent='✅ 今日已打卡'; btn.disabled=true; } else { btn.textContent='✅ 今天练过了'; btn.disabled=false; }
-  // 连续天数
-  let s=0; for(let i=0;i<365;i++){ const d=new Date(); d.setDate(d.getDate()-i); if(state.pianoLog[dateStr(d)]) s++; else if(i>0) break; }
-  document.getElementById('streakTag').textContent='🔥 连续 '+s+' 天';
-  // 7天日历
-  const cal=document.getElementById('cal'); cal.innerHTML='';
-  for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); const k=dateStr(d);
-    const day=document.createElement('div'); day.className='day'+(state.pianoLog[k]?' on':'');
-    day.innerHTML=`<div class="dnum">${state.pianoLog[k]?'✓':d.getDate()}</div><div class="dlbl">${'日一二三四五六'[d.getDay()]}</div>`;
-    cal.appendChild(day);
+  if(btn){ if(done){ btn.textContent='✅ 今日已打卡'; btn.disabled=true; } else { btn.textContent='✅ 今天练过了'; btn.disabled=false; } }
+  const streak=document.getElementById('streakTag');
+  if(streak){
+    let s=0; for(let i=0;i<365;i++){ const d=new Date(); d.setDate(d.getDate()-i); if(state.pianoLog[dateStr(d)]) s++; else if(i>0) break; }
+    streak.textContent='🔥 连续 '+s+' 天';
+  }
+  const cal=document.getElementById('cal');
+  if(cal){
+    cal.innerHTML='';
+    for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); const k=dateStr(d);
+      const day=document.createElement('div'); day.className='day'+(state.pianoLog[k]?' on':'');
+      day.innerHTML=`<div class="dnum">${state.pianoLog[k]?'✓':d.getDate()}</div><div class="dlbl">${'日一二三四五六'[d.getDay()]}</div>`;
+      cal.appendChild(day);
+    }
   }
 }
 
@@ -1062,7 +1068,7 @@ document.getElementById('dualBtn').onclick=()=>{
 document.getElementById('metroBtn').onclick=()=>{ metroOn?stopMetro():startMetro(); };
 document.getElementById('bpm').addEventListener('input',e=>{ document.getElementById('bpmVal').textContent=e.target.value; if(metroOn) stopMetro(),startMetro(); });
 document.getElementById('beats').addEventListener('change',renderBeatDots);
-document.getElementById('checkinBtn').onclick=()=>{ state.pianoLog[today()]={done:true,min:state.pianoLog[today()]?.min||5}; save(); renderCheckin(); toast('✅ 已记录今日练习，保持手感！'); };
+const _cb=document.getElementById('checkinBtn'); if(_cb) _cb.onclick=()=>{ state.pianoLog[today()]={done:true,min:state.pianoLog[today()]?.min||5}; save(); renderCheckin(); toast('✅ 已记录今日练习，保持手感！'); };
 document.getElementById('theorySeg').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b) return;
   document.querySelectorAll('#theorySeg button').forEach(x=>x.classList.toggle('on',x===b));
