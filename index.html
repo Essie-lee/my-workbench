@@ -1927,6 +1927,17 @@ function applyPmodTheme(t){
     </nav>
   </div>
 
+  <script>
+    // 内置公版书元数据（内联，确保永远可用；全文由 books-data.js 按需加载）
+    window.BUILTIN_BOOKS = window.BUILTIN_BOOKS || [
+      {id:"pg11",title:"Alice's Adventures in Wonderland",author:"Lewis Carroll",year:1865,lang:"en"},
+      {id:"pg84",title:"Frankenstein",author:"Mary Shelley",year:1818,lang:"en"},
+      {id:"pg345",title:"Dracula",author:"Bram Stoker",year:1897,lang:"en"},
+      {id:"pg28054",title:"The Adventures of Sherlock Holmes",author:"Arthur Conan Doyle",year:1892,lang:"en"},
+      {id:"pg132",title:"The Art of War",author:"Sun Tzu (tr. Lionel Giles)",year:"ancient",lang:"en"},
+      {id:"pg2701",title:"Moby-Dick",author:"Herman Melville",year:1851,lang:"en"}
+    ];
+  </script>
   <script src="books-data.js"></script>
   <script>
     const KEY = 'growth-os-v1';
@@ -24483,21 +24494,45 @@ function applyPmodTheme(t){
       return c;
     }
     function bookHeatmap() {
-      const weeks = 17, days = weeks * 7;
-      const lvColor = ['var(--line-2)', '#dff0e0', '#bfe3c6', '#7fc99a', '#2e9e5b'];
-      let cells = '';
-      for (let i = days - 1; i >= 0; i--) {
-        const d = new Date(); d.setDate(d.getDate() - i);
-        const k = dateStr(d);
-        const rec = state.books.log[k];
-        let lvl = 0;
-        if (rec && rec.done) {
-          const m = rec.min || 0;
-          lvl = m >= 60 ? 4 : m >= 30 ? 3 : m >= 15 ? 2 : 1;
+      const WEEKS = 18, DAYS = WEEKS * 7;
+      const CELL = 13, GAP = 3;
+      const lvColor = ['var(--line-2)','#c6f6d5','#9ae6b4','#68d391','#38a169'];
+      const wdLabel = ['一','二','三','四','五','六','日'];
+      let cellsByRow = [[],[],[],[],[],[],[]];
+      let monthLabels = [];
+      let lastMonth = -1;
+      for (let col = 0; col < WEEKS; col++) {
+        for (let row = 0; row < 7; row++) {
+          const idx = (WEEKS - 1 - col) * 7 + row;
+          if (idx >= DAYS) { cellsByRow[row].push(''); continue; }
+          const d = new Date(); d.setDate(d.getDate() - (DAYS - 1 - idx));
+          const k = dateStr(d);
+          const rec = state.books.log[k];
+          let lvl = 0;
+          if (rec && rec.done) {
+            const m = rec.min || 0;
+            lvl = m >= 60 ? 4 : m >= 30 ? 3 : m >= 15 ? 2 : 1;
+          }
+          if (row === 0 && d.getMonth() !== lastMonth) {
+            lastMonth = d.getMonth();
+            monthLabels.push({ col, label: (d.getMonth()+1)+'月' });
+          }
+          cellsByRow[row].push(`<div title="${k}${rec && rec.done ? (' · 读 '+rec.min+' 分钟') : ''}" style="width:${CELL}px;height:${CELL}px;border-radius:2px;background:${lvColor[lvl]};transition:background .2s"></div>`);
         }
-        cells += `<div title="${k}${rec && rec.done ? (' · 读 ' + rec.min + ' 分钟') : ''}" style="width:11px;height:11px;border-radius:3px;background:${lvColor[lvl]}"></div>`;
       }
-      return `<div style="display:grid;grid-template-rows:repeat(7,11px);grid-auto-flow:column;gap:3px;justify-content:start">${cells}</div>`;
+      const gridCols = Array.from({length: WEEKS}, (_,i) => `${CELL}px`).join(' ');
+      const rowsHtml = cellsByRow.map((cells, ri) =>
+        `<div style="display:flex;align-items:center;gap:${GAP}px">${wdLabel[ri]?`<span style="width:16px;font-size:10px;color:var(--muted);text-align:right;flex-shrink:0;line-height:${CELL}px">${wdLabel[ri]}</span>`:''}<div style="display:flex;gap:${GAP}px;flex-wrap:nowrap">${cells.join('')}</div></div>`
+      ).join('');
+      let mlHtml = '<div style="display:flex;gap:'+GAP+'px;padding-left:22px;margin-bottom:4px">';
+      let prevEnd = 0;
+      monthLabels.forEach(m => {
+        const pad = (m.col - prevEnd) * (CELL + GAP);
+        if (pad > 16) mlHtml += `<span style="margin-left:${pad}px;font-size:10px;color:var(--muted);white-space:nowrap">${m.label}</span>`;
+        prevEnd = m.col;
+      });
+      mlHtml += '</div>';
+      return `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch">${mlHtml}<div>${rowsHtml}</div></div>`;
     }
     function bookGoalRing() {
       const total = state.books.goal.yearTarget || 24;
@@ -24543,6 +24578,7 @@ function applyPmodTheme(t){
       if (it && it.builtin && window.BUILTIN_BOOKS){
         const b = window.BUILTIN_BOOKS.find(x=>x.id===it.builtin);
         if (b && b.paras) return b.paras;
+        // 元数据在但正文未加载（books-data.js 覆盖加载时补 paras）
       }
       if (it && it.text){
         return it.text.split(/\n{1,}/).map(s=>s.replace(/\s+/g,' ').trim()).filter(Boolean);
@@ -24600,7 +24636,16 @@ function applyPmodTheme(t){
       save();
     }
     function renderReader(item){
-      const paras = bookItemParas(item);
+      let paras = bookItemParas(item);
+      // 内置书有元数据但正文未从 books-data.js 加载 → 尝试补全
+      if (!paras.length && item.builtin && window.BUILTIN_BOOKS){
+        const b = window.BUILTIN_BOOKS.find(x=>x.id===item.builtin);
+        if (b && !b.paras){
+          // books-data.js 可能还在加载或失败，给用户明确引导
+          openReaderPaste(item.title || (b&&b.title)||'这本书', item.author || (b&&b.author));
+          return;
+        }
+      }
       if (!paras.length){ toast('这本书还没有可阅读的正文，先「贴入全文」吧'); return; }
       const meta = bookItemMeta(item);
       if (item.status !== 'reading'){ item.status = 'reading'; }
@@ -24704,13 +24749,13 @@ function applyPmodTheme(t){
         <div class="card">
           <div class="card-title">🔥 阅读热力图</div>
           <div class="card-sub">颜色越深，当天读得越久。坚持看得见。</div>
-          <div style="overflow-x:auto;margin-top:10px;padding-bottom:2px">${bookHeatmap()}</div>
-          <div style="display:flex;align-items:center;gap:5px;margin-top:10px;font-size:11px;color:var(--muted)">
-            <span>少</span><span style="width:11px;height:11px;border-radius:3px;background:var(--line-2)"></span>
-            <span style="width:11px;height:11px;border-radius:3px;background:#dff0e0"></span>
-            <span style="width:11px;height:11px;border-radius:3px;background:#bfe3c6"></span>
-            <span style="width:11px;height:11px;border-radius:3px;background:#7fc99a"></span>
-            <span style="width:11px;height:11px;border-radius:3px;background:#2e9e5b"></span><span>多</span>
+          <div style="margin-top:10px;padding-bottom:4px">${bookHeatmap()}</div>
+          <div style="display:flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;color:var(--muted);padding-left:22px">
+            <span>少</span><span style="width:13px;height:13px;border-radius:2px;background:var(--line-2);display:inline-block;vertical-align:middle"></span>
+            <span style="width:13px;height:13px;border-radius:2px;background:#c6f6d5;display:inline-block;vertical-align:middle"></span>
+            <span style="width:13px;height:13px;border-radius:2px;background:#9ae6b4;display:inline-block;vertical-align:middle"></span>
+            <span style="width:13px;height:13px;border-radius:2px;background:#68d391;display:inline-block;vertical-align:middle"></span>
+            <span style="width:13px;height:13px;border-radius:2px;background:#38a169;display:inline-block;vertical-align:middle"></span><span>多</span>
           </div>
         </div>
 
@@ -24730,20 +24775,21 @@ function applyPmodTheme(t){
         <div class="card">
           <div class="flex-between" style="margin-bottom:6px">
             <div class="card-title" style="margin:0">📚 内置可读公版书</div>
-            <span class="tag gray" style="font-size:10px">离线 · 真能读</span>
+            <span class="tag primary" style="font-size:10px">${(window.BUILTIN_BOOKS&&window.BUILTIN_BOOKS[0]&&window.BUILTIN_BOOKS[0].paras)?'已加载全文':'元数据就绪'}</span>
           </div>
-          <div class="card-sub">从公版经典里挑一本，在 App 内读，进度实时写回书架与热力图。</div>
+          <div class="card-sub">从公版经典里挑一本，在 App 内读，进度实时写回书架与热力图。${(window.BUILTIN_BOOKS&&window.BUILTIN_BOOKS[0]&&window.BUILTIN_BOOKS[0].paras)?'':'正文将在点击「阅读」时自动加载或引导贴入。'}</div>
           ${(window.BUILTIN_BOOKS||[]).map(b=>{
             const inShelf = state.books.shelf.find(s=>s.builtin===b.id);
             const prog = inShelf ? (inShelf.progress||0) : 0;
+            const hasParas = !!(b.paras);
             return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line-2)">
               <div style="flex:1;min-width:0">
                 <div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
-                <div style="font-size:11px;color:var(--muted)">${esc(b.author)} · ${b.year}${prog?(' · 已读 '+prog+'%'):''}</div>
+                <div style="font-size:11px;color:var(--muted)">${esc(b.author)} · ${b.year}${prog?(' · 已读 '+prog+'%'):''}${!hasParas?' · 待加载正文':''}</div>
               </div>
-              <button class="btn sm ${prog?'outline':'accent'}" data-action="book-read" data-builtin="${b.id}" style="flex-shrink:0;padding:4px 10px;font-size:12px">${prog?'📖 续读':'📖 阅读'}</button>
+              <button class="btn sm ${prog?'outline':(hasParas?'accent':'primary')}" data-action="book-read" data-builtin="${b.id}" style="flex-shrink:0;padding:4px 10px;font-size:12px">${prog?'📖 续读':(hasParas?'📖 阅读':'📥 加载')}</button>
             </div>`;
-          }).join('') || '<div class="empty">内置书库未加载（确认 books-data.js 已部署）</div>'}
+          }).join('') || '<div class="empty">内置书库未初始化</div>'}
         </div>
 
         <div class="card">
