@@ -22873,6 +22873,11 @@ function applyPmodTheme(t){
           books: ['日常','学习投入','其他'],
           budget: 3000,         // 月度支出预算
           curBook: '日常'
+        },
+        books: {
+          shelf: [],            // [{id,title,author,status:'want'|'reading'|'done',progress:0,doneDate:null,added:date}]
+          goal: { year: new Date().getFullYear(), yearTarget: 24, monthTarget: 2 },
+          log: {}               // {'YYYY-MM-DD': {done:true, min:Number}}
         }
       };
     }
@@ -23107,7 +23112,9 @@ function applyPmodTheme(t){
       }
       // 首页模块进度驾驶舱（v15：横向胶囊，一眼看全模块状态，点按直达）
       const topicN = Array.isArray(state.topicSaved) ? state.topicSaved.length : 0;
-      const bookN = Array.isArray(state.bookNotes) ? state.bookNotes.length : 0;
+      const bookStreakN = bookStreak();
+      const bookReadingN = bookReadingCount();
+      const bookTodayDone = !!(state.books && state.books.log[today()] && state.books.log[today()].done);
       const totalPiano = (PIANO_STAGES.find(s=>s.id===(state.pianoStage||'s1'))||PIANO_STAGES[0]).ex.length;
       const learnActive = Object.values(state.lang||{}).filter(l=>l && l.level < (LANG[Object.keys(state.lang).find(k=>state.lang[k]===l)]?.plan?.length||99)).length;
       const billFlows = (state.bill && Array.isArray(state.bill.flows)) ? state.bill.flows.filter(f => monthKey(f.date) === monthKey()) : [];
@@ -23119,7 +23126,7 @@ function applyPmodTheme(t){
         { ic:'📝', num:`${done}/${r.length}`, lbl:'今日计划', v:'daily', ok: r.length>0 && done>=r.length },
         { ic:'💡', num: topicN, lbl:'选题灵感', v:'topic' },
         { ic:'🎹', num: pianoToday?'已练 ✓':`${mastered}/18`, lbl:'钢琴练习', v:'piano', ok: pianoToday },
-        { ic:'📖', num: bookN, lbl:'读书笔记', v:'book' },
+        { ic:'📖', num: bookStreakN ? ('🔥' + bookStreakN) : (bookReadingN || '0'), lbl:'连续阅读', v:'book', ok: bookTodayDone },
         { ic:'📚', num: studyToday?'已学 ✓':`连续${learnActive}`, lbl:'学习成长', v:'study', ok: studyToday },
         { ic:'💰', num: fmtMoney(billExp), lbl:'本月记账', v:'bill' },
         { ic:'😴', num: sleepRec.sleep?`${sleepRec.sleep}h`:'未记', lbl:'昨晚睡眠', v:'health' }
@@ -23173,7 +23180,10 @@ function applyPmodTheme(t){
         <div class="card">
           <div class="card-title">📖 今日书摘</div>
           <div class="quote">「${quote}」<span class="by">— 《${todayBook.t}》</span></div>
-          <div class="item-actions" style="margin-top:14px"><button class="btn sm outline" data-action="go" data-v="book">去读书 →</button></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
+            <button class="btn sm ${bookTodayDone ? 'outline' : 'accent'}" data-action="book-checkin" style="flex:1;justify-content:inherit;justify-content:center">${bookTodayDone ? '✓ 今日已读' : '✅ 今天读过了'}</button>
+            <span class="tag ${bookStreakN ? 'primary' : 'gray'}">🔥 连续 ${bookStreakN} 天</span>
+          </div>
         </div>
         <div class="section-title">今日行动</div>
         <div class="card">
@@ -24432,36 +24442,195 @@ function applyPmodTheme(t){
     }
 
     // ===================== 读书 =====================
+    // ===================== 读书 · 养成辅助 =====================
+    function bookStreak() {
+      if (!state.books || !state.books.log) return 0;
+      let s = 0;
+      // 今天没打卡也不算断（今天还没结束）；从昨天起算
+      let i = (state.books.log[today()] && state.books.log[today()].done) ? 0 : 1;
+      for (; i < 400; i++) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const k = dateStr(d);
+        if (state.books.log[k] && state.books.log[k].done) s++;
+        else break;
+      }
+      return s;
+    }
+    function bookYearDone() {
+      if (!state.books) return 0;
+      const y = String(new Date().getFullYear());
+      return state.books.shelf.filter(b => b.status === 'done' && b.doneDate && b.doneDate.startsWith(y)).length;
+    }
+    function bookMonthDone() {
+      if (!state.books) return 0;
+      const m = monthKey();
+      return state.books.shelf.filter(b => b.status === 'done' && b.doneDate && b.doneDate.startsWith(m)).length;
+    }
+    function bookReadingCount() {
+      return state.books ? state.books.shelf.filter(b => b.status === 'reading').length : 0;
+    }
+    function bookWeekDays() {
+      if (!state.books || !state.books.log) return 0;
+      const now = new Date();
+      const dow = (now.getDay() + 6) % 7; // 0=周一
+      let c = 0;
+      for (let i = 0; i <= dow; i++) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const k = dateStr(d);
+        if (state.books.log[k] && state.books.log[k].done) c++;
+      }
+      return c;
+    }
+    function bookHeatmap() {
+      const weeks = 17, days = weeks * 7;
+      const lvColor = ['var(--line-2)', '#dff0e0', '#bfe3c6', '#7fc99a', '#2e9e5b'];
+      let cells = '';
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const k = dateStr(d);
+        const rec = state.books.log[k];
+        let lvl = 0;
+        if (rec && rec.done) {
+          const m = rec.min || 0;
+          lvl = m >= 60 ? 4 : m >= 30 ? 3 : m >= 15 ? 2 : 1;
+        }
+        cells += `<div title="${k}${rec && rec.done ? (' · 读 ' + rec.min + ' 分钟') : ''}" style="width:11px;height:11px;border-radius:3px;background:${lvColor[lvl]}"></div>`;
+      }
+      return `<div style="display:grid;grid-template-rows:repeat(7,11px);grid-auto-flow:column;gap:3px;justify-content:start">${cells}</div>`;
+    }
+    function bookGoalRing() {
+      const total = state.books.goal.yearTarget || 24;
+      const done = bookYearDone();
+      const pct = Math.min(100, Math.round(done / total * 100));
+      return `<div style="display:flex;align-items:center;gap:14px;margin-top:6px">
+        <div style="width:74px;height:74px;border-radius:50%;background:conic-gradient(var(--green) ${pct * 3.6}deg, var(--line-2) 0);display:grid;place-items:center;flex-shrink:0">
+          <div style="width:58px;height:58px;border-radius:50%;background:var(--panel);display:grid;place-items:center;text-align:center">
+            <div><div style="font-size:17px;font-weight:800;line-height:1">${done}</div><div style="font-size:9px;color:var(--muted)">/ ${total}</div></div>
+          </div>
+        </div>
+        <div style="font-size:12.5px;color:var(--muted);line-height:1.7">今年读完 <b style="color:var(--ink-1);font-size:15px">${done}</b> / ${total} 本<br>年度目标进度 <b style="color:var(--ink-1)">${pct}%</b> · 月均 ${state.books.goal.monthTarget || 2} 本</div>
+      </div>`;
+    }
+    function bookShelfCard(b) {
+      const statusLabel = { want: '想读', reading: '在读', done: '读完' }[b.status];
+      return `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px;background:rgba(255,255,255,.4)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(b.author || '佚名')} · <span class="tag" style="font-size:10px;padding:0 6px">${statusLabel}</span></div>
+          </div>
+          <button class="icon-btn" data-action="book-del-shelf" data-id="${b.id}" style="color:var(--red);flex-shrink:0" title="移出书架">✕</button>
+        </div>
+        ${b.status === 'reading' ? `<div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+          <div style="flex:1;height:8px;background:var(--line-2);border-radius:999px;overflow:hidden"><div style="height:100%;width:${b.progress || 0}%;background:var(--primary);border-radius:999px;transition:width .3s"></div></div>
+          <span style="font-size:11px;color:var(--muted);min-width:34px;text-align:right">${b.progress || 0}%</span>
+          <button class="btn sm outline" data-action="book-progress" data-id="${b.id}" style="padding:3px 8px;font-size:11px">更新</button>
+        </div>` : ''}
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+          ${b.status !== 'want' ? `<button class="btn sm outline" data-action="book-status" data-id="${b.id}" data-s="want" style="padding:4px 9px;font-size:12px">↩ 想读</button>` : ''}
+          ${b.status !== 'reading' ? `<button class="btn sm outline" data-action="book-status" data-id="${b.id}" data-s="reading" style="padding:4px 9px;font-size:12px">📖 在读</button>` : ''}
+          ${b.status !== 'done' ? `<button class="btn sm ${b.status === 'reading' ? '' : 'outline'}" data-action="book-status" data-id="${b.id}" data-s="done" style="padding:4px 9px;font-size:12px">✓ 读完</button>` : `<span class="tag primary" style="font-size:11px;align-self:center">✓ 已读完</span>`}
+        </div>
+      </div>`;
+    }
+
     function renderBook() {
       // 防御性初始化：老数据缺失字段时自动补齐
-      if (!Array.isArray(state.bookSaved)) { state.bookSaved = []; save(); }
-      if (!Array.isArray(state.bookNotes)) { state.bookNotes = []; save(); }
-      if (state.bookApi === undefined) { state.bookApi = null; save(); }
-      const month = '2026-' + String(new Date().getMonth()+1).padStart(2,'0');
-      const list = BOOKS.filter(b=>b.m===month);
-      const all = BOOKS;
-      // 当前选中的分类(默认全部)
+      if (!state.books || typeof state.books !== 'object') state.books = { shelf: [], goal: { year: new Date().getFullYear(), yearTarget: 24, monthTarget: 2 }, log: {} };
+      if (!Array.isArray(state.books.shelf)) state.books.shelf = [];
+      if (!state.books.goal || typeof state.books.goal !== 'object') state.books.goal = { year: new Date().getFullYear(), yearTarget: 24, monthTarget: 2 };
+      if (!state.books.goal.yearTarget) state.books.goal.yearTarget = 24;
+      if (!Array.isArray(state.bookNotes)) state.bookNotes = [];
+      if (!Array.isArray(state.bookSaved)) state.bookSaved = [];
+      if (state.bookApi === undefined) state.bookApi = null;
+
+      const B = state.books;
+      const todayLog = B.log[today()] || {};
+      const streak = bookStreak();
+      const monthMin = Object.keys(B.log).filter(k => k.startsWith(monthKey())).reduce((s, k) => s + ((B.log[k].min) || 0), 0);
+      const reading = B.shelf.filter(b => b.status === 'reading');
+      const want = B.shelf.filter(b => b.status === 'want');
+      const doneList = B.shelf.filter(b => b.status === 'done');
       const filterCat = state.bookCat || '全部';
       const filteredBooks = filterCat === '全部' ? OFFLINE_BOOKS : OFFLINE_BOOKS.filter(b => b.cat === filterCat);
-      // 所有分类
       const cats = ['全部', ...new Set(OFFLINE_BOOKS.map(b => b.cat))];
-      // 首次进入且没加载过:跳过自动加载(直接用 OFFLINE_BOOKS)
+      const month = '2026-' + String(new Date().getMonth() + 1).padStart(2, '0');
+      const list = BOOKS.filter(b => b.m === month);
+      const shelfTab = state.bookShelfTab || 'reading';
+      const shelfMap = { reading, want, done: doneList };
+      const shelfList = shelfMap[shelfTab] || [];
+
       $('main').innerHTML = `
         <div class="card">
-          <div class="card-title">📚 本月推荐(${month})</div>
-          <div class="card-sub">每月 2 本公认好书,每天打开会推送其中一本的经典语录。</div>
-          ${list.map(b=>bookCard(b)).join('') || '<div class="empty">本月书单待定</div>'}
+          <div class="flex-between">
+            <div class="card-title" style="margin:0">📚 阅读概览 · ${new Date().getFullYear()}</div>
+            <button class="btn sm outline" data-action="book-goal" style="padding:4px 10px;font-size:12px">🎯 设目标</button>
+          </div>
+          ${bookGoalRing()}
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <div style="flex:1;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--green)">${streak}</div><div style="font-size:11px;color:var(--muted)">连续天数</div></div>
+            <div style="flex:1;text-align:center"><div style="font-size:20px;font-weight:800">${reading.length}</div><div style="font-size:11px;color:var(--muted)">在读</div></div>
+            <div style="flex:1;text-align:center"><div style="font-size:20px;font-weight:800">${Math.round(monthMin)}</div><div style="font-size:11px;color:var(--muted)">本月分钟</div></div>
+            <div style="flex:1;text-align:center"><div style="font-size:20px;font-weight:800">${doneList.length}</div><div style="font-size:11px;color:var(--muted)">已读完</div></div>
+          </div>
         </div>
+
+        <div class="card">
+          <div class="card-title">📅 今日阅读打卡</div>
+          <div class="card-sub">每天读 10 分钟就够——关键是连续不断。</div>
+          <button class="btn sm ${todayLog.done ? 'outline' : 'accent'}" data-action="book-checkin" style="width:100%;justify-content:center;margin-top:8px">${todayLog.done ? '✓ 今日已读' : '✅ 今天读过了'}</button>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
+            <span style="font-size:12.5px;color:var(--muted);flex-shrink:0">时长</span>
+            <input type="range" id="bookMin" min="0" max="120" step="5" value="${todayLog.min || 10}" style="flex:1;accent-color:var(--primary)" />
+            <span id="bookMinLbl" style="font-size:13px;font-weight:600;min-width:50px;text-align:right">${todayLog.min || 10} 分钟</span>
+          </div>
+          <div class="card-sub" style="margin-top:8px">本周已读 ${bookWeekDays()} 天 · 连续 ${streak} 天 🔥</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🔥 阅读热力图</div>
+          <div class="card-sub">颜色越深，当天读得越久。坚持看得见。</div>
+          <div style="overflow-x:auto;margin-top:10px;padding-bottom:2px">${bookHeatmap()}</div>
+          <div style="display:flex;align-items:center;gap:5px;margin-top:10px;font-size:11px;color:var(--muted)">
+            <span>少</span><span style="width:11px;height:11px;border-radius:3px;background:var(--line-2)"></span>
+            <span style="width:11px;height:11px;border-radius:3px;background:#dff0e0"></span>
+            <span style="width:11px;height:11px;border-radius:3px;background:#bfe3c6"></span>
+            <span style="width:11px;height:11px;border-radius:3px;background:#7fc99a"></span>
+            <span style="width:11px;height:11px;border-radius:3px;background:#2e9e5b"></span><span>多</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="flex-between" style="margin-bottom:8px">
+            <div class="card-title" style="margin:0">📚 我的书架</div>
+            <button class="btn sm outline" data-action="book-add-custom" style="padding:4px 10px;font-size:12px">+ 添加书</button>
+          </div>
+          <div class="row" style="gap:6px;margin-bottom:10px">
+            <button class="btn sm ${shelfTab === 'reading' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="reading">在读 ${reading.length}</button>
+            <button class="btn sm ${shelfTab === 'want' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="want">想读 ${want.length}</button>
+            <button class="btn sm ${shelfTab === 'done' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="done">读完 ${doneList.length}</button>
+          </div>
+          ${shelfList.length ? shelfList.map(b => bookShelfCard(b)).join('') : '<div class="empty">这里还空空如也，去下方书库「加入书架」吧 📖</div>'}
+        </div>
+
+        <div class="card">
+          <div class="card-title">📚 本月推荐(${month})</div>
+          <div class="card-sub">每月 2 本公认好书，每天打开会推送其中一本的经典语录。</div>
+          ${list.map(b => bookCard(b)).join('') || '<div class="empty">本月书单待定</div>'}
+        </div>
+
         <div class="section-title">精选好书(${OFFLINE_BOOKS.length}本 · 离线内置,免搜索)</div>
         <div class="card">
-          <div class="card-sub">点开任意一本,直接跳到 Open Library / 豆瓣 / Google Books 阅读。已按分类整理好。</div>
+          <div class="card-sub">点开任意一本，直接跳到阅读入口。已按分类整理好。</div>
           <div class="row" style="margin-bottom:12px;gap:6px;flex-wrap:wrap">
-            ${cats.map(c=>`<button class="btn sm ${filterCat===c?'':'outline'}" data-action="book-cat" data-c="${esc(c)}" style="min-width:54px">${c}</button>`).join('')}
+            ${cats.map(c => `<button class="btn sm ${filterCat === c ? '' : 'outline'}" data-action="book-cat" data-c="${esc(c)}" style="min-width:54px">${c}</button>`).join('')}
           </div>
-          ${filteredBooks.map(b=>offlineBookCard(b)).join('')}
+          ${filteredBooks.map(b => offlineBookCard(b)).join('')}
         </div>
+
         <div class="section-title">全部精选书单(经典月推)</div>
-        <div class="card">${all.map(b=>bookCard(b)).join('')}</div>
+        <div class="card">${BOOKS.map(b => bookCard(b)).join('')}</div>
+
         <div class="section-title">我的阅读笔记</div>
         <div class="card">
           <div class="row" style="margin-bottom:10px">
@@ -24469,8 +24638,17 @@ function applyPmodTheme(t){
             <input class="input" id="bnText" placeholder="笔记内容…" style="flex:2" />
             <button class="btn" data-action="add-note">+</button>
           </div>
-          ${state.bookNotes.length?state.bookNotes.slice().reverse().map(n=>`<div class="memo-item"><div>${n.text}</div><div class="memo-date">📖 ${n.book} · ${n.date} <button data-action="del-note" data-id="${n.id}" style="background:none;border:none;color:inherit;text-decoration:underline;float:right">删除</button></div></div>`).join(''):'<div class="empty">还没有笔记</div>'}
+          ${state.bookNotes.length ? state.bookNotes.slice().reverse().map(n => `<div class="memo-item"><div>${n.text}</div><div class="memo-date">📖 ${n.book} · ${n.date} <button data-action="del-note" data-id="${n.id}" style="background:none;border:none;color:inherit;text-decoration:underline;float:right">删除</button></div></div>`).join('') : '<div class="empty">还没有笔记</div>'}
         </div>`;
+
+      // 时长滑块联动（标签 + 已打卡则静默更新日志）
+      const minEl = $('bookMin');
+      if (minEl) {
+        minEl.addEventListener('input', () => { const l = $('bookMinLbl'); if (l) l.textContent = (+minEl.value) + ' 分钟'; });
+        minEl.addEventListener('change', () => {
+          if (B.log[today()] && B.log[today()].done) { B.log[today()].min = +minEl.value || 0; save(); }
+        });
+      }
     }
 
     // 离线书单的卡片(每个有封面色块 + 3 个阅读入口)
@@ -24482,6 +24660,7 @@ function applyPmodTheme(t){
           <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.t)}</div>
           <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(b.a)} · ${b.y} <span class="tag" style="background:${b.cover};color:#0078d4;padding:1px 6px;font-size:10px;margin-left:4px">${esc(b.cat)}</span></div>
           <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+            <button class="btn sm ${state.books&&state.books.shelf.some(s=>s.title===b.t)?'outline':'primary'}" data-action="book-add-shelf" data-t="${esc(b.t)}" data-a="${esc(b.a)}" style="padding:4px 10px;font-size:12px">${state.books&&state.books.shelf.some(s=>s.title===b.t)?'✓ 在书架':'＋ 加入书架'}</button>
             <button class="btn sm outline" data-action="open-link" data-url="${esc(b.olink)}" style="padding:4px 10px;font-size:12px">📖 Open Library</button>
             <button class="btn sm outline" data-action="open-link" data-url="${esc(b.douban)}" style="padding:4px 10px;font-size:12px">📕 豆瓣</button>
             <button class="btn sm outline" data-action="open-link" data-url="${esc(b.google)}" style="padding:4px 10px;font-size:12px">🔍 Google</button>
@@ -25370,6 +25549,61 @@ function applyPmodTheme(t){
           break;
         }
         case 'book-cat': { state.bookCat = t.dataset.c; save(); renderBook(); break; }
+        case 'book-checkin': {
+          if (!state.books) state.books = { shelf: [], goal: { year: new Date().getFullYear(), yearTarget: 24, monthTarget: 2 }, log: {} };
+          const minEl = $('bookMin');
+          const min = minEl ? (+minEl.value || 0) : 10;
+          if (state.books.log[today()] && state.books.log[today()].done) { delete state.books.log[today()]; toast('已取消今日打卡'); }
+          else { state.books.log[today()] = { done: true, min: min || 10 }; toast('✅ 今日已读，连续 ' + bookStreak() + ' 天 🔥'); }
+          save();
+          if (currentView === 'book') renderBook(); else if (typeof renderHome === 'function') renderHome(); else navigate('home');
+          break;
+        }
+        case 'book-goal': {
+          openModal(`<h3>🎯 设置读书目标</h3>
+            <div style="margin:12px 0"><label style="font-size:13px;color:var(--muted)">今年读完（本）</label><input class="input" id="goalYear" type="number" value="${state.books.goal.yearTarget || 24}" style="width:100%;margin-top:4px"></div>
+            <div style="margin:12px 0"><label style="font-size:13px;color:var(--muted)">每月平均（本）</label><input class="input" id="goalMonth" type="number" value="${state.books.goal.monthTarget || 2}" style="width:100%;margin-top:4px"></div>
+            <div class="modal-actions"><button class="btn ghost" data-action="modal-close">取消</button><button class="btn" data-action="book-set-goal">保存</button></div>`);
+          break;
+        }
+        case 'book-set-goal': {
+          const y = +$('goalYear').value, m = +$('goalMonth').value;
+          if (y > 0) state.books.goal.yearTarget = y;
+          if (m > 0) state.books.goal.monthTarget = m;
+          save(); toast('目标已更新'); closeModal(); renderBook(); break;
+        }
+        case 'book-add-shelf': {
+          const title = t.dataset.t, author = t.dataset.a || '';
+          if (state.books.shelf.some(b => b.title === title)) { toast('《' + title + '》已在书架上'); break; }
+          state.books.shelf.push({ id: uid(), title: title, author: author, status: 'want', progress: 0, added: today(), doneDate: null });
+          save(); toast('已加入书架（想读）'); renderBook(); break;
+        }
+        case 'book-add-custom': {
+          const title = prompt('书名？', ''); if (!title || !title.trim()) break;
+          const author = prompt('作者（选填）', '') || '';
+          state.books.shelf.push({ id: uid(), title: title.trim(), author: author, status: 'want', progress: 0, added: today(), doneDate: null });
+          save(); toast('已加入书架（想读）'); renderBook(); break;
+        }
+        case 'book-status': {
+          const id = t.dataset.id, s = t.dataset.s;
+          const b = state.books.shelf.find(x => x.id === id); if (!b) break;
+          b.status = s;
+          if (s === 'done') { b.doneDate = today(); b.progress = 100; toast('🎉 读完《' + b.title + '》'); }
+          else if (s === 'reading') { b.doneDate = null; if (!b.progress) b.progress = 0; }
+          else { b.doneDate = null; }
+          save(); renderBook(); break;
+        }
+        case 'book-progress': {
+          const id = t.dataset.id; const b = state.books.shelf.find(x => x.id === id); if (!b) break;
+          const v = prompt('当前进度（0-100 的百分比）？', (b.progress || 0)); if (v === null) break;
+          const n = Math.max(0, Math.min(100, +v || 0)); b.progress = n;
+          if (n >= 100) { b.status = 'done'; b.doneDate = today(); toast('🎉 读完《' + b.title + '》'); }
+          save(); renderBook(); break;
+        }
+        case 'book-del-shelf': {
+          state.books.shelf = state.books.shelf.filter(b => b.id !== t.dataset.id); save(); renderBook(); break;
+        }
+        case 'book-shelf-tab': { state.bookShelfTab = t.dataset.t; save(); renderBook(); break; }
         case 'reset-data': {
           if (confirm('确定要清空所有数据吗?这会删除你所有的任务/学习进度/收藏/笔记,且无法恢复。')) {
             localStorage.removeItem(KEY);
