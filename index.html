@@ -122,6 +122,8 @@
         radial-gradient(at 78% 92%, rgba(255,127,214,.06) 0px, transparent 50%);
     }
     #app { max-width: 540px; margin: 0 auto; min-height: 100%; position: relative; }
+    @media (min-width: 768px) { #app { max-width: 720px; } }
+    @media (min-width: 1024px) { #app { max-width: 860px; } }
 
     /* ===== 顶部条(Mica 风) ===== */
     .topbar {
@@ -215,7 +217,7 @@
       background: rgba(255,255,255,.72);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
       backdrop-filter: blur(24px) saturate(180%);
-      border-radius: var(--radius); padding: 16px 18px; margin-bottom: 10px;
+      border-radius: var(--radius); padding: 16px 18px; margin-bottom: 18px;
       box-shadow: var(--shadow);
       border: 1px solid rgba(255,255,255,.5);
     }
@@ -786,7 +788,7 @@
   .badge{font-size:11px;color:var(--muted);border:1px solid var(--line);padding:4px 9px;border-radius:999px;white-space:nowrap}
 
   .card{background:var(--panel);border:1px solid var(--line);
-    border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px;
+    border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:18px;
     -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%)}
   .card-title{font-weight:600;font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:8px;color:var(--ink)}
   .card-sub{color:var(--muted);font-size:13px;margin-top:6px;line-height:1.5}
@@ -24494,7 +24496,17 @@ function applyPmodTheme(t){
       return c;
     }
     function bookHeatmap() {
-      const WEEKS = 18, DAYS = WEEKS * 7;
+      // 自适应范围：没数据时只显示近期，有数据才从首次读书那周向前展开，避免旧空格占地方
+      const logs = Object.keys(state.books.log || {}).filter(k => state.books.log[k] && state.books.log[k].done).sort();
+      let startWeeksAgo = 16;
+      if (logs.length) {
+        const earliest = new Date(logs[0]);
+        const weeksSince = Math.ceil((Date.now() - earliest.getTime()) / (7 * 86400000));
+        startWeeksAgo = Math.min(16, Math.max(5, weeksSince + 1));
+      } else {
+        startWeeksAgo = 6; // 没数据时只显示近 6 周作为引导
+      }
+      const WEEKS = startWeeksAgo, DAYS = WEEKS * 7;
       const lvColor = ['var(--line-2)','#c6f6d5','#9ae6b4','#68d391','#38a169'];
       const wdLabel = ['一','二','三','四','五','六','日'];
       const todayKey = today();
@@ -24555,7 +24567,7 @@ function applyPmodTheme(t){
     }
     function bookShelfCard(b) {
       const statusLabel = { want: '想读', reading: '在读', done: '读完' }[b.status];
-      return `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px;background:rgba(255,255,255,.4)">
+      return `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px;background:rgba(255,255,255,.4)">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
           <div style="flex:1;min-width:0">
             <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
@@ -24925,12 +24937,12 @@ function applyPmodTheme(t){
             const inShelf = state.books.shelf.find(s=>s.builtin===b.id);
             const prog = inShelf ? (inShelf.progress||0) : 0;
             const hasParas = !!(b.paras);
-            return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line-2)">
+            return `<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line-2)">
               <div style="flex:1;min-width:0">
-                <div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
-                <div style="font-size:11px;color:var(--muted)">${esc(b.author)} · ${b.year}${prog?(' · 已读 '+prog+'%'):''}${!hasParas?' · 待加载正文':''}</div>
+                <div style="font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
+                <div style="font-size:11.5px;color:var(--muted);margin-top:1px">${esc(b.author)} · ${b.year}${prog?(' · 已读 '+prog+'%'):''}${!hasParas?' · 待加载正文':''}</div>
               </div>
-              <button class="btn sm ${prog?'outline':(hasParas?'accent':'primary')}" data-action="book-read" data-builtin="${b.id}" style="flex-shrink:0;padding:4px 10px;font-size:12px">${prog?'📖 续读':(hasParas?'📖 阅读':'📥 加载')}</button>
+              <button class="btn sm ${prog?'outline':(hasParas?'accent':'primary')}" data-action="book-read" data-builtin="${b.id}" style="flex-shrink:0;padding:5px 12px;font-size:12px">${prog?'📖 续读':(hasParas?'📖 阅读':'📥 加载')}</button>
             </div>`;
           }).join('') || '<div class="empty">内置书库未初始化</div>'}
         </div>
@@ -24973,21 +24985,22 @@ function applyPmodTheme(t){
       }
     }
 
-    // 离线书单的卡片(每个有封面色块 + 3 个阅读入口)
+    // 离线书单的卡片(封面色块 + 主按钮 + 次要链接)
     function offlineBookCard(b) {
       const saved = state.bookSaved.includes(b.t);
       const onShelf = state.books && state.books.shelf.some(s=>s.title===b.t);
       const hasText = !!(state.books && state.books.shelf.find(s=>s.title===b.t && (s.builtin||s.text)));
-      return `<div style="display:flex;gap:10px;padding:12px;border:1px solid var(--line);border-radius:var(--radius-sm);margin-bottom:10px;background:rgba(255,255,255,.55)">
-        <div style="width:56px;height:80px;background:${b.cover || '#deecf9'};border-radius:4px;flex-shrink:0;display:grid;place-items:center;font-size:24px;color:#0078d4;font-weight:700">${b.t.slice(0,1)}</div>
+      return `<div style="display:flex;gap:12px;padding:14px;border:1px solid var(--line);border-radius:var(--radius-sm);margin-bottom:14px;background:rgba(255,255,255,.55)">
+        <div style="width:52px;height:72px;background:${b.cover || '#deecf9'};border-radius:4px;flex-shrink:0;display:grid;place-items:center;font-size:22px;color:#0078d4;font-weight:700">${b.t.slice(0,1)}</div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.t)}</div>
           <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(b.a)} · ${b.y} <span class="tag" style="background:${b.cover};color:#0078d4;padding:1px 6px;font-size:10px;margin-left:4px">${esc(b.cat)}</span></div>
-          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-            <button class="btn sm ${onShelf?'outline':'primary'}" data-action="book-add-shelf" data-t="${esc(b.t)}" data-a="${esc(b.a)}" style="padding:4px 10px;font-size:12px">${onShelf?'✓ 在书架':'＋ 加入书架'}</button>
-            <button class="btn sm ${hasText?'outline':'accent'}" data-action="book-read" data-title="${esc(b.t)}" data-author="${esc(b.a)}" style="padding:4px 10px;font-size:12px">${hasText?'📖 续读':'📖 阅读'}</button>
-            <button class="btn sm outline" data-action="open-link" data-url="${esc(b.douban)}" style="padding:4px 10px;font-size:12px">📕 豆瓣</button>
-            <button class="btn sm ${saved?'outline':'accent'}" data-action="save-book" data-t="${esc(b.t)}" style="padding:4px 10px;font-size:12px">${saved?'✓ 已收藏':'⭐ 收藏'}</button>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:10px;flex-wrap:wrap">
+            <button class="btn sm ${onShelf?'outline':'primary'}" data-action="book-add-shelf" data-t="${esc(b.t)}" data-a="${esc(b.a)}" style="padding:5px 11px;font-size:12px">${onShelf?'✓ 在书架':'＋ 加入书架'}</button>
+            <button class="btn sm ${hasText?'outline':'accent'}" data-action="book-read" data-title="${esc(b.t)}" data-author="${esc(b.a)}" style="padding:5px 11px;font-size:12px">${hasText?'📖 续读':'📖 阅读'}</button>
+            <span style="flex:1"></span>
+            <a href="${esc(b.douban)}" data-action="open-link" data-url="${esc(b.douban)}" target="_blank" rel="noopener" style="font-size:11.5px;color:var(--primary);text-decoration:none;white-space:nowrap;padding:4px 6px">豆瓣 ↗</a>
+            <button class="btn sm ghost" data-action="save-book" data-t="${esc(b.t)}" style="padding:4px 8px;font-size:11.5px">${saved?'★ 已藏':'☆ 收藏'}</button>
           </div>
         </div>
       </div>`;
@@ -25051,7 +25064,7 @@ function applyPmodTheme(t){
     function bookCard(b){
       const saved = state.bookSaved.includes(b.t);
       const quote = b.q[0];
-      return `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px">
+      return `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px">
         <div style="font-weight:700">${b.t}</div>
         <div style="font-size:12px;color:var(--muted);margin-bottom:6px">${b.a} · ${b.m}</div>
         <div class="quote" style="font-size:14px">「${quote}」</div>
