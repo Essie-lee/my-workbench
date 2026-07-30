@@ -1927,6 +1927,7 @@ function applyPmodTheme(t){
     </nav>
   </div>
 
+  <script src="books-data.js"></script>
   <script>
     const KEY = 'growth-os-v1';
 
@@ -24527,11 +24528,124 @@ function applyPmodTheme(t){
           <button class="btn sm outline" data-action="book-progress" data-id="${b.id}" style="padding:3px 8px;font-size:11px">更新</button>
         </div>` : ''}
         <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+          ${(b.builtin||b.text) ? `<button class="btn sm accent" data-action="book-read" data-id="${b.id}" style="padding:4px 9px;font-size:12px">${b.status==='reading'&&(b.progress||0)>0?'📖 续读':'📖 阅读'}</button>` : ''}
           ${b.status !== 'want' ? `<button class="btn sm outline" data-action="book-status" data-id="${b.id}" data-s="want" style="padding:4px 9px;font-size:12px">↩ 想读</button>` : ''}
           ${b.status !== 'reading' ? `<button class="btn sm outline" data-action="book-status" data-id="${b.id}" data-s="reading" style="padding:4px 9px;font-size:12px">📖 在读</button>` : ''}
           ${b.status !== 'done' ? `<button class="btn sm ${b.status === 'reading' ? '' : 'outline'}" data-action="book-status" data-id="${b.id}" data-s="done" style="padding:4px 9px;font-size:12px">✓ 读完</button>` : `<span class="tag primary" style="font-size:11px;align-self:center">✓ 已读完</span>`}
         </div>
       </div>`;
+    }
+
+    // ===================== 读书 · 内置阅读器 =====================
+    let _reader = null;
+    let _readerFont = 17;
+    function bookItemParas(it){
+      if (it && it.builtin && window.BUILTIN_BOOKS){
+        const b = window.BUILTIN_BOOKS.find(x=>x.id===it.builtin);
+        if (b && b.paras) return b.paras;
+      }
+      if (it && it.text){
+        return it.text.split(/\n{1,}/).map(s=>s.replace(/\s+/g,' ').trim()).filter(Boolean);
+      }
+      return [];
+    }
+    function bookItemMeta(it){
+      if (it && it.builtin && window.BUILTIN_BOOKS){
+        const b = window.BUILTIN_BOOKS.find(x=>x.id===it.builtin);
+        if (b) return { title: b.title, author: b.author, year: b.year };
+      }
+      return { title: it.title, author: it.author||'佚名', year: it.year||'' };
+    }
+    function finalizeReader(){
+      if (!_reader) return;
+      try { clearInterval(_reader.timer); } catch(e){}
+      const mins = Math.min(240, Math.max(1, Math.round((Date.now()-_reader.start)/60000)));
+      const log = state.books.log[today()];
+      if (log){ log.done = true; log.min = Math.min(600, (log.min||0) + mins); }
+      save();
+      _reader = null;
+    }
+    function scrollReaderTo(off){
+      const sc = $('readerScroll'); if (!sc || !_reader) return;
+      let acc = 0, target = 0;
+      for (let i=0;i<_reader.paras.length;i++){
+        if (acc >= off){ target = i; break; }
+        acc += _reader.paras[i].length + 1;
+      }
+      const el = sc.querySelector('p[data-pi="'+target+'"]');
+      if (el) sc.scrollTop = el.offsetTop - 8;
+    }
+    function currentReaderOffset(){
+      const sc = $('readerScroll'); if (!sc || !_reader) return _reader ? (_reader.item.pos||0) : 0;
+      const cont = sc.getBoundingClientRect();
+      const ps = sc.querySelectorAll('p[data-pi]');
+      let cur = 0;
+      for (let i=0;i<ps.length;i++){ if (ps[i].getBoundingClientRect().top - cont.top <= 30) cur = i; else break; }
+      let off = 0;
+      for (let i=0;i<cur;i++) off += _reader.paras[i].length + 1;
+      const rp = ps[cur].getBoundingClientRect();
+      const frac = Math.min(1, Math.max(0, (cont.top + 30 - rp.top) / (rp.height || 1)));
+      off += Math.round(_reader.paras[cur].length * frac);
+      return off;
+    }
+    function updateReaderProgress(){
+      if (!_reader) return;
+      const off = currentReaderOffset();
+      const pct = Math.max(0, Math.min(100, Math.round(off / _reader.totalChars * 100)));
+      _reader.item.pos = off;
+      _reader.item.progress = pct;
+      const bar = $('readerBar'), lbl = $('readerPct');
+      if (bar) bar.style.width = pct + '%';
+      if (lbl) lbl.textContent = pct + '%';
+      save();
+    }
+    function renderReader(item){
+      const paras = bookItemParas(item);
+      if (!paras.length){ toast('这本书还没有可阅读的正文，先「贴入全文」吧'); return; }
+      const meta = bookItemMeta(item);
+      if (item.status !== 'reading'){ item.status = 'reading'; }
+      if (!state.books.log[today()]) state.books.log[today()] = { done:false, min:0 };
+      state.books.log[today()].done = true;
+      save();
+      const totalChars = paras.reduce((s,p)=>s+p.length+1, 0) || 1;
+      _reader = { item, paras, totalChars, start: Date.now(), timer:null };
+      const pct0 = Math.max(0, Math.min(100, Math.round(_reader.item.progress||0)));
+      $('main').innerHTML = `
+        <div style="position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 12px;display:flex;align-items:center;gap:8px">
+          <button class="btn sm outline" data-action="reader-back" style="flex-shrink:0">← 返回</button>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(meta.title)}</div>
+            <div style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(meta.author)}</div>
+          </div>
+          <button class="icon-btn" data-action="reader-font-down" style="flex-shrink:0" title="缩小字号">A−</button>
+          <button class="icon-btn" data-action="reader-font-up" style="flex-shrink:0" title="放大字号">A+</button>
+        </div>
+        <div style="height:4px;background:var(--line-2)"><div id="readerBar" style="height:100%;width:${pct0}%;background:var(--primary);transition:width .2s"></div></div>
+        <div id="readerScroll" style="height:calc(100vh - 118px);overflow:auto;padding:18px 18px 120px;-webkit-overflow-scrolling:touch">
+          ${paras.map((p,i)=>`<p data-pi="${i}" style="margin:0 0 18px;font-size:${_readerFont}px;line-height:1.9">${esc(p)}</p>`).join('')}
+        </div>
+        <div style="position:fixed;bottom:0;left:0;right:0;z-index:5;background:var(--panel);border-top:1px solid var(--line);padding:8px 12px;display:flex;align-items:center;gap:10px">
+          <span class="tag ${state.books.log[today()].done?'primary':'gray'}">✓ 今日已读</span>
+          <div style="flex:1;text-align:right;font-size:12px;color:var(--muted)">进度 <b id="readerPct" style="color:var(--ink-1)">${pct0}%</b> · 已自动同步书架</div>
+        </div>`;
+      scrollReaderTo(_reader.item.pos||0);
+      let st = null;
+      $('readerScroll').addEventListener('scroll', ()=>{
+        if (st) return;
+        st = setTimeout(()=>{ st = null; updateReaderProgress(); }, 250);
+      });
+      _reader.timer = setInterval(()=>{ if(_reader){ _reader.item.pos = currentReaderOffset(); save(); } }, 15000);
+    }
+    function openReaderPaste(title, author){
+      openModal(`<h3>📖 把《${esc(title)}》的正文贴进来</h3>
+        <div class="card-sub">内容只存在你的浏览器本地，不会上传。贴入后即可在 App 内阅读，进度自动同步书架与热力图。</div>
+        <textarea id="pasteText" class="input" style="width:100%;height:170px;margin-top:8px;font-size:13px" placeholder="在此粘贴全书正文（或其中一部分）…"></textarea>
+        <div class="modal-actions">
+          <label class="btn outline" style="position:relative;overflow:hidden;cursor:pointer">📎 导入 .txt<input id="pasteFile" type="file" accept=".txt,text/plain" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>
+          <button class="btn ghost" data-action="modal-close">取消</button>
+          <button class="btn" data-action="book-paste-save" data-t="${esc(title)}" data-a="${esc(author||'')}">开始阅读</button>
+        </div>`);
+      setTimeout(()=>{ const fi=$('pasteFile'); if(fi) fi.addEventListener('change', e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ const ta=$('pasteText'); if(ta) ta.value=rd.result; }; rd.readAsText(f); }); }, 60);
     }
 
     function renderBook() {
@@ -24614,6 +24728,25 @@ function applyPmodTheme(t){
         </div>
 
         <div class="card">
+          <div class="flex-between" style="margin-bottom:6px">
+            <div class="card-title" style="margin:0">📚 内置可读公版书</div>
+            <span class="tag gray" style="font-size:10px">离线 · 真能读</span>
+          </div>
+          <div class="card-sub">从公版经典里挑一本，在 App 内读，进度实时写回书架与热力图。</div>
+          ${(window.BUILTIN_BOOKS||[]).map(b=>{
+            const inShelf = state.books.shelf.find(s=>s.builtin===b.id);
+            const prog = inShelf ? (inShelf.progress||0) : 0;
+            return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line-2)">
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
+                <div style="font-size:11px;color:var(--muted)">${esc(b.author)} · ${b.year}${prog?(' · 已读 '+prog+'%'):''}</div>
+              </div>
+              <button class="btn sm ${prog?'outline':'accent'}" data-action="book-read" data-builtin="${b.id}" style="flex-shrink:0;padding:4px 10px;font-size:12px">${prog?'📖 续读':'📖 阅读'}</button>
+            </div>`;
+          }).join('') || '<div class="empty">内置书库未加载（确认 books-data.js 已部署）</div>'}
+        </div>
+
+        <div class="card">
           <div class="card-title">📚 本月推荐(${month})</div>
           <div class="card-sub">每月 2 本公认好书，每天打开会推送其中一本的经典语录。</div>
           ${list.map(b => bookCard(b)).join('') || '<div class="empty">本月书单待定</div>'}
@@ -24621,7 +24754,7 @@ function applyPmodTheme(t){
 
         <div class="section-title">精选好书(${OFFLINE_BOOKS.length}本 · 离线内置,免搜索)</div>
         <div class="card">
-          <div class="card-sub">点开任意一本，直接跳到阅读入口。已按分类整理好。</div>
+          <div class="card-sub">想读就「加入书架」，再点「📖 阅读」把正文贴进来，就能在 App 内读、进度自动同步。</div>
           <div class="row" style="margin-bottom:12px;gap:6px;flex-wrap:wrap">
             ${cats.map(c => `<button class="btn sm ${filterCat === c ? '' : 'outline'}" data-action="book-cat" data-c="${esc(c)}" style="min-width:54px">${c}</button>`).join('')}
           </div>
@@ -24654,16 +24787,17 @@ function applyPmodTheme(t){
     // 离线书单的卡片(每个有封面色块 + 3 个阅读入口)
     function offlineBookCard(b) {
       const saved = state.bookSaved.includes(b.t);
+      const onShelf = state.books && state.books.shelf.some(s=>s.title===b.t);
+      const hasText = !!(state.books && state.books.shelf.find(s=>s.title===b.t && (s.builtin||s.text)));
       return `<div style="display:flex;gap:10px;padding:12px;border:1px solid var(--line);border-radius:var(--radius-sm);margin-bottom:10px;background:rgba(255,255,255,.55)">
         <div style="width:56px;height:80px;background:${b.cover || '#deecf9'};border-radius:4px;flex-shrink:0;display:grid;place-items:center;font-size:24px;color:#0078d4;font-weight:700">${b.t.slice(0,1)}</div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.t)}</div>
           <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(b.a)} · ${b.y} <span class="tag" style="background:${b.cover};color:#0078d4;padding:1px 6px;font-size:10px;margin-left:4px">${esc(b.cat)}</span></div>
           <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-            <button class="btn sm ${state.books&&state.books.shelf.some(s=>s.title===b.t)?'outline':'primary'}" data-action="book-add-shelf" data-t="${esc(b.t)}" data-a="${esc(b.a)}" style="padding:4px 10px;font-size:12px">${state.books&&state.books.shelf.some(s=>s.title===b.t)?'✓ 在书架':'＋ 加入书架'}</button>
-            <button class="btn sm outline" data-action="open-link" data-url="${esc(b.olink)}" style="padding:4px 10px;font-size:12px">📖 Open Library</button>
+            <button class="btn sm ${onShelf?'outline':'primary'}" data-action="book-add-shelf" data-t="${esc(b.t)}" data-a="${esc(b.a)}" style="padding:4px 10px;font-size:12px">${onShelf?'✓ 在书架':'＋ 加入书架'}</button>
+            <button class="btn sm ${hasText?'outline':'accent'}" data-action="book-read" data-title="${esc(b.t)}" data-author="${esc(b.a)}" style="padding:4px 10px;font-size:12px">${hasText?'📖 续读':'📖 阅读'}</button>
             <button class="btn sm outline" data-action="open-link" data-url="${esc(b.douban)}" style="padding:4px 10px;font-size:12px">📕 豆瓣</button>
-            <button class="btn sm outline" data-action="open-link" data-url="${esc(b.google)}" style="padding:4px 10px;font-size:12px">🔍 Google</button>
             <button class="btn sm ${saved?'outline':'accent'}" data-action="save-book" data-t="${esc(b.t)}" style="padding:4px 10px;font-size:12px">${saved?'✓ 已收藏':'⭐ 收藏'}</button>
           </div>
         </div>
@@ -25211,7 +25345,7 @@ function applyPmodTheme(t){
       }
       if (t.dataset.view) { navigate(t.dataset.view); return; }
       switch(a){
-        case 'go': navigate(t.dataset.v); break;
+        case 'go': if(_reader) finalizeReader(); navigate(t.dataset.v); break;
         case 'toggle-task': { const g=t.dataset.g,id=t.dataset.id; const it=state.daily[g].find(x=>x.id===id); if(it){it.done=!it.done;save();renderDaily();} break; }
         case 'del-task': { const g=t.dataset.g,id=t.dataset.id; state.daily[g]=state.daily[g].filter(x=>x.id!==id); save(); renderDaily(); break; }
         case 'add-task': { const v=$('newTask').value.trim(); if(!v)break; const ty=$('newType').value; state.daily[ty].push({id:uid(),title:v,tag:ty==='routine'?'每日必做':'创作任务',done:false}); save(); renderDaily(); break; }
@@ -25604,6 +25738,38 @@ function applyPmodTheme(t){
           state.books.shelf = state.books.shelf.filter(b => b.id !== t.dataset.id); save(); renderBook(); break;
         }
         case 'book-shelf-tab': { state.bookShelfTab = t.dataset.t; save(); renderBook(); break; }
+        case 'book-read': {
+          let item = null;
+          if (t.dataset.builtin){
+            item = state.books.shelf.find(s=>s.builtin===t.dataset.builtin);
+            if (!item){
+              const b = (window.BUILTIN_BOOKS||[]).find(x=>x.id===t.dataset.builtin);
+              if (!b){ toast('内置书库未加载'); break; }
+              item = { id: uid(), title: b.title, author: b.author, status:'reading', progress:0, doneDate:null, added:today(), builtin:b.id, text:null, pos:0 };
+              state.books.shelf.push(item); save();
+            }
+          } else if (t.dataset.id){
+            item = state.books.shelf.find(s=>s.id===t.dataset.id);
+          } else if (t.dataset.title){
+            item = state.books.shelf.find(s=>s.title===t.dataset.title && (s.builtin||s.text));
+            if (!item){ openReaderPaste(t.dataset.title, t.dataset.author); break; }
+          }
+          if (!item){ break; }
+          renderReader(item);
+          break;
+        }
+        case 'reader-back': { if(_reader) finalizeReader(); renderBook(); break; }
+        case 'reader-font-up': { _readerFont = Math.min(28, _readerFont+2); document.querySelectorAll('#readerScroll p').forEach(p=>p.style.fontSize=_readerFont+'px'); break; }
+        case 'reader-font-down': { _readerFont = Math.max(13, _readerFont-2); document.querySelectorAll('#readerScroll p').forEach(p=>p.style.fontSize=_readerFont+'px'); break; }
+        case 'book-paste-save': {
+          const ta = $('pasteText'); const txt = ta ? ta.value.trim() : '';
+          if (!txt){ toast('请先粘贴或导入正文'); break; }
+          const title = t.dataset.t, author = t.dataset.a||'';
+          let item = state.books.shelf.find(s=>s.title===title && (s.builtin||s.text));
+          if (!item){ item = { id: uid(), title:title, author:author, status:'reading', progress:0, doneDate:null, added:today(), builtin:null, text:txt, pos:0 }; state.books.shelf.push(item); }
+          else { item.text = txt; item.status='reading'; }
+          save(); closeModal(); renderReader(item); break;
+        }
         case 'reset-data': {
           if (confirm('确定要清空所有数据吗?这会删除你所有的任务/学习进度/收藏/笔记,且无法恢复。')) {
             localStorage.removeItem(KEY);
