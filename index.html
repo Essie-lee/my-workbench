@@ -24495,16 +24495,17 @@ function applyPmodTheme(t){
     }
     function bookHeatmap() {
       const WEEKS = 18, DAYS = WEEKS * 7;
-      const CELL = 13, GAP = 3;
       const lvColor = ['var(--line-2)','#c6f6d5','#9ae6b4','#68d391','#38a169'];
       const wdLabel = ['一','二','三','四','五','六','日'];
-      let cellsByRow = [[],[],[],[],[],[],[]];
+      // build 7×WEEKS grid, column-major (col 0 = oldest week)
+      let grid = [];
+      for (let row = 0; row < 7; row++) grid[row] = [];
       let monthLabels = [];
       let lastMonth = -1;
       for (let col = 0; col < WEEKS; col++) {
         for (let row = 0; row < 7; row++) {
           const idx = (WEEKS - 1 - col) * 7 + row;
-          if (idx >= DAYS) { cellsByRow[row].push(''); continue; }
+          if (idx >= DAYS) { grid[row].push(''); continue; }
           const d = new Date(); d.setDate(d.getDate() - (DAYS - 1 - idx));
           const k = dateStr(d);
           const rec = state.books.log[k];
@@ -24517,22 +24518,20 @@ function applyPmodTheme(t){
             lastMonth = d.getMonth();
             monthLabels.push({ col, label: (d.getMonth()+1)+'月' });
           }
-          cellsByRow[row].push(`<div title="${k}${rec && rec.done ? (' · 读 '+rec.min+' 分钟') : ''}" style="width:${CELL}px;height:${CELL}px;border-radius:2px;background:${lvColor[lvl]};transition:background .2s"></div>`);
+          grid[row].push(`<div title="${k}${rec&&rec.done?(' · 读 '+rec.min+' 分钟'):''}" style="aspect-ratio:1;border-radius:2px;background:${lvColor[lvl]};transition:background .2s"></div>`);
         }
       }
-      const gridCols = Array.from({length: WEEKS}, (_,i) => `${CELL}px`).join(' ');
-      const rowsHtml = cellsByRow.map((cells, ri) =>
-        `<div style="display:flex;align-items:center;gap:${GAP}px">${wdLabel[ri]?`<span style="width:16px;font-size:10px;color:var(--muted);text-align:right;flex-shrink:0;line-height:${CELL}px">${wdLabel[ri]}</span>`:''}<div style="display:flex;gap:${GAP}px;flex-wrap:nowrap">${cells.join('')}</div></div>`
+      // month label row
+      let mlCells = '';
+      for (let c = 0; c < WEEKS; c++) {
+        const ml = monthLabels.find(m=>m.col===c);
+        mlCells += `<div style="font-size:10px;color:var(--muted);text-align:left;padding-left:1px">${ml?ml.label:''}</div>`;
+      }
+      // body rows
+      const rowsHtml = grid.map((cells, ri) =>
+        `<div style="display:grid;grid-template-columns:repeat(${WEEKS},1fr);gap:3px;align-items:center">${wdLabel[ri]?`<span style="font-size:10px;color:var(--muted);text-align:right;padding-right:4px;grid-column:1/-1;display:block;height:0;overflow:visible;position:relative;top:-14px;left:-2px">${wdLabel[ri]}</span>`:''}${cells.join('')}</div>`
       ).join('');
-      let mlHtml = '<div style="display:flex;gap:'+GAP+'px;padding-left:22px;margin-bottom:4px">';
-      let prevEnd = 0;
-      monthLabels.forEach(m => {
-        const pad = (m.col - prevEnd) * (CELL + GAP);
-        if (pad > 16) mlHtml += `<span style="margin-left:${pad}px;font-size:10px;color:var(--muted);white-space:nowrap">${m.label}</span>`;
-        prevEnd = m.col;
-      });
-      mlHtml += '</div>';
-      return `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch">${mlHtml}<div>${rowsHtml}</div></div>`;
+      return `<div style="padding-top:18px"><div style="display:grid;grid-template-columns:repeat(${WEEKS},1fr);gap:3px;margin-bottom:2px">${mlCells}</div>${rowsHtml}</div>`;
     }
     function bookGoalRing() {
       const total = state.books.goal.yearTarget || 24;
@@ -24760,14 +24759,14 @@ function applyPmodTheme(t){
         </div>
 
         <div class="card">
-          <div class="flex-between" style="margin-bottom:8px">
+          <div class="flex-between" style="margin-bottom:10px">
             <div class="card-title" style="margin:0">📚 我的书架</div>
-            <button class="btn sm outline" data-action="book-add-custom" style="padding:4px 10px;font-size:12px">+ 添加书</button>
+            <button class="btn sm outline" data-action="book-add-custom" style="padding:5px 12px;font-size:12px">+ 添加书</button>
           </div>
-          <div class="row" style="gap:6px;margin-bottom:10px">
-            <button class="btn sm ${shelfTab === 'reading' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="reading">在读 ${reading.length}</button>
-            <button class="btn sm ${shelfTab === 'want' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="want">想读 ${want.length}</button>
-            <button class="btn sm ${shelfTab === 'done' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="done">读完 ${doneList.length}</button>
+          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+            <button class="btn sm ${shelfTab === 'reading' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="reading" style="padding:5px 14px;font-size:12.5px">在读 ${reading.length}</button>
+            <button class="btn sm ${shelfTab === 'want' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="want" style="padding:5px 14px;font-size:12.5px">想读 ${want.length}</button>
+            <button class="btn sm ${shelfTab === 'done' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="done" style="padding:5px 14px;font-size:12.5px">读完 ${doneList.length}</button>
           </div>
           ${shelfList.length ? shelfList.map(b => bookShelfCard(b)).join('') : '<div class="empty">这里还空空如也，去下方书库「加入书架」吧 📖</div>'}
         </div>
