@@ -765,7 +765,7 @@
     --green:#107c10; --red:#d83b01; --gold:#b8860b; --radius:8px; --radius-sm:6px;
     --shadow:0 2px 4px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
   }
-  :root.pmod-light body{background:radial-gradient(1200px 600px at 70% -10%, #e9eff7 0%, var(--bg) 55%) fixed;color:var(--ink)}
+  :root.pmod-light body{background:transparent;color:var(--ink)}
   :root.pmod-light .piano-shell{background:linear-gradient(180deg,#fbfbfc,#eef0f3);border-color:#d8dadf}
   :root.pmod-light .chip.on{background:rgba(43,136,216,.12);border-color:var(--primary);color:var(--primary)}
   :root.pmod-light .btn.ghost.on{background:rgba(43,136,216,.14);border-color:var(--primary);color:var(--primary)}
@@ -775,11 +775,11 @@
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
-    background:radial-gradient(1200px 600px at 70% -10%, #2a2a2a 0%, var(--bg) 55%) fixed;
-    color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
-    line-height:1.55; -webkit-font-smoothing:antialiased; padding:18px 14px 60px;
+    background:transparent;
+    color:var(--ink); font-family:"Segoe UI Variable","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased; padding:4px 0 16px;
   }
-  .wrap{max-width:880px;margin:0 auto}
+  .wrap{max-width:100%;margin:0}
   header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
   header.top h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
   header.top .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
@@ -911,6 +911,9 @@
   .opt:hover{border-color:var(--primary)}
   .info{font-size:13px;color:#dde2ec;margin-top:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:10px 12px;line-height:1.7}
   .info b{color:#fff}
+  /* 嵌入工作台模式：隐藏独立页面的标题栏和页脚，与主界面融合 */
+  header.top{display:none}
+  footer{display:none}
 </style>
 </head>
 <body>
@@ -24945,15 +24948,16 @@ function applyPmodTheme(t){
       const pRoot = document.getElementById('htmlRoot') || document.documentElement;
       const ptheme = pRoot.getAttribute('data-theme')==='dark' ? 'dark' : 'light';
       $('main').innerHTML = `
-        <div class="card">
-          <div class="card-title">🎹 钢琴练习 · 优化版</div>
-          <div class="card-sub">可弹奏键盘 + 跟弹练习 + 乐理课堂 + 识谱 + 18 首曲库 + 双手模式。进度独立保存在本浏览器。</div>
-          <div style="display:flex;gap:8px;margin-top:8px">
+        <div class="card" style="margin-bottom:12px">
+          <div class="flex-between">
+            <div class="card-title" style="margin:0">🎹 钢琴练习</div>
+            <span class="tag ${pToday?'primary':'gray'}">${pToday?'今日已练 ✓':'未打卡'}</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px">
             <button class="btn sm" data-action="piano-checkin" style="flex:1;justify-content:center">✅ 今天练过了</button>
-            <span class="tag ${pToday?'primary':'gray'}" style="align-self:center">${pToday?'今日已打卡':'今日未打卡'}</span>
           </div>
         </div>
-        <div id="pianoHost"><iframe id="pianoFrame" style="width:100%;border:0;display:block;min-height:700px"></iframe></div>
+        <div id="pianoHost"><iframe id="pianoFrame" style="width:100%;border:0;display:block;min-height:700px;background:transparent"></iframe></div>
       `;
       // 内联 srcdoc：把钢琴模块直接嵌入，零外部请求，nginx 不再 404
       const _pf = document.getElementById('pianoFrame');
