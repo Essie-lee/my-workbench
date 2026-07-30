@@ -916,6 +916,15 @@
   /* 嵌入工作台模式：隐藏独立页面的标题栏和页脚，与主界面融合 */
   header.top{display:none}
   footer{display:none}
+
+  /* ===================== 日记模块（排版小动物） ===================== */
+  .diary-animals{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+  .diary-chip{ display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; cursor:pointer; font-size:13px; transition:.15s; text-align:left; }
+  .diary-chip:hover{ filter:brightness(.98); transform:translateY(-1px); }
+  .diary-chip.on{ box-shadow:0 2px 10px rgba(0,0,0,.12); }
+  .diary-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; }
+  @media (max-width:720px){ .diary-list{ grid-template-columns:1fr; } .diary-animals{ grid-template-columns:1fr; } }
+  .diary-entry{ display:flex; flex-direction:column; }
 </style>
 </head>
 <body>
@@ -1905,6 +1914,8 @@ function applyPmodTheme(t){
         <div class="drawer-group">🎬 内容创作</div>
         <button data-view="topic">💡 选题灵感</button>
         <button data-view="shoot">📷 拍摄计划</button>
+        <div class="drawer-group">📓 记录心情</div>
+        <button data-view="diary">🐾 我的日记</button>
         <div class="drawer-group">🎯 休闲娱乐</div>
         <button data-view="game">🎮 益智游戏</button>
       </div>
@@ -22982,6 +22993,9 @@ function applyPmodTheme(t){
           shelf: [],            // [{id,title,author,status:'want'|'reading'|'done',progress:0,doneDate:null,added:date}]
           goal: { year: new Date().getFullYear(), yearTarget: 24, monthTarget: 2 },
           log: {}               // {'YYYY-MM-DD': {done:true, min:Number}}
+        },
+        diary: {
+          entries: []           // [{id,date,title,body,animal,mood,ts}]
         }
       };
     }
@@ -23133,10 +23147,10 @@ function applyPmodTheme(t){
 
     // ===================== 导航 =====================
     const VIEWS = { home:renderHome, daily:renderDaily, study:renderStudy, sport:renderSport, health:renderHealth,
-      topic:renderTopic, book:renderBook, shoot:renderShoot, game:renderGame, piano:renderPiano, bill:renderBill };
+      topic:renderTopic, book:renderBook, shoot:renderShoot, game:renderGame, piano:renderPiano, bill:renderBill, diary:renderDiary };
     let currentView = 'home';
     const TITLES = { home:'首页', daily:'每日计划', study:'学习中心', sport:'运动计划', health:'健康档案',
-      topic:'选题灵感', book:'读书计划', shoot:'拍摄计划', game:'益智游戏', piano:'钢琴练习', bill:'记账' };
+      topic:'选题灵感', book:'读书计划', shoot:'拍摄计划', game:'益智游戏', piano:'钢琴练习', bill:'记账', diary:'日记' };
 
     // 底部 Tab 与视图的映射（仅高频模块常驻，其余归到"更多"）
     const TAB_OF_VIEW = { home:'home', daily:'daily', topic:'topic', piano:'piano' };
@@ -23236,7 +23250,8 @@ function applyPmodTheme(t){
         { ic:'📚', num: studyToday?'已学 ✓':`连续${learnActive}`, lbl:'学习成长', v:'study', ok: studyToday },
         { ic:'📷', num: shootTotal?`${shootDone}/${shootTotal}`:'0', lbl:'拍摄计划', v:'shoot', ok: shootTotal>0 && shootDone>=shootTotal },
         { ic:'💰', num: fmtMoney(billExp), lbl:'本月记账', v:'bill' },
-        { ic:'😴', num: sleepRec.sleep?`${sleepRec.sleep}h`:'未记', lbl:'昨晚睡眠', v:'health' }
+        { ic:'😴', num: sleepRec.sleep?`${sleepRec.sleep}h`:'未记', lbl:'昨晚睡眠', v:'health' },
+        { ic:'🐾', num: (state.diary && state.diary.entries) ? state.diary.entries.length : 0, lbl:'我的日记', v:'diary' }
       ];
       const dashHtml = `
         <div class="section-title">模块进度 · 今日一览</div>
@@ -25691,6 +25706,188 @@ function applyPmodTheme(t){
         ${!locked?exHtml+addBtn:''}      </div>`;
     }
 
+    // ===================== 日记模块（参照「排版小动物」· 治愈系记录） =====================
+    const DIARY_MOODS = [
+      { k:'calm', e:'😌', t:'平静' },
+      { k:'happy', e:'😊', t:'开心' },
+      { k:'sad', e:'😢', t:'难过' },
+      { k:'tired', e:'😮‍💨', t:'疲惫' },
+      { k:'energy', e:'⚡', t:'能量满满' }
+    ];
+    // 八位「排版小动物」排版师，每位一种风格模板（原创设计，致敬 i 人友好·动物治愈的理念）
+    const DIARY_ANIMALS = [
+      { key:'tsuki', name:'月岛', emoji:'🐱', role:'京都独居小猫', style:'日系治愈',
+        bg:'#faf7f2', color:'#4a4540', accent:'#b9a48c', font:'"Songti SC","Noto Serif SC",serif', tag:'夜深了，写点什么吧' },
+      { key:'ralph', name:'拉尔夫', emoji:'🐶', role:'建筑系在读小狗', style:'北欧极简',
+        bg:'#ffffff', color:'#1c1c1c', accent:'#111111', font:'"Helvetica Neue",Arial,sans-serif', tag:'秩序，带来平静' },
+      { key:'louis', name:'路易', emoji:'🐦', role:'环球旅行家信鸽', style:'旅行明信片',
+        bg:'#f3e9d2', color:'#5b4632', accent:'#c0392b', font:'"Comic Sans MS","Marker Felt",cursive', tag:'寄给未来的自己' },
+      { key:'editor', name:'老编辑', emoji:'🐢', role:'编辑部老师傅', style:'复古钢笔',
+        bg:'#f5f0e1', color:'#3a3327', accent:'#7a5c3e', font:'Georgia,"Songti SC",serif', tag:'一笔一划，皆是时光' },
+      { key:'director', name:'主任', emoji:'🐻', role:'教导主任', style:'正式公告',
+        bg:'#fff8f6', color:'#222222', accent:'#b0252b', font:'"Songti SC",serif', tag:'重要的事，认真记下' },
+      { key:'liang', name:'亮亮', emoji:'🐘', role:'活在童年的小象', style:'千禧童年',
+        bg:'#fff0f6', color:'#7a4f6b', accent:'#ff7eb6', font:'"Comic Sans MS",cursive', tag:'把今天折成一颗糖' },
+      { key:'miles', name:'迈尔斯', emoji:'🐑', role:'长跑杂志主编', style:'马拉松',
+        bg:'#eef6ef', color:'#2f5d3a', accent:'#3f9d5a', font:'"Helvetica Neue",Arial,sans-serif', tag:'坚持，本身就是意义' },
+      { key:'kaka', name:'kaka', emoji:'🐤', role:'酷酷的小学生', style:'涂鸦手账',
+        bg:'#fffdf5', color:'#33415c', accent:'#f4a261', font:'"Comic Sans MS","Comic Sans",cursive', tag:'乱涂乱画，也是记录' }
+    ];
+    let diarySel = 'tsuki';
+    let diaryMood = 'calm';
+    let diaryEditId = null;
+
+    function moodEmoji(k){ const m = DIARY_MOODS.find(x => x.k === k); return m ? m.e : ''; }
+    function moodKey(e){ const m = DIARY_MOODS.find(x => x.e === e); return m ? m.k : 'calm'; }
+    function diaryStreak(entries){
+      if (!entries || !entries.length) return 0;
+      const days = new Set(entries.map(x => x.date));
+      let s = 0; const d = new Date();
+      while (true) {
+        if (days.has(dateStr(d))) s++; else break;
+        d.setDate(d.getDate() - 1);
+        if (s > 366) break;
+      }
+      return s;
+    }
+    // 单张卡片的内部排版（按小动物风格做差异化装饰）
+    function diaryCardInner(a, e) {
+      let deco = '';
+      if (a.key === 'tsuki') {
+        deco = `<div style="text-align:right;color:${a.accent};font-size:18px;line-height:1">☾</div>
+          <div style="width:40px;height:1px;background:${a.accent};opacity:.5;margin:8px 0 16px"></div>`;
+      } else if (a.key === 'ralph') {
+        deco = `<div style="border-top:2px solid ${a.accent};padding-top:10px;font-family:monospace;letter-spacing:1px;font-size:11px;color:${a.accent};text-transform:uppercase">${e.date}</div>`;
+      } else if (a.key === 'louis') {
+        deco = `<div style="position:relative;height:54px">
+          <div style="position:absolute;top:0;right:0;width:50px;height:60px;border:2px solid ${a.accent};border-radius:4px;display:grid;place-items:center;font-size:24px;background:rgba(192,57,43,.08)">🐦</div>
+          <div style="position:absolute;top:22px;right:8px;width:46px;height:46px;border:1.5px dashed ${a.accent};border-radius:50%;display:grid;place-items:center;font-size:9px;color:${a.accent};transform:rotate(-12deg);text-align:center;line-height:1.1">POST<br>✈</div>
+        </div>`;
+      } else if (a.key === 'editor') {
+        deco = `<div style="border-top:3px double ${a.accent};border-bottom:3px double ${a.accent};padding:6px 0;text-align:center;font-size:11px;letter-spacing:3px;color:${a.accent}">— 墨 · 记 —</div>`;
+      } else if (a.key === 'director') {
+        deco = `<div style="background:${a.accent};color:#fff;text-align:center;font-size:12px;letter-spacing:6px;padding:5px;border-radius:6px 6px 0 0;margin:-2px -2px 14px">公 告</div>`;
+      } else if (a.key === 'liang') {
+        deco = `<div style="text-align:right;font-size:16px;color:${a.accent}">✨ 🍬</div>`;
+      } else if (a.key === 'miles') {
+        deco = `<div style="display:flex;align-items:center;gap:6px;color:${a.accent};font-size:11px;margin-bottom:8px">🏃 第 ${e._idx ? e._idx : ''} 篇 · 还在路上</div>`;
+      } else if (a.key === 'kaka') {
+        deco = `<div style="text-align:right;font-size:18px;color:${a.accent}">✎</div>`;
+      }
+      const ta = a.align || 'left';
+      return `
+        ${deco}
+        <div style="font-size:11px;color:${a.accent};letter-spacing:1px;margin-bottom:6px">${e.date}</div>
+        <div style="font-weight:700;font-size:18px;line-height:1.4;margin-bottom:10px;text-align:${ta}">${e.title ? esc(e.title) : '<span style="opacity:.45;font-weight:400;font-size:14px">无题</span>'}</div>
+        <div style="height:1px;background:${a.accent};opacity:.35;margin:0 0 12px"></div>
+        <div style="white-space:pre-wrap;line-height:1.95;font-size:14.5px;text-align:${ta};word-break:break-word">${e.body ? esc(e.body) : '<span style="opacity:.4">（这一页还是空白的）</span>'}</div>
+        <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:flex-end;font-size:12px;color:${a.accent}">
+          <span>${e.mood ? e.mood : ''}</span>
+          <span style="opacity:.85">—— 排版师 ${a.name} ${a.emoji}</span>
+        </div>`;
+    }
+    function diaryCardHTML(e) {
+      const a = DIARY_ANIMALS.find(x => x.key === e.animal) || DIARY_ANIMALS[0];
+      const ruled = a.key === 'kaka'
+        ? `repeating-linear-gradient(transparent, transparent 26px, ${a.accent}22 26px, ${a.accent}22 27px),`
+        : '';
+      const wrap = `position:relative;background:${ruled}${a.bg};color:${a.color};font-family:${a.font};border-radius:14px;padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.07);border:1px solid rgba(0,0,0,.05);line-height:1.6`;
+      return `<div style="${wrap}">${diaryCardInner(a, e)}</div>`;
+    }
+    function diaryChipHTML(x, sel) {
+      const base = 'diary-chip' + (x.key === sel ? ' on' : '');
+      if (x.key === diarySel && sel === diarySel) {
+        return `<button class="${base}" data-action="diary-animal" data-k="${x.key}" style="background:${x.accent};border:1px solid ${x.accent};color:#fff">
+          <span style="font-size:18px">${x.emoji}</span>
+          <span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><b style="font-size:13px">${x.name}</b><small style="font-size:10px;opacity:.8">${x.style}</small></span>
+        </button>`;
+      }
+      return `<button class="${base}" data-action="diary-animal" data-k="${x.key}" style="background:${x.bg};border:1px solid var(--line);color:${x.color}">
+        <span style="font-size:18px">${x.emoji}</span>
+        <span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><b style="font-size:13px">${x.name}</b><small style="font-size:10px;opacity:.75">${x.style}</small></span>
+      </button>`;
+    }
+    function diaryMoodChipHTML(m) {
+      const on = m.k === diaryMood;
+      return `<button class="diary-chip" data-action="diary-mood" data-m="${m.k}" style="padding:6px 10px;${on?'background:var(--primary-soft);border:1px solid var(--primary);color:var(--primary)':'background:var(--bg);border:1px solid var(--line);color:var(--ink)'};font-size:13px">${m.e} ${m.t}</button>`;
+    }
+    function renderDiary() {
+      if (!state.diary) state.diary = { entries: [] };
+      const entries = state.diary.entries;
+      const byDate = [...entries].sort((a, b) => a.date.localeCompare(b.date) || a.ts - b.ts);
+      const idxMap = {};
+      byDate.forEach((e, i) => { idxMap[e.id] = i + 1; });
+      const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date) || b.ts - a.ts);
+      const a = DIARY_ANIMALS.find(x => x.key === diarySel) || DIARY_ANIMALS[0];
+      const ed = diaryEditId ? entries.find(x => x.id === diaryEditId) : null;
+      const streak = diaryStreak(entries);
+
+      const animalChips = DIARY_ANIMALS.map(x => diaryChipHTML(x, diarySel)).join('');
+      const moodChips = DIARY_MOODS.map(diaryMoodChipHTML).join('');
+      const listHtml = sorted.length ? sorted.map(e => {
+        const card = diaryCardHTML(Object.assign({}, e, { _idx: idxMap[e.id] }));
+        return `<div class="diary-entry">
+          ${card}
+          <div class="row" style="margin-top:8px;gap:8px">
+            <button class="btn sm ghost" data-action="diary-edit" data-id="${e.id}">✏️ 编辑</button>
+            <button class="btn sm ghost" data-action="diary-del" data-id="${e.id}" style="color:var(--red);border-color:var(--line)">🗑 删除</button>
+          </div>
+        </div>`;
+      }).join('') : `<div class="empty"><span class="big">🐾</span>还没有日记。选一只小动物，写下今天的第一页吧～</div>`;
+
+      $('main').innerHTML = `
+        <div class="card" style="border:1px solid var(--primary);background:var(--primary-soft)">
+          <div class="card-title" style="color:var(--primary-dark)">🐾 排版小动物 · 治愈系日记</div>
+          <div class="card-sub" style="color:var(--primary-dark)">选一只小动物当你的「排版师」——把心情、生活、书摘随手写下来，它会帮你排成一张温柔的卡片。i 人友好，动物治愈。已写下 <b>${entries.length}</b> 篇 · 连续记录 <b>${streak}</b> 天</div>
+        </div>
+
+        <div class="grid cols-2" style="margin-top:18px">
+          <div class="card">
+            <div class="card-title">📝 ${ed ? '编辑这一页' : '写一页日记'}</div>
+            <div class="card-sub">${ed ? '修改后点保存即可覆盖原卡片' : '挑一只小动物，它会决定这页的样子'}</div>
+            <div class="row mb" style="gap:10px">
+              <input class="input" id="dDate" type="date" value="${ed ? ed.date : today()}" style="width:auto" />
+              <input class="input" id="dTitle" placeholder="标题（可留空）" value="${ed ? esc(ed.title) : ''}" style="flex:1" />
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">选排版师</div>
+            <div id="diaryAnimals" class="diary-animals">${animalChips}</div>
+            <div class="mt" style="font-size:12px;color:var(--muted);margin-bottom:6px">此刻心情</div>
+            <div id="diaryMoods" class="row wrap" style="gap:8px">${moodChips}</div>
+            <textarea class="input" id="dBody" rows="6" placeholder="今天发生了什么？有什么想说的、想记住的…" style="margin-top:12px;resize:vertical;line-height:1.8">${ed ? esc(ed.body) : ''}</textarea>
+            <div class="row mt" style="gap:8px;justify-content:flex-end">
+              ${ed ? `<button class="btn ghost" data-action="diary-cancel">取消</button>` : ''}
+              <button class="btn" data-action="diary-save">📥 收进纸箱</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">👀 实时预览</div>
+            <div class="card-sub" id="diaryPreviewName">这就是「${a.name}」会排出来的样子</div>
+            <div id="diaryPreview">${diaryCardHTML({ date: ed ? ed.date : today(), title: ed ? ed.title : '', body: ed ? ed.body : '', animal: diarySel, mood: ed ? ed.mood : moodEmoji(diaryMood), _idx: entries.length + 1 })}</div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin:26px 0 12px">📦 我的纸箱 · 全部日记（${sorted.length}）</div>
+        <div class="diary-list">${listHtml}</div>
+      `;
+    }
+    // 仅局部刷新（选小动物 / 选心情时，不重建输入框，避免打字内容丢失）
+    function renderDiaryPreview() {
+      const a = DIARY_ANIMALS.find(x => x.key === diarySel) || DIARY_ANIMALS[0];
+      const title = $('dTitle') ? $('dTitle').value : '';
+      const body = $('dBody') ? $('dBody').value : '';
+      const date = $('dDate') ? $('dDate').value : today();
+      const cnt = state.diary ? state.diary.entries.length : 0;
+      const prev = $('diaryPreview');
+      if (prev) prev.innerHTML = diaryCardHTML({ date, title, body, animal: diarySel, mood: moodEmoji(diaryMood), _idx: cnt + 1 });
+      const pn = $('diaryPreviewName');
+      if (pn) pn.textContent = '这就是「' + a.name + '」会排出来的样子';
+      const ani = $('diaryAnimals');
+      if (ani) ani.innerHTML = DIARY_ANIMALS.map(x => diaryChipHTML(x, diarySel)).join('');
+      const mo = $('diaryMoods');
+      if (mo) mo.innerHTML = DIARY_MOODS.map(diaryMoodChipHTML).join('');
+    }
+
     // ===================== 弹窗 =====================
     function openModal(html){ const m=document.createElement('div'); m.className='modal-mask'; m.id='mask'; m.innerHTML=`<div class="modal">${html}</div>`;
       m.addEventListener('click',e=>{ if(e.target===m) closeModal(); }); document.body.appendChild(m); }
@@ -26204,6 +26401,36 @@ function applyPmodTheme(t){
           break;
         }
         case 'close-avatar': closeAvatarModal(); break;
+        // ===== 日记模块（排版小动物） =====
+        case 'diary-animal': { diarySel = t.dataset.k; renderDiaryPreview(); break; }
+        case 'diary-mood': { diaryMood = t.dataset.m; renderDiaryPreview(); break; }
+        case 'diary-save': {
+          if (!state.diary) state.diary = { entries: [] };
+          const title = ($('dTitle') ? $('dTitle').value : '').trim();
+          const body = ($('dBody') ? $('dBody').value : '').trim();
+          const date = ($('dDate') ? $('dDate').value : today()) || today();
+          if (!title && !body) { toast('写点什么再保存吧 🐾'); break; }
+          if (diaryEditId) {
+            const e = state.diary.entries.find(x => x.id === diaryEditId);
+            if (e) { e.date = date; e.title = title; e.body = body; e.animal = diarySel; e.mood = moodEmoji(diaryMood); e.ts = Date.now(); }
+            diaryEditId = null;
+            save(); toast('已更新这一页 ✏️'); renderDiary();
+          } else {
+            state.diary.entries.push({ id: uid(), date, title, body, animal: diarySel, mood: moodEmoji(diaryMood), ts: Date.now() });
+            save(); toast('已收进纸箱 📦'); renderDiary();
+          }
+          break;
+        }
+        case 'diary-del': {
+          if (state.diary) state.diary.entries = state.diary.entries.filter(x => x.id !== t.dataset.id);
+          save(); renderDiary(); break;
+        }
+        case 'diary-edit': {
+          const e = state.diary && state.diary.entries.find(x => x.id === t.dataset.id);
+          if (e) { diaryEditId = e.id; diarySel = e.animal; diaryMood = moodKey(e.mood); renderDiary(); }
+          break;
+        }
+        case 'diary-cancel': { diaryEditId = null; renderDiary(); break; }
         case 'modal-close': closeModal(); break;
       }
     });
