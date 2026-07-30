@@ -24496,15 +24496,15 @@ function applyPmodTheme(t){
       return c;
     }
     function bookHeatmap() {
-      // 自适应范围：没数据时只显示近期，有数据才从首次读书那周向前展开，避免旧空格占地方
+      // 自适应范围（已减半）：没数据时只显示近期，有数据才从首次读书那周向前展开
       const logs = Object.keys(state.books.log || {}).filter(k => state.books.log[k] && state.books.log[k].done).sort();
-      let startWeeksAgo = 16;
+      let startWeeksAgo = 8;
       if (logs.length) {
         const earliest = new Date(logs[0]);
         const weeksSince = Math.ceil((Date.now() - earliest.getTime()) / (7 * 86400000));
-        startWeeksAgo = Math.min(16, Math.max(5, weeksSince + 1));
+        startWeeksAgo = Math.min(8, Math.max(3, weeksSince + 1));
       } else {
-        startWeeksAgo = 6; // 没数据时只显示近 6 周作为引导
+        startWeeksAgo = 3; // 没数据时只显示近 3 周作为引导
       }
       const WEEKS = startWeeksAgo, DAYS = WEEKS * 7;
       const lvColor = ['var(--line-2)','#c6f6d5','#9ae6b4','#68d391','#38a169'];
@@ -24534,10 +24534,12 @@ function applyPmodTheme(t){
             monthLabels.push({ col, label: (d.getMonth()+1)+'月' });
           }
           const isToday = (k === todayKey);
+          const txtColor = lvl >= 2 ? '#fff' : 'rgba(0,0,0,.55)';
+          const base = `aspect-ratio:1;border-radius:3px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:${txtColor};overflow:hidden`;
           const cellStyle = isToday
-            ? `aspect-ratio:1;border-radius:2px;background:${lvColor[lvl]};transition:background .2s;box-shadow:0 0 0 2px var(--primary);position:relative;z-index:2`
-            : `aspect-ratio:1;border-radius:2px;background:${lvColor[lvl]};transition:background .2s`;
-          grid[row].push(`<div title="${k}${isToday?' (今天)':''}${rec&&rec.done?(' · 读 '+rec.min+' 分钟'):''}" style="${cellStyle}"></div>`);
+            ? `${base};background:${lvColor[lvl]};border:1px solid rgba(0,120,212,.65);box-shadow:0 0 0 2px var(--primary)`
+            : `${base};background:${lvColor[lvl]};border:1px solid rgba(0,0,0,.08)`;
+          grid[row].push(`<div title="${k}${isToday?' (今天)':''}${rec&&rec.done?(' · 读 '+rec.min+' 分钟'):''}" style="${cellStyle}">${d.getDate()}</div>`);
         }
       }
       // month label row (aligned above their columns)
@@ -24548,7 +24550,7 @@ function applyPmodTheme(t){
       }
       // body rows with weekday labels on the left
       const rowsHtml = grid.map((cells, ri) =>
-        `<div style="display:flex;align-items:center;gap:4px"><span style="width:16px;font-size:10px;color:var(--muted);text-align:right;flex-shrink:0;line-height:1">${wdLabel[ri]}</span><div style="display:grid;grid-template-columns:repeat(${WEEKS},1fr);gap:3px;flex:1">${cells.join('')}</div></div>`
+        `<div style="display:flex;align-items:center;gap:4px"><span style="width:16px;font-size:10px;color:var(--muted);text-align:right;flex-shrink:0;line-height:1">${wdLabel[ri]}</span><div style="display:grid;grid-template-columns:repeat(${WEEKS},1fr);gap:4px;flex:1">${cells.join('')}</div></div>`
       ).join('');
       return `<div>${mlCells?`<div style="display:grid;grid-template-columns:repeat(${WEEKS},1fr);gap:3px;margin-bottom:4px;margin-left:20px">${mlCells}</div>`:''}<div>${rowsHtml}</div><div style="font-size:11px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px"><span style="width:13px;height:13px;border-radius:2px;background:var(--line-2);box-shadow:0 0 0 2px var(--primary);display:inline-block"></span> 蓝框 = 今天（${todayKey}）</div></div>`;
     }
@@ -24897,7 +24899,7 @@ function applyPmodTheme(t){
         <div class="card">
           <div class="card-title">🔥 阅读热力图</div>
           <div class="card-sub">颜色越深，当天读得越久。坚持看得见。</div>
-          <div style="max-width:500px;margin:0 auto">
+          <div style="max-width:260px;margin:0 auto">
           <div style="margin-top:10px;padding-bottom:4px">${bookHeatmap()}</div>
           <div style="display:flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;color:var(--muted);padding-left:22px">
             <span>少</span><span style="width:13px;height:13px;border-radius:2px;background:var(--line-2);display:inline-block;vertical-align:middle"></span>
