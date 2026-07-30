@@ -24497,6 +24497,7 @@ function applyPmodTheme(t){
       const WEEKS = 18, DAYS = WEEKS * 7;
       const lvColor = ['var(--line-2)','#c6f6d5','#9ae6b4','#68d391','#38a169'];
       const wdLabel = ['一','二','三','四','五','六','日'];
+      const todayKey = today();
       // build 7×WEEKS grid: col 0 = oldest week (LEFT), col WEEKS-1 = newest (RIGHT) — like GitHub
       let grid = [];
       for (let row = 0; row < 7; row++) grid[row] = [];
@@ -24520,7 +24521,11 @@ function applyPmodTheme(t){
             lastMonth = d.getMonth();
             monthLabels.push({ col, label: (d.getMonth()+1)+'月' });
           }
-          grid[row].push(`<div title="${k}${rec&&rec.done?(' · 读 '+rec.min+' 分钟'):''}" style="aspect-ratio:1;border-radius:2px;background:${lvColor[lvl]};transition:background .2s"></div>`);
+          const isToday = (k === todayKey);
+          const cellStyle = isToday
+            ? `aspect-ratio:1;border-radius:2px;background:${lvColor[lvl]};transition:background .2s;box-shadow:0 0 0 2px var(--primary);position:relative;z-index:2`
+            : `aspect-ratio:1;border-radius:2px;background:${lvColor[lvl]};transition:background .2s`;
+          grid[row].push(`<div title="${k}${isToday?' (今天)':''}${rec&&rec.done?(' · 读 '+rec.min+' 分钟'):''}" style="${cellStyle}"></div>`);
         }
       }
       // month label row (aligned above their columns)
@@ -24533,7 +24538,7 @@ function applyPmodTheme(t){
       const rowsHtml = grid.map((cells, ri) =>
         `<div style="display:flex;align-items:center;gap:4px"><span style="width:16px;font-size:10px;color:var(--muted);text-align:right;flex-shrink:0;line-height:1">${wdLabel[ri]}</span><div style="display:grid;grid-template-columns:repeat(${WEEKS},1fr);gap:3px;flex:1">${cells.join('')}</div></div>`
       ).join('');
-      return `<div>${mlCells?`<div style="display:grid;grid-template-columns:repeat(${WEEKS},1fr);gap:3px;margin-bottom:4px;margin-left:20px">${mlCells}</div>`:''}<div>${rowsHtml}</div></div>`;
+      return `<div>${mlCells?`<div style="display:grid;grid-template-columns:repeat(${WEEKS},1fr);gap:3px;margin-bottom:4px;margin-left:20px">${mlCells}</div>`:''}<div>${rowsHtml}</div><div style="font-size:11px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px"><span style="width:13px;height:13px;border-radius:2px;background:var(--line-2);box-shadow:0 0 0 2px var(--primary);display:inline-block"></span> 蓝框 = 今天（${todayKey}）</div></div>`;
     }
     function bookGoalRing() {
       const total = state.books.goal.yearTarget || 24;
