@@ -23455,23 +23455,41 @@ function applyPmodTheme(t){
       };
     }
     let state = load();
+    // 状态归一化：把任意版本/碎片化的旧 localStorage 校正为当前结构，
+    // 杜绝「字段类型错配（如 daily 是数组而非对象）→ 渲染抛错 → 整页崩溃 → 很多功能点了没反应」
+    function normalizeState(s) {
+      const ds = defaultState();
+      for (const k in ds) {
+        const def = ds[k];
+        const val = s[k];
+        const defArr = Array.isArray(def), defObj = def !== null && typeof def === 'object' && !defArr;
+        const valArr = Array.isArray(val), valObj = val !== null && typeof val === 'object' && !valArr;
+        if (val === undefined || val === null) { s[k] = def; continue; }
+        if (defArr && !valArr) { s[k] = def; continue; }                  // 期望数组却拿到其它类型
+        if (defObj && !valObj) { s[k] = def; continue; }                  // 期望对象却拿到其它类型
+        if (!defArr && !defObj && typeof val !== typeof def) { s[k] = def; continue; } // 基本类型错配
+        if (defObj) for (const sk in def) if (s[k][sk] === undefined) s[k][sk] = def[sk]; // 补齐缺失子字段
+      }
+      // 关键嵌套结构再校正（防半旧数据）
+      if (!Array.isArray(s.daily.routine)) s.daily.routine = [];
+      if (!Array.isArray(s.daily.tasks)) s.daily.tasks = [];
+      if (!Array.isArray(s.shoot)) s.shoot = ds.shoot;
+      if (!Array.isArray(s.shootDaily)) s.shootDaily = ds.shootDaily;
+      if (!Array.isArray(s.bill.flows)) s.bill.flows = [];
+      if (!Array.isArray(s.books.shelf)) s.books.shelf = [];
+      if (!Array.isArray(s.diary.entries)) s.diary.entries = [];
+      ['done','weekPlan','log','setsLog','pr'].forEach(p => {
+        if (typeof s.sport[p] !== 'object' || s.sport[p] === null || Array.isArray(s.sport[p])) s.sport[p] = {};
+      });
+      return s;
+    }
     function load() {
       try {
-        const s = JSON.parse(localStorage.getItem(KEY));
+        const raw = localStorage.getItem(KEY);
+        const s = raw ? JSON.parse(raw) : null;
         if (s && typeof s === 'object') {
-          const ds = defaultState();
-          const merged = Object.assign(ds, s);
-          // 智能合并：保证 defaultState 的所有顶层+一层字段都存在于 merged（修老数据缺失字段导致整页崩溃）
-          for (const k in ds) {
-            if (merged[k] === undefined || merged[k] === null) {
-              merged[k] = ds[k];
-            } else if (ds[k] !== null && typeof ds[k] === 'object' && !Array.isArray(ds[k])) {
-              for (const sk in ds[k]) {
-                if (merged[k][sk] === undefined) merged[k][sk] = ds[k][sk];
-              }
-            }
-          }
-          return merged;
+          const merged = Object.assign({}, defaultState(), s);
+          return normalizeState(merged);
         }
       } catch(e){}
       return defaultState();
