@@ -846,6 +846,315 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 /* 滚动条美化 */
 .drawer-nav::-webkit-scrollbar, .modal::-webkit-scrollbar{ width:6px; }
 .drawer-nav::-webkit-scrollbar-thumb, .modal::-webkit-scrollbar-thumb{ background:var(--line-1); border-radius:3px; }
+
+/* =====================================================================
+   ★ Vivid Layer — 活力升级层 (v16)
+   在 "Calm Growth OS" 之上叠加：渐变签名色 / 弹性动效 / 触控友好 /
+   补全缺失组件样式。不删除任何既有类，仅增强。
+   ===================================================================== */
+:root{
+  --spring: cubic-bezier(.34,1.42,.64,1);
+  --t-spring:.36s var(--spring);
+
+  /* 模块签名渐变 */
+  --g-primary: linear-gradient(135deg,#4f7dff,#7a5cff);
+  --g-accent:  linear-gradient(135deg,#ff9a3d,#ff6a3d);
+  --g-green:   linear-gradient(135deg,#22c47c,#0fb0a0);
+  --g-purple:  linear-gradient(135deg,#9b5cff,#d05bff);
+  --g-pink:    linear-gradient(135deg,#ff5fae,#ff7a6b);
+  --g-gold:    linear-gradient(135deg,#ffc244,#ff9b2f);
+  --g-teal:    linear-gradient(135deg,#22c2d6,#3f8dff);
+  --g-red:     linear-gradient(135deg,#ff6b6f,#ff4d8d);
+  --g-rose:    linear-gradient(135deg,#ff7f9f,#ff9ec7);
+
+  --tap: 44px;   /* 最小触控尺寸 */
+}
+[data-theme="dark"]{
+  --g-primary: linear-gradient(135deg,#5f89ff,#9b7bff);
+  --g-accent:  linear-gradient(135deg,#ffab5e,#ff8158);
+  --g-green:   linear-gradient(135deg,#38d693,#17c2b1);
+  --g-purple:  linear-gradient(135deg,#ac7bff,#dd7cff);
+  --g-pink:    linear-gradient(135deg,#ff7cc0,#ff9585);
+  --g-gold:    linear-gradient(135deg,#ffd06a,#ffab4d);
+  --g-teal:    linear-gradient(135deg,#3ed3e6,#5c9dff);
+  --g-red:     linear-gradient(135deg,#ff8286,#ff6ba0);
+  --g-rose:    linear-gradient(135deg,#ff96b1,#ffb0d3);
+}
+
+/* ---------- 入场动效 ---------- */
+@keyframes rise{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+@keyframes floaty{ 0%,100%{ transform:translate(0,0) } 50%{ transform:translate(-8px,6px) } }
+#main > *{ animation:rise .34s var(--ease) both; }
+#main > *:nth-child(1){ animation-delay:.01s } #main > *:nth-child(2){ animation-delay:.04s }
+#main > *:nth-child(3){ animation-delay:.07s } #main > *:nth-child(4){ animation-delay:.10s }
+#main > *:nth-child(5){ animation-delay:.13s } #main > *:nth-child(n+6){ animation-delay:.16s }
+
+/* ---------- Hero 更有活力 ---------- */
+.hero{
+  background:
+    linear-gradient(135deg, color-mix(in srgb,var(--primary) 16%, transparent), color-mix(in srgb,var(--purple) 14%, transparent) 60%, color-mix(in srgb,var(--accent) 12%, transparent));
+  border-color:color-mix(in srgb,var(--primary) 16%, var(--line));
+  box-shadow:0 10px 30px -14px color-mix(in srgb,var(--primary) 55%, transparent);
+  flex-wrap:wrap;
+}
+.hero::before{
+  width:180px; height:180px; right:-46px; top:-56px;
+  background:radial-gradient(circle, color-mix(in srgb,var(--accent) 34%, transparent), transparent 70%);
+  animation:floaty 9s ease-in-out infinite;
+}
+.hero::after{
+  content:''; position:absolute; left:-40px; bottom:-60px; width:150px; height:150px; border-radius:50%;
+  background:radial-gradient(circle, color-mix(in srgb,var(--green) 22%, transparent), transparent 70%);
+  animation:floaty 11s ease-in-out infinite reverse;
+}
+.hero-hi{ font-size:20px; }
+.hero-ring{ width:66px; height:66px; }
+.hero-ring::before{ inset:7px; }
+.hero-line{
+  position:relative; flex:1 1 100%; font-size:12.5px; color:var(--ink-2);
+  background:color-mix(in srgb,var(--panel) 62%, transparent);
+  border-radius:var(--radius-pill); padding:7px 13px; margin-top:2px;
+}
+.hero-line b{ color:var(--primary-dark); font-feature-settings:"tnum"; }
+
+/* ---------- 模块磁贴：签名渐变 ---------- */
+.dash-pill{ --c:var(--primary); --c-soft:var(--primary-soft); --c-grad:var(--g-primary); }
+.dash-pill::before{
+  content:''; position:absolute; left:0; top:0; height:3px; width:100%;
+  background:var(--c-grad); opacity:.9;
+}
+.dash-pill::after{
+  content:''; position:absolute; right:-28px; bottom:-34px; width:88px; height:88px; border-radius:50%;
+  background:var(--c-soft); opacity:.55; pointer-events:none;
+}
+.dash-pill > *{ position:relative; }
+.dash-pill .dp-top span:first-child{ background:var(--c-soft); }
+.dash-pill .dp-num{ background:var(--c-grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.dash-pill:hover{ transform:translateY(-2px); box-shadow:0 12px 26px -14px color-mix(in srgb,var(--c) 70%, transparent); border-color:color-mix(in srgb,var(--c) 26%, var(--line)); }
+.dash-pill:active{ transform:scale(.97); }
+.dash-pill.done{ border-color:color-mix(in srgb,var(--green) 40%, var(--line)); }
+.dash-pill.done .dp-num{ background:var(--g-green); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.dash-pill.done .dp-lbl{ color:var(--green); font-weight:650; }
+
+.dash-pill[data-v="home"]  { --c:var(--primary); --c-soft:var(--primary-soft); --c-grad:var(--g-primary); }
+.dash-pill[data-v="daily"] { --c:var(--primary); --c-soft:var(--primary-soft); --c-grad:var(--g-primary); }
+.dash-pill[data-v="topic"] { --c:var(--pink);    --c-soft:var(--pink-soft);    --c-grad:var(--g-pink); }
+.dash-pill[data-v="piano"] { --c:var(--gold);    --c-soft:var(--gold-soft);    --c-grad:var(--g-gold); }
+.dash-pill[data-v="book"]  { --c:var(--purple);  --c-soft:var(--purple-soft);  --c-grad:var(--g-purple); }
+.dash-pill[data-v="study"] { --c:var(--accent);  --c-soft:var(--accent-soft);  --c-grad:var(--g-accent); }
+.dash-pill[data-v="shoot"] { --c:var(--teal);    --c-soft:var(--teal-soft);    --c-grad:var(--g-teal); }
+.dash-pill[data-v="bill"]  { --c:var(--green);   --c-soft:var(--green-soft);   --c-grad:var(--g-green); }
+.dash-pill[data-v="health"]{ --c:var(--red);     --c-soft:var(--red-soft);     --c-grad:var(--g-red); }
+.dash-pill[data-v="sport"] { --c:var(--green);   --c-soft:var(--green-soft);   --c-grad:var(--g-green); }
+.dash-pill[data-v="diary"] { --c:var(--rose);    --c-soft:var(--rose-soft);    --c-grad:var(--g-rose); }
+.dash-pill[data-v="game"]  { --c:var(--purple);  --c-soft:var(--purple-soft);  --c-grad:var(--g-purple); }
+
+/* ---------- 分组标题：可着色 ---------- */
+.section-title::before{ background:var(--g-primary); }
+.section-title[data-c="accent"]::before{ background:var(--g-accent) }
+.section-title[data-c="green"]::before{  background:var(--g-green) }
+.section-title[data-c="purple"]::before{ background:var(--g-purple) }
+.section-title[data-c="pink"]::before{   background:var(--g-pink) }
+.section-title[data-c="gold"]::before{   background:var(--g-gold) }
+.section-title[data-c="teal"]::before{   background:var(--g-teal) }
+.section-title[data-c="red"]::before{    background:var(--g-red) }
+.section-title[data-c="rose"]::before{   background:var(--g-rose) }
+.section-title .st-count{
+  margin-left:auto; font-size:11px; font-weight:650; color:var(--muted);
+  background:var(--panel-ins); padding:2px 9px; border-radius:var(--radius-pill);
+  font-feature-settings:"tnum";
+}
+
+/* ---------- 卡片色调（tint）---------- */
+.card.tint{ position:relative; overflow:hidden; }
+.card.tint::before{
+  content:''; position:absolute; inset:0 auto 0 0; width:4px; background:var(--g-primary);
+}
+.card.tint-green::before{  background:var(--g-green) }
+.card.tint-accent::before{ background:var(--g-accent) }
+.card.tint-purple::before{ background:var(--g-purple) }
+.card.tint-pink::before{   background:var(--g-pink) }
+.card.tint-gold::before{   background:var(--g-gold) }
+.card.tint-teal::before{   background:var(--g-teal) }
+.card.tint-red::before{    background:var(--g-red) }
+.card.tint-rose::before{   background:var(--g-rose) }
+.card.soft-green{  background:linear-gradient(180deg,var(--green-soft),transparent 70%),var(--panel); }
+.card.soft-accent{ background:linear-gradient(180deg,var(--accent-soft),transparent 70%),var(--panel); }
+.card.soft-primary{background:linear-gradient(180deg,var(--primary-soft),transparent 70%),var(--panel); }
+.card.soft-gold{   background:linear-gradient(180deg,var(--gold-soft),transparent 70%),var(--panel); }
+.card.soft-purple{ background:linear-gradient(180deg,var(--purple-soft),transparent 70%),var(--panel); }
+.card.soft-teal{   background:linear-gradient(180deg,var(--teal-soft),transparent 70%),var(--panel); }
+.card.soft-rose{   background:linear-gradient(180deg,var(--rose-soft),transparent 70%),var(--panel); }
+.card:hover{ box-shadow:var(--shadow); }
+
+/* ---------- 模块切换条 (域内横滑) ---------- */
+.seg-scroll{
+  display:flex; gap:7px; overflow-x:auto; padding:3px 2px 9px;
+  margin:2px -2px 2px; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+.seg-scroll::-webkit-scrollbar{ display:none; }
+.seg-scroll button{
+  flex:0 0 auto; min-height:38px; padding:8px 15px; border-radius:var(--radius-pill);
+  font-size:13px; font-weight:640; color:var(--ink-3);
+  background:var(--panel); border:1px solid var(--line);
+  box-shadow:var(--shadow-soft);
+  transition:transform var(--t-fast), color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+  white-space:nowrap;
+}
+.seg-scroll button:active{ transform:scale(.94); }
+.seg-scroll button.active{
+  color:#fff; border-color:transparent; background:var(--g-primary);
+  box-shadow:0 6px 16px -8px color-mix(in srgb,var(--primary) 90%, transparent);
+}
+.seg-scroll button.active[data-v="study"]{ background:var(--g-accent) }
+.seg-scroll button.active[data-v="piano"]{ background:var(--g-gold) }
+.seg-scroll button.active[data-v="book"]{  background:var(--g-purple) }
+.seg-scroll button.active[data-v="topic"]{ background:var(--g-pink) }
+.seg-scroll button.active[data-v="shoot"]{ background:var(--g-teal) }
+
+/* ---------- 分段控件 (难度 / 模式) ---------- */
+.diff-pills{
+  display:flex; gap:4px; padding:4px; border-radius:var(--radius-pill);
+  background:var(--panel-ins); border:1px solid var(--line-2);
+  overflow-x:auto; scrollbar-width:none;
+}
+.diff-pills::-webkit-scrollbar{ display:none }
+.diff-pill{
+  flex:1 0 auto; min-height:36px; padding:7px 14px; border-radius:var(--radius-pill);
+  font-size:13px; font-weight:620; color:var(--ink-3); white-space:nowrap;
+  transition:all var(--t-fast);
+}
+.diff-pill:hover{ color:var(--ink-1); }
+.diff-pill.on, .diff-pill.active{
+  background:var(--panel); color:var(--primary-dark);
+  box-shadow:var(--shadow-soft); font-weight:700;
+}
+[data-theme="dark"] .diff-pill.on, [data-theme="dark"] .diff-pill.active{ background:var(--bg-2); }
+
+/* ---------- 单词卡正面 ---------- */
+.card-front{
+  display:grid; place-items:center; text-align:center; gap:2px;
+  min-height:96px; padding:16px;
+  border-radius:var(--radius); border:1px dashed color-mix(in srgb,var(--primary) 32%, var(--line-1));
+  background:linear-gradient(140deg,var(--primary-soft),transparent 70%),var(--panel);
+  cursor:pointer; transition:transform var(--t-fast), box-shadow var(--t-fast);
+}
+.card-front:active{ transform:scale(.98); }
+.card-front:hover{ box-shadow:var(--shadow); }
+
+/* ---------- Toast ---------- */
+#toast{
+  position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom));
+  transform:translateX(-50%) translateY(8px);
+  background:color-mix(in srgb, #10131a 88%, transparent); color:#fff;
+  padding:11px 20px; border-radius:var(--radius-pill); font-size:13.5px; font-weight:600;
+  z-index:100; max-width:86%; text-align:center; pointer-events:none;
+  box-shadow:var(--shadow-lg); opacity:0;
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  transition:opacity .22s var(--ease), transform .3s var(--spring);
+}
+#toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ---------- 触控友好 ---------- */
+.btn{ min-height:var(--tap); }
+.btn.sm{ min-height:38px; }
+.btn.block{ width:100%; }
+.btn.grad{ background:var(--g-primary); }
+.btn.grad:hover{ filter:brightness(1.06); background:var(--g-primary); }
+.btn.grad.green{ background:var(--g-green) }
+.btn.grad.accent{ background:var(--g-accent) }
+.btn.grad.gold{ background:var(--g-gold) }
+.btn.grad.purple{ background:var(--g-purple) }
+.btn.grad.pink{ background:var(--g-pink) }
+.btn.grad.teal{ background:var(--g-teal) }
+.icon-btn{ min-width:38px; }
+.icon-btn.inline{ min-width:32px; width:32px; height:32px; }
+.check{ width:24px; height:24px; }
+.item{ padding:13px 4px; }
+.item .check{ position:relative; }
+.item .check::after{
+  content:''; position:absolute; inset:-11px; /* 扩大点按热区至 44px */
+}
+.item.done .check{ background:var(--g-green); border-color:transparent; }
+
+/* ---------- 空状态 ---------- */
+.empty{ padding:34px 16px; }
+.empty-box{
+  display:grid; place-items:center; gap:6px; text-align:center;
+  padding:26px 16px; border-radius:var(--radius);
+  border:1px dashed var(--line-1); background:var(--panel-ins);
+  color:var(--muted); font-size:13px;
+}
+.empty-box .eb-ic{ font-size:28px; opacity:.75; }
+.empty-box .eb-t{ font-weight:650; color:var(--ink-3); font-size:13.5px; }
+
+/* ---------- 汇总指标行 ---------- */
+.metric-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+.metric{
+  text-align:center; padding:10px 6px; border-radius:var(--radius-sm);
+  background:var(--panel-ins);
+}
+.metric .mv{ font-size:17px; font-weight:760; color:var(--ink-1); font-feature-settings:"tnum"; line-height:1.2; }
+.metric .ml{ font-size:11px; color:var(--muted); margin-top:2px; }
+
+/* 统计卡活力化 */
+.stat-card{ position:relative; overflow:hidden; }
+.stat-card .num{ background:var(--g-primary); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+/* ---------- 进度条 ---------- */
+.progress span{ background:var(--g-primary); }
+.progress.green span{ background:var(--g-green); }
+.progress.accent span{ background:var(--g-accent); }
+.lv-bar > *{ background:var(--g-accent); }
+.budget-bar-fill{ background:var(--g-green); }
+
+/* ---------- Tabbar 活力化 ---------- */
+#tabbar button{ min-height:var(--tap); padding:6px 4px; }
+#tabbar button.active{
+  color:#fff; background:var(--g-primary);
+  box-shadow:0 8px 18px -10px color-mix(in srgb,var(--primary) 95%, transparent);
+}
+#tabbar button.active .ic{ filter:none; transform:translateY(-1px) scale(1.06); }
+#tabbar button:not(.active):hover{ color:var(--ink-2); background:var(--panel-ins); }
+
+/* ---------- 抽屉活力化 ---------- */
+.drawer-nav button{ min-height:var(--tap); }
+.drawer-nav button.active{ background:var(--primary-soft); }
+.drawer-nav button.active::before{ background:var(--g-primary); box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 16%, transparent); }
+.drawer-header .avatar{ background:var(--g-primary); color:#fff; }
+
+/* ---------- 快速添加条 ---------- */
+.quick-add{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.quick-add .input{ flex:1 1 150px; min-height:var(--tap); }
+.quick-add select.input{ flex:0 0 auto; width:104px; }
+.quick-add .btn{ flex:0 0 auto; }
+
+/* ---------- 小徽标 ---------- */
+.tag.green{ background:var(--green-soft); color:var(--green) }
+.tag.purple{ background:var(--purple-soft); color:var(--purple) }
+.tag.gold{ background:var(--gold-soft); color:var(--gold) }
+.tag.teal{ background:var(--teal-soft); color:var(--teal) }
+.tag.pink{ background:var(--pink-soft); color:var(--pink) }
+.tag.red{ background:var(--red-soft); color:var(--red) }
+.tag.rose{ background:var(--rose-soft); color:var(--rose) }
+.tag.solid{ background:var(--g-primary); color:#fff }
+
+/* ---------- 折叠块 ---------- */
+details.fold{ border-top:1px solid var(--line-2); margin-top:12px; padding-top:10px; }
+details.fold > summary{
+  cursor:pointer; list-style:none; font-size:13px; font-weight:650; color:var(--ink-3);
+  display:flex; align-items:center; gap:6px; min-height:36px;
+}
+details.fold > summary::-webkit-details-marker{ display:none }
+details.fold > summary::after{ content:'▾'; margin-left:auto; transition:transform var(--t-fast); color:var(--muted); }
+details.fold[open] > summary::after{ transform:rotate(180deg); }
+
+/* ---------- 响应式：宽屏双列 ---------- */
+@media (max-width:400px){
+  .cols-2{ grid-template-columns:1fr; }
+  .metric-row{ grid-template-columns:repeat(3,1fr); }
+}
+
 </style>
 <script type="importmap">
 { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
@@ -2010,23 +2319,23 @@ function applyPmodTheme(t){
         </div>
       </div>
       <div class="drawer-nav" id="drawerNav">
-        <div class="drawer-group">🏠 总览</div>
+        <div class="drawer-group">总览</div>
         <button data-view="home" class="active">🏠 首页</button>
-        <div class="drawer-group">📅 每日规划</div>
+        <div class="drawer-group">每日</div>
         <button data-view="daily">📝 每日计划</button>
-        <button data-view="sport">🏊 运动计划</button>
-        <button data-view="health">❤️ 健康档案</button>
-        <button data-view="bill">💰 记账</button>
-        <div class="drawer-group">📚 学习成长</div>
+        <div class="drawer-group">成长</div>
         <button data-view="study">📚 学习中心</button>
         <button data-view="piano">🎹 钢琴练习</button>
         <button data-view="book">📖 读书计划</button>
-        <div class="drawer-group">🎬 内容创作</div>
+        <div class="drawer-group">创作</div>
         <button data-view="topic">💡 选题灵感</button>
         <button data-view="shoot">📷 拍摄计划</button>
-        <div class="drawer-group">📓 记录心情</div>
+        <div class="drawer-group">生活</div>
+        <button data-view="sport">🏊 运动计划</button>
+        <button data-view="health">❤️ 健康档案</button>
+        <button data-view="bill">💰 记账</button>
         <button data-view="diary">🐾 我的日记</button>
-        <div class="drawer-group">🎯 休闲娱乐</div>
+        <div class="drawer-group">休闲</div>
         <button data-view="game">🎮 益智游戏</button>
       </div>
       <div style="padding:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
@@ -2044,8 +2353,8 @@ function applyPmodTheme(t){
     <nav id="tabbar">
       <button data-tab="home" class="active"><span class="ic">🏠</span>首页</button>
       <button data-tab="daily"><span class="ic">📝</span>每日</button>
-      <button data-tab="topic"><span class="ic">💡</span>选题</button>
-      <button data-tab="piano"><span class="ic">🎹</span>钢琴</button>
+      <button data-tab="growth"><span class="ic">🚀</span>成长</button>
+      <button data-tab="create"><span class="ic">✨</span>创作</button>
       <button data-tab="more"><span class="ic">☰</span>更多</button>
     </nav>
   </div>
@@ -23165,11 +23474,10 @@ function applyPmodTheme(t){
       let t = document.getElementById('toast');
       if (!t) {
         t = document.createElement('div'); t.id = 'toast';
-        t.style.cssText = 'position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;padding:10px 18px;border-radius:24px;font-size:14px;z-index:100;max-width:85%;text-align:center;transition:opacity .25s;opacity:0';
         document.body.appendChild(t);
       }
-      t.textContent = msg; t.style.opacity = '1';
-      clearTimeout(t._tm); t._tm = setTimeout(()=>{ t.style.opacity='0'; }, 2600);
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(t._tm); t._tm = setTimeout(()=>{ t.classList.remove('show'); }, 2600);
     }
 
     // 抖音搜索：优先唤起 App（深链），失败则复制话题名兜底（网页端/未装App）
@@ -23262,11 +23570,49 @@ function applyPmodTheme(t){
     const TITLES = { home:'首页', daily:'每日计划', study:'学习中心', sport:'运动计划', health:'健康档案',
       topic:'选题灵感', book:'读书计划', shoot:'拍摄计划', game:'益智游戏', piano:'钢琴练习', bill:'记账', diary:'日记' };
 
-    // 底部 Tab 与视图的映射（仅高频模块常驻，其余归到"更多"）
-    const TAB_OF_VIEW = { home:'home', daily:'daily', topic:'topic', piano:'piano' };
+    // 底部 Tab = 使用场景「域」，域内用顶部切换条横滑，任何模块都在 2 次点击内可达
+    const DOMAIN_MODULES = {
+      growth: [ {v:'study', ic:'📚', t:'学习中心'}, {v:'piano', ic:'🎹', t:'钢琴练习'}, {v:'book', ic:'📖', t:'读书计划'} ],
+      create: [ {v:'topic', ic:'💡', t:'选题灵感'}, {v:'shoot', ic:'📷', t:'拍摄计划'} ]
+    };
+    const lastDomainView = { growth:'study', create:'topic' };
+    const TAB_OF_VIEW = { home:'home', daily:'daily', study:'growth', piano:'growth', book:'growth', topic:'create', shoot:'create' };
     function syncTab(view) {
       const tab = TAB_OF_VIEW[view] || 'more';
       document.querySelectorAll('#tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    }
+    // 绑定包装（函数声明已提升，可安全重绑定；同时同步 VIEWS 引用）
+    function installModuleSwitch() {
+      renderStudy = withModuleSwitch('study', renderStudy);
+      renderPiano = withModuleSwitch('piano', renderPiano);
+      renderBook  = withModuleSwitch('book',  renderBook);
+      renderTopic = withModuleSwitch('topic', renderTopic);
+      renderShoot = withModuleSwitch('shoot', renderShoot);
+      VIEWS.study = renderStudy; VIEWS.piano = renderPiano; VIEWS.book = renderBook;
+      VIEWS.topic = renderTopic; VIEWS.shoot = renderShoot;
+    }
+
+    // 域内模块切换条：让「成长 / 创作」域下的兄弟模块一眼可见、一点直达
+    function renderModuleSwitch(view) {
+      const d = TAB_OF_VIEW[view];
+      const list = DOMAIN_MODULES[d];
+      if (!list) return '';
+      return `<div class="seg-scroll" role="tablist" aria-label="${d==='growth'?'成长':'创作'}模块切换">` +
+        list.map(m => `<button role="tab" aria-selected="${m.v===view}" class="${m.v===view?'active':''}" data-action="go" data-v="${m.v}">${m.ic} ${m.t}</button>`).join('') +
+        `</div>`;
+    }
+    // 包装域内视图渲染函数：无论从哪条路径重绘，切换条始终存在且不重复
+    function withModuleSwitch(view, fn) {
+      return function () {
+        const r = fn.apply(this, arguments);
+        const m = $('main');
+        if (m) {
+          m.querySelectorAll(':scope > .seg-scroll').forEach(n => n.remove());
+          const sw = renderModuleSwitch(view);
+          if (sw) m.insertAdjacentHTML('afterbegin', sw);
+        }
+        return r;
+      };
     }
     function navigate(view) {
       // 离开运动页时清理 3D 模型，防止 WebGL 上下文泄漏
@@ -23277,7 +23623,13 @@ function applyPmodTheme(t){
       syncTab(view);
       closeDrawer();
       try {
-        if (VIEWS[view]) VIEWS[view]();
+        if (VIEWS[view]) {
+          VIEWS[view]();
+          const _d = TAB_OF_VIEW[view];
+          if (DOMAIN_MODULES[_d]) lastDomainView[_d] = view;
+          $('main').scrollTop = 0;
+          try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch(_) { window.scrollTo(0,0); }
+        }
         else $('main').innerHTML = '<div class="empty">未找到该页面:' + view + '</div>';
       } catch(e) {
         console.error('navigate err:', e);
@@ -23300,7 +23652,9 @@ function applyPmodTheme(t){
       const r = [...state.daily.routine, ...state.daily.tasks];
       const done = r.filter(i=>i.done).length;
       const pianoStat = pianoModuleStat(); const mastered = pianoStat.mastered;
-      const todayBook = BOOKS.find(b => b.m === '2026-' + String(new Date().getMonth()+1).padStart(2,'0')) || BOOKS[0];
+      const _bm = new Date();
+      const todayBook = BOOKS.find(b => b.m === _bm.getFullYear() + '-' + String(_bm.getMonth()+1).padStart(2,'0'))
+        || BOOKS.find(b => b.m && b.m.endsWith('-' + String(_bm.getMonth()+1).padStart(2,'0'))) || BOOKS[0];
       const quote = (todayBook.q[new Date().getDate() % todayBook.q.length]);
       // 首次访问轻量引导（v14 新增，基于 localStorage，不影响数据模型）
       let onboard = '';
@@ -23352,39 +23706,64 @@ function applyPmodTheme(t){
       const sleepRec = (state.health && state.health.records && state.health.records[today()]) || {};
       const shootDone = Array.isArray(state.shoot) ? state.shoot.filter(s=>s.done).length : 0;
       const shootTotal = Array.isArray(state.shoot) ? state.shoot.length : 0;
-      const dashItems = [
-        { ic:'📝', num:`${done}/${r.length}`, lbl:'今日计划', v:'daily', ok: r.length>0 && done>=r.length },
-        { ic:'💡', num: topicN, lbl:'选题灵感', v:'topic' },
-        { ic:'🎹', num: pianoToday?'已练 ✓':`${mastered}/18`, lbl:'钢琴练习', v:'piano', ok: pianoToday },
-        { ic:'📖', num: bookStreakN ? ('🔥' + bookStreakN) : (bookReadingN || '0'), lbl:'连续阅读', v:'book', ok: bookTodayDone },
-        { ic:'📚', num: studyToday?'已学 ✓':`连续${learnActive}`, lbl:'学习成长', v:'study', ok: studyToday },
-        { ic:'📷', num: shootTotal?`${shootDone}/${shootTotal}`:'0', lbl:'拍摄计划', v:'shoot', ok: shootTotal>0 && shootDone>=shootTotal },
-        { ic:'💰', num: fmtMoney(billExp), lbl:'本月记账', v:'bill' },
-        { ic:'😴', num: sleepRec.sleep?`${sleepRec.sleep}h`:'未记', lbl:'昨晚睡眠', v:'health' },
-        { ic:'🐾', num: (state.diary && state.diary.entries) ? state.diary.entries.length : 0, lbl:'我的日记', v:'diary' }
+      const _sportHas = k => { try { const a = state.sport && state.sport.log && state.sport.log[k];
+        const b = state.sport && state.sport.setsLog && state.sport.setsLog[k];
+        return !!((a && Object.keys(a).length) || (b && Object.keys(b).length)); } catch(_) { return false; } };
+      const sportTodayDone = _sportHas(today());
+      const sportWeekN = (()=>{ let n=0; for(let i=0;i<7;i++){ const d=new Date(); d.setDate(d.getDate()-i); if(_sportHas(dateStr(d))) n++; } return n; })();
+      // 按「域」分组：成长 → 创作 → 生活 → 休闲，顺序与底部 Tab 一致，降低心智负担
+      const dashGroups = [
+        { t:'成长', c:'accent', items:[
+          { ic:'📚', num: studyToday?'已学 ✓':`${learnActive} 门`, lbl:'学习中心', v:'study', ok: studyToday },
+          { ic:'🎹', num: pianoToday?'已练 ✓':`${mastered}/18`, lbl:'钢琴练习', v:'piano', ok: pianoToday },
+          { ic:'📖', num: bookStreakN ? ('🔥' + bookStreakN) : (bookReadingN || '0'), lbl:'读书计划', v:'book', ok: bookTodayDone }
+        ]},
+        { t:'创作', c:'pink', items:[
+          { ic:'💡', num: topicN, lbl:'选题灵感', v:'topic' },
+          { ic:'📷', num: shootTotal?`${shootDone}/${shootTotal}`:'0', lbl:'拍摄计划', v:'shoot', ok: shootTotal>0 && shootDone>=shootTotal }
+        ]},
+        { t:'生活', c:'green', items:[
+          { ic:'🏊', num: sportTodayDone?'已练 ✓':`本周 ${sportWeekN}`, lbl:'运动计划', v:'sport', ok: sportTodayDone },
+          { ic:'😴', num: sleepRec.sleep?`${sleepRec.sleep}h`:'未记', lbl:'健康档案', v:'health', ok: !!sleepRec.sleep },
+          { ic:'💰', num: fmtMoney(billExp), lbl:'本月记账', v:'bill' },
+          { ic:'🐾', num: (state.diary && state.diary.entries) ? state.diary.entries.length : 0, lbl:'我的日记', v:'diary' }
+        ]},
+        { t:'休闲', c:'purple', items:[
+          { ic:'🎮', num:'开局', lbl:'益智游戏', v:'game' }
+        ]}
       ];
+      const dashPill = x => `<div class="dash-pill ${x.ok?'done':''}" data-action="go" data-v="${x.v}" role="button" tabindex="0" aria-label="${x.lbl}">
+            <div class="dp-top"><span>${x.ic}</span><span>${x.lbl}</span></div>
+            <div class="dp-num">${x.num}</div>
+            <div class="dp-lbl">${x.ok?'已完成 ✓':'点击进入'}</div>
+          </div>`;
       const hNow = new Date();
       const hHour = hNow.getHours();
       const hGreet = hHour<5?'夜深了':hHour<11?'早上好':hHour<13?'中午好':hHour<18?'下午好':'晚上好';
       const hDate = hNow.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});
       const hRate = r.length?Math.round(done/r.length*100):0;
+      const hTip = hRate>=100 ? '今天全部搞定，给自己一个赞 🎉'
+        : hRate>=60 ? '进度不错，再冲一把 💪'
+        : hRate>0 ? '已经开始了，保持节奏 ✨'
+        : '从最小的一件事开始吧 🌱';
       const heroHtml = `
         <div class="hero">
           <div class="hero-greet">
             <div class="hero-hi">${hGreet}，<b>${esc(state.wbName||'我')}</b> 👋</div>
             <div class="hero-date">${hDate}</div>
           </div>
-          <div class="hero-ring" style="--p:${hRate}"><span>${hRate}%</span></div>
-        </div>
-        <div class="hero-sub">今天已完成 <b>${done}/${r.length}</b> 项计划 · 钢琴掌握 ${mastered}/18 · 继续保持节奏 ✨</div>`;
+          <div class="hero-ring" style="--p:${hRate}" role="img" aria-label="今日完成率 ${hRate}%"><span>${hRate}%</span></div>
+          <div class="hero-line">今日计划 <b>${done}/${r.length}</b> · 钢琴掌握 <b>${mastered}/18</b> · ${hTip}</div>
+        </div>`;
+      const doneCount = dashGroups.reduce((n,g)=>n+g.items.filter(i=>i.ok).length,0);
+      const totalTrack = dashGroups.reduce((n,g)=>n+g.items.filter(i=>'ok' in i).length,0);
       const dashHtml = `
-        <div class="section-title">模块进度 · 今日一览</div>
-        <div class="dash-row">
-          ${dashItems.map(x=>`<div class="dash-pill ${x.ok?'done':''}" data-action="go" data-v="${x.v}">
-            <div class="dp-top"><span>${x.ic}</span><span>${x.lbl}</span></div>
-            <div class="dp-num">${x.num}</div>
-            <div class="dp-lbl">${x.ok?'已完成 ✓':'点击查看'}</div>
-          </div>`).join('')}
+        <div class="section-title">今日一览<span class="st-count">${doneCount}/${totalTrack} 已完成</span></div>
+        <div class="dash-pill-groups">
+          ${dashGroups.map(g=>`
+            <div class="section-title" data-c="${g.c}" style="margin:14px 4px 8px;font-size:12px">${g.t}</div>
+            <div class="dash-row">${g.items.map(dashPill).join('')}</div>
+          `).join('')}
         </div>`;
       // 今日学习内容一览（v14 新增：从现有数据源聚合，让首页成为真正的"今日一览"）
       const eng = (LANG.english.fullTexts && LANG.english.fullTexts[0]) || null;
@@ -23413,37 +23792,55 @@ function applyPmodTheme(t){
               <span style="color:var(--primary);font-size:13px">›</span>
             </div>`).join('')}
         </div>` : '';
-      $('main').innerHTML = `
-        ${heroHtml}
-        ${onboard}
-        ${dashHtml}
-        ${learnReminder}
-        ${learnPreviewHtml}
-        <div class="section-title">今日进度</div>
-        <div class="stat-grid">
-          <div class="stat-card"><div class="num">${done}/${r.length}</div><div class="lbl">今日计划完成</div></div>
-          <div class="stat-card"><div class="num">${mastered}/18</div><div class="lbl">钢琴曲已掌握</div></div>
-        </div>
-        <div class="section-title">今日阅读</div>
-        <div class="card">
+      // 今日计划：首屏直接可勾选（原先必须进「每日」页才能操作）
+      const undoneList = [...state.daily.routine.map(i=>({...i,g:'routine'})), ...state.daily.tasks.map(i=>({...i,g:'tasks'}))]
+        .filter(i=>!i.done).slice(0,4);
+      const planHtml = `
+        <div class="section-title">今日计划<span class="st-count">${done}/${r.length}</span></div>
+        <div class="card tint">
+          ${r.length === 0
+            ? `<div class="empty-box"><div class="eb-ic">🌱</div><div class="eb-t">今天还没有安排</div><div>去「每日」加一件小事开始</div></div>`
+            : (undoneList.length
+              ? undoneList.map(i=>`<div class="item">
+                  <div class="check" data-action="toggle-task" data-g="${i.g}" data-id="${i.id}" role="checkbox" aria-checked="false" aria-label="完成 ${esc(i.title)}"></div>
+                  <div class="item-body"><div class="item-title">${esc(i.title)}</div>
+                    <div class="item-desc"><span class="tag ${i.g==='routine'?'primary':'accent'}">${esc(i.tag||'')}</span></div></div>
+                </div>`).join('')
+              : `<div class="empty-box"><div class="eb-ic">🎉</div><div class="eb-t">今日计划全部完成</div><div>休息一下，或者加点新目标</div></div>`)}
+          <button class="btn sm outline block" data-action="go" data-v="daily" style="margin-top:10px">查看全部计划 ›</button>
+        </div>`;
+      const readHtml = `
+        <div class="section-title" data-c="purple">今日阅读</div>
+        <div class="card tint tint-purple soft-purple">
           <div class="card-title">📖 今日书摘</div>
           <div class="quote">「${quote}」<span class="by">— 《${todayBook.t}》</span></div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
-            <button class="btn sm ${bookTodayDone ? 'outline' : 'accent'}" data-action="book-checkin" style="flex:1;justify-content:inherit;justify-content:center">${bookTodayDone ? '✓ 今日已读' : '✅ 今天读过了'}</button>
-            <span class="tag ${bookStreakN ? 'primary' : 'gray'}">🔥 连续 ${bookStreakN} 天</span>
-          </div>
-        </div>
-        <div class="section-title">今日行动</div>
-        <div class="card">
-          <div class="card-title">🎯 今日建议</div>
-          <div class="card-sub">语言 · 钢琴 · 运动 · 阅读,四件事每天推进一点点。</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
-            <button class="btn sm" data-action="go" data-v="study" style="width:100%;justify-content:center">📚 学习</button>
-            <button class="btn sm" data-action="go" data-v="piano" style="width:100%;justify-content:center">🎹 钢琴</button>
-            <button class="btn sm" data-action="go" data-v="sport" style="width:100%;justify-content:center">🏊 运动</button>
-            <button class="btn sm" data-action="go" data-v="game" style="width:100%;justify-content:center">🎮 游戏</button>
+            <button class="btn sm ${bookTodayDone ? 'outline' : 'grad purple'}" data-action="book-checkin" style="flex:1;justify-content:center">${bookTodayDone ? '✓ 今日已读' : '✅ 今天读过了'}</button>
+            <span class="tag ${bookStreakN ? 'purple' : 'gray'}">🔥 连续 ${bookStreakN} 天</span>
           </div>
         </div>`;
+      const actionHtml = `
+        <div class="section-title" data-c="teal">一键开始</div>
+        <div class="card">
+          <div class="card-sub" style="margin:0 0 10px">语言 · 钢琴 · 运动 · 选题 · 记录，每天推进一点点。</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <button class="btn sm grad accent" data-action="go" data-v="study" style="justify-content:center">📚 学习</button>
+            <button class="btn sm grad gold" data-action="go" data-v="piano" style="justify-content:center">🎹 钢琴</button>
+            <button class="btn sm grad green" data-action="go" data-v="sport" style="justify-content:center">🏊 运动</button>
+            <button class="btn sm grad pink" data-action="go" data-v="topic" style="justify-content:center">💡 选题</button>
+            <button class="btn sm grad" data-action="go" data-v="diary" style="justify-content:center">🐾 日记</button>
+            <button class="btn sm grad purple" data-action="go" data-v="game" style="justify-content:center">🎮 游戏</button>
+          </div>
+        </div>`;
+      $('main').innerHTML = `
+        ${heroHtml}
+        ${onboard}
+        ${learnReminder}
+        ${planHtml}
+        ${learnPreviewHtml}
+        ${dashHtml}
+        ${readHtml}
+        ${actionHtml}`;
       const ob = $('onboardClose');
       if (ob) ob.addEventListener('click', () => { try { localStorage.setItem('growth-os-onboard','1'); } catch(_){} navigate('home'); });
     }
@@ -23455,50 +23852,68 @@ function applyPmodTheme(t){
       const pianoTodayDone = !!(state.pianoLog && state.pianoLog[today()]);
       const studyTodayDone = !!(state.studyLog && state.studyLog[today()]);
       const sleepRecDone = !!(state.health && state.health.records && state.health.records[today()] && state.health.records[today()].sleep);
+      const rt = state.daily.routine, tk = state.daily.tasks;
+      const rtDone = rt.filter(i=>i.done).length, tkDone = tk.filter(i=>i.done).length;
+      const habits = [
+        { ic:'🎹', t:'钢琴练习', done:pianoTodayDone, doneTxt:'今日已练', todoTxt:'今天还没练', btn:'去练琴', act:`data-action="go" data-v="piano"`, cls:'gold' },
+        { ic:'📚', t:'学习成长', done:studyTodayDone, doneTxt:'今日已学', todoTxt:'今天还没学', btn:'去学习', act:`data-action="study-checkin"`, cls:'accent' },
+        { ic:'😴', t:'睡眠记录', done:sleepRecDone,   doneTxt:'今日已记', todoTxt:'今晚记得记', btn:'去记录', act:`data-action="go" data-v="health"`, cls:'red' }
+      ];
+      const habitDone = habits.filter(h=>h.done).length;
+      const emptyBox = (ic,t,d)=>`<div class="empty-box"><div class="eb-ic">${ic}</div><div class="eb-t">${t}</div><div>${d}</div></div>`;
       $('main').innerHTML = `
-        <div class="card">
-          <div class="card-title">${remaining} 待完成</div>
-          <div class="card-sub">完成率 ${rate}%</div>
-          <div class="progress-wrap"><div class="progress"><span style="width:${rate}%"></span></div>${rate}%</div>
+        <div class="hero">
+          <div class="hero-greet">
+            <div class="hero-hi">${remaining ? remaining + ' 项待完成' : '今天全部完成 🎉'}</div>
+            <div class="hero-date">日常 ${rtDone}/${rt.length} · 创作 ${tkDone}/${tk.length} · 习惯 ${habitDone}/3</div>
+          </div>
+          <div class="hero-ring" style="--p:${rate}" role="img" aria-label="完成率 ${rate}%"><span>${rate}%</span></div>
         </div>
-        <div class="section-title">个人日常</div>
-        <div class="card">${state.daily.routine.map(i=>taskItem(i,'routine')).join('')}</div>
-        <div class="section-title">创作任务</div>
-        <div class="card">${state.daily.tasks.map(i=>taskItem(i,'tasks')).join('')}</div>
-        <div class="section-title">今日习惯打卡（联动钢琴 / 学习）</div>
-        <div class="card">
-          <div class="item" style="padding:10px 4px">
-            <div style="flex:1"><div style="font-weight:600;font-size:14px">🎹 钢琴练习</div><div class="item-desc" style="margin-top:2px">${pianoTodayDone?'今日已练 ✓':'今天还没练'}</div></div>
-            ${pianoTodayDone?'<span class="tag primary">已完成</span>':`<button class="btn sm" data-action="go" data-v="piano">去练琴</button>`}
-          </div>
-          <div class="item" style="padding:10px 4px;border-top:1px solid var(--line-2)">
-            <div style="flex:1"><div style="font-weight:600;font-size:14px">📚 学习成长</div><div class="item-desc" style="margin-top:2px">${studyTodayDone?'今日已学 ✓':'今天还没学'}</div></div>
-            ${studyTodayDone?'<span class="tag primary">已完成</span>':`<button class="btn sm" data-action="study-checkin">去学习</button>`}
-          </div>
-          <div class="item" style="padding:10px 4px;border-top:1px solid var(--line-2)">
-            <div style="flex:1"><div style="font-weight:600;font-size:14px">😴 睡眠记录</div><div class="item-desc" style="margin-top:2px">${sleepRecDone?'今日已记 ✓':'今晚记得记'}</div></div>
-            ${sleepRecDone?'<span class="tag primary">已完成</span>':`<button class="btn sm" data-action="go" data-v="health">去记录</button>`}
+
+        <div class="card tint" style="margin-top:12px">
+          <div class="card-title">➕ 快速添加</div>
+          <div class="quick-add" style="margin-top:10px">
+            <input class="input" id="newTask" placeholder="想做什么？回车即可添加…" aria-label="任务名称" />
+            <select class="input" id="newType" aria-label="任务分类"><option value="routine">日常</option><option value="tasks">创作</option></select>
+            <button class="btn grad" data-action="add-task" aria-label="添加任务">添加</button>
           </div>
         </div>
+
+        <div class="section-title">个人日常<span class="st-count">${rtDone}/${rt.length}</span></div>
+        <div class="card tint">${rt.length ? rt.map(i=>taskItem(i,'routine')).join('') : emptyBox('🌤️','还没有日常事项','用上面的输入框添加，选「日常」')}</div>
+
+        <div class="section-title" data-c="accent">创作任务<span class="st-count">${tkDone}/${tk.length}</span></div>
+        <div class="card tint tint-accent">${tk.length ? tk.map(i=>taskItem(i,'tasks')).join('') : emptyBox('🎬','还没有创作任务','用上面的输入框添加，选「创作」')}</div>
+
+        <div class="section-title" data-c="gold">习惯打卡<span class="st-count">${habitDone}/3</span></div>
         <div class="card">
-          <div class="card-title">添加任务</div>
-          <div class="row" style="margin-top:8px">
-            <input class="input" id="newTask" placeholder="任务名称…" />
-            <select class="input" id="newType" style="width:110px;flex-shrink:0;font-size:15px"><option value="routine">日常</option><option value="tasks">创作</option></select>
-            <button class="btn" data-action="add-task">+</button>
-          </div>
+          ${habits.map((h,idx)=>`
+          <div class="item" ${idx?'style="border-top:1px solid var(--line-2)"':''}>
+            <span style="font-size:22px;width:34px;text-align:center">${h.ic}</span>
+            <div class="item-body">
+              <div class="item-title">${h.t}</div>
+              <div class="item-desc">${h.done ? h.doneTxt + ' ✓' : h.todoTxt}</div>
+            </div>
+            ${h.done ? `<span class="tag ${h.cls}">已完成</span>` : `<button class="btn sm grad ${h.cls==='red'?'':h.cls}" ${h.act}>${h.btn}</button>`}
+          </div>`).join('')}
         </div>`;
+      // 回车即添加，减少一次点击
+      const nt = $('newTask');
+      if (nt) nt.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); document.querySelector('[data-action="add-task"]').click(); }
+      });
     }
     function taskItem(i,g){
       const goV = i.goto || (g==='routine' && i.id==='r5' ? 'shoot' : null);
+      const goLbl = { shoot:'去拍摄', study:'去学习', piano:'去练琴', book:'去阅读', sport:'去运动', topic:'去选题' }[goV] || '去处理';
       const titleHtml = goV
-        ? `<div class="item-title" data-action="go" data-v="${goV}" style="cursor:pointer">${i.title} <span style="font-size:11px;color:var(--primary);font-weight:400">↗ 去拍摄</span></div>`
+        ? `<div class="item-title" data-action="go" data-v="${goV}" style="cursor:pointer">${i.title} <span class="tag teal" style="font-size:10.5px;padding:1px 7px;margin-left:4px">↗ ${goLbl}</span></div>`
         : `<div class="item-title">${i.title}</div>`;
       return `<div class="item ${i.done?'done':''}">
-      <div class="check" data-action="toggle-task" data-g="${g}" data-id="${i.id}">${i.done?'✓':''}</div>
+      <div class="check" data-action="toggle-task" data-g="${g}" data-id="${i.id}" role="checkbox" aria-checked="${i.done?'true':'false'}" aria-label="${i.done?'取消完成':'标记完成'} ${esc(i.title)}">${i.done?'✓':''}</div>
       <div class="item-body">${titleHtml}
         <div class="item-desc"><span class="tag ${g==='routine'?'primary':'accent'}">${i.tag}</span></div></div>
-      <button class="icon-btn inline" data-action="del-task" data-g="${g}" data-id="${i.id}">✕</button></div>`; }
+      <button class="icon-btn inline" data-action="del-task" data-g="${g}" data-id="${i.id}" aria-label="删除任务 ${esc(i.title)}" title="删除">✕</button></div>`; }
     function completion(){ const all=[...state.daily.routine,...state.daily.tasks]; return all.length?Math.round(all.filter(i=>i.done).length/all.length*100):0; }
 
     // ===================== 学习中心 =====================
@@ -26028,6 +26443,7 @@ function applyPmodTheme(t){
       if (t.dataset.tab) {
         const tb = t.dataset.tab;
         if (tb === 'more') { openDrawer(); }
+        else if (DOMAIN_MODULES[tb]) { navigate(lastDomainView[tb] || DOMAIN_MODULES[tb][0].v); }
         else { navigate(tb); }
         return;
       }
@@ -26655,6 +27071,7 @@ function applyPmodTheme(t){
     }
 
     // ===================== 初始化 =====================
+    installModuleSwitch();
     warmVoices();
     $('menuBtn').addEventListener('click', openDrawer);
     $('overlay').addEventListener('click', closeDrawer);
