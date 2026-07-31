@@ -1105,6 +1105,11 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 .progress span{ background:var(--g-primary); }
 .progress.green span{ background:var(--g-green); }
 .progress.accent span{ background:var(--g-accent); }
+.progress.teal span{   background:var(--g-teal); }
+.progress.gold span{   background:var(--g-gold); }
+.progress.purple span{ background:var(--g-purple); }
+.progress.pink span{   background:var(--g-pink); }
+.progress.rose span{   background:var(--g-rose); }
 .lv-bar > *{ background:var(--g-accent); }
 .budget-bar-fill{ background:var(--g-green); }
 
@@ -25101,7 +25106,7 @@ function applyPmodTheme(t){
           <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;align-items:center">
             <span class="tag gray">🔥 ${(it.hot/10000).toFixed(0)} 万</span>
             ${ /douyin\.com/.test(it.url) ? `<button class="btn sm outline" data-action="douyin-search" data-t="${esc(it.title)}" style="padding:3px 10px;font-size:12px">📱 打开抖音搜</button>` : `<button class="btn sm outline" data-action="open-link" data-url="${esc(it.url)}" style="padding:3px 10px;font-size:12px">查看 →</button>` }
-            <button class="btn sm outline" data-action="save-topic" data-t="${esc(it.title)}" style="padding:3px 10px;font-size:12px">⭐ 存灵感</button>
+            <button class="btn sm ${(state.topicSaved||[]).includes(it.title)?'outline':'grad pink'}" data-action="save-topic" data-t="${esc(it.title)}" style="padding:3px 10px;font-size:12px">${(state.topicSaved||[]).includes(it.title)?'★ 已存':'⭐ 存灵感'}</button>
           </div>
         </div>
       </div>`).join('');
@@ -25117,10 +25122,46 @@ function applyPmodTheme(t){
       // 防御性初始化
       if (!Array.isArray(state.topicSaved)) { state.topicSaved = []; save(); }
       const hotHtml = renderHotspotsSection(_hotspots);
+      const saved = state.topicSaved;
+      const isSaved = t => saved.includes(t);
+      const starBtn = t => `<button class="btn sm ${isSaved(t)?'outline':'grad pink'}" data-action="save-topic" data-t="${esc(t)}">${isSaved(t)?'★ 已存':'⭐ 存灵感'}</button>`;
       $('main').innerHTML = `
-        ${hotHtml}
+        <div class="hero">
+          <div class="hero-greet">
+            <div class="hero-hi">💡 灵感库 <b>${saved.length}</b> 条</div>
+            <div class="hero-date">看到心动的选题就存下来，拍的时候不愁</div>
+          </div>
+          <div class="hero-line">先存后拍：热点 → 灵感库 → <b>拍摄计划</b></div>
+        </div>
+
+        <div class="section-title" data-c="pink" style="margin-top:14px">我的灵感库<span class="st-count">${saved.length}</span></div>
+        <div class="card tint tint-pink soft-rose">
+          <div class="quick-add">
+            <input class="input" id="topicNew" placeholder="自己想到的选题，随手记一条…" />
+            <button class="btn grad pink" data-action="add-topic">＋ 存起来</button>
+          </div>
+          <div style="margin-top:12px">
+            ${saved.length ? saved.slice().reverse().map(t=>`
+              <div class="item">
+                <div class="item-body"><div class="item-title">${esc(t)}</div>
+                  <div class="item-actions" style="margin-top:6px">
+                    <button class="tag pink" data-action="douyin-search" data-t="${esc(t)}" style="cursor:pointer;border:0">📱 抖音搜</button>
+                    <button class="tag purple" data-action="open-link" data-url="https://www.xiaohongshu.com/search?keyword=${encodeURIComponent(t)}" style="cursor:pointer;border:0">小红书 →</button>
+                    <button class="tag teal" data-action="go" data-v="shoot" style="cursor:pointer;border:0">去拍摄计划</button>
+                  </div>
+                </div>
+                <button class="icon-btn" data-action="save-topic" data-t="${esc(t)}" title="移出灵感库" aria-label="移出灵感库" style="color:var(--red);flex-shrink:0">✕</button>
+              </div>`).join('')
+            : `<div class="empty-box"><div class="eb-ic">💡</div><div class="eb-t">灵感库还是空的</div>
+                <div class="card-sub">下面看到喜欢的热点／选题，点「⭐ 存灵感」就会出现在这里</div></div>`}
+          </div>
+        </div>
+
+        <div class="section-title" data-c="pink">今日热点</div>
+        ${hotHtml || '<div class="card"><div class="empty-box"><div class="eb-ic">🔥</div><div class="eb-t">热点加载中…</div></div></div>'}
+
+        <div class="section-title" data-c="pink">新人简易灵感<span class="st-count">${TOPIC_NEWBIE.length}</span></div>
         <div class="card">
-          <div class="card-title">🐣 新人简易灵感</div>
           <div class="card-sub">抖音 / 小红书新人，挑简单易上手、真实感强的方向。</div>
           ${TOPIC_NEWBIE.map(t=>`<div class="item" style="flex-direction:column;align-items:flex-start">
             <strong style="font-size:15px">${t.t}</strong>
@@ -25135,19 +25176,25 @@ function applyPmodTheme(t){
                 }
                 return u ? `<button class="tag gray" data-action="open-link" data-url="${esc(u)}" style="cursor:pointer;border:1px solid var(--line-1)">${x} →</button>` : `<span class="tag gray">${x}</span>`;
               }).join('')}
-              <button class="btn sm outline" data-action="save-topic" data-t="${t.t}">⭐ 存灵感</button>
+              ${starBtn(t.t)}
             </div>
           </div>`).join('')}
         </div>
+
+        <div class="section-title" data-c="pink">可点击热点<span class="st-count">${TOPIC_HOT.length}</span></div>
         <div class="card">
-          <div class="card-title">🚀 从 0 做千万账号</div>
-          <div class="card-sub">10 条核心方法论（基于公开增长方法论整理）</div>
-          ${TOPIC_GROWTH.map((g,i)=>`<div class="item" style="padding:9px 0"><span class="tag primary" style="margin-right:8px">${i+1}</span>${g}</div>`).join('')}
-        </div>
-        <div class="card">
-          <div class="card-title">🔥 可点击热点</div>
           <div class="card-sub">点链接直接跳到抖音 / 小红书查看相关视频。</div>
-          ${TOPIC_HOT.map(h=>{ const u=(h.url||''); const isDouyin = h.platform==='douyin' || /douyin\.com/.test(u); return `<div class="video-card"><div class="play">🔥</div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">${esc(h.t)} <span class="tag accent">${esc(h.cat||'')}</span></div>${ isDouyin ? `<button class="btn sm outline" data-action="douyin-search" data-t="${esc(h.t)}" style="margin-top:6px;padding:3px 10px;font-size:12px">📱 打开抖音搜</button>` : u ? `<button class="btn sm outline" data-action="open-link" data-url="${esc(u)}" style="margin-top:6px;padding:3px 10px;font-size:12px">查看 → ${u.slice(0,30)}${u.length>30?'...':''}</button>` : `<span class="tag gray" style="margin-top:6px">敬请期待</span>` }</div></div>`; }).join('')}
+          ${TOPIC_HOT.map(h=>{ const u=(h.url||''); const isDouyin = h.platform==='douyin' || /douyin\.com/.test(u); return `<div class="video-card"><div class="play">🔥</div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">${esc(h.t)} <span class="tag pink">${esc(h.cat||'')}</span></div><div class="item-actions" style="margin-top:6px">${ isDouyin ? `<button class="btn sm outline" data-action="douyin-search" data-t="${esc(h.t)}" style="padding:3px 10px;font-size:12px">📱 打开抖音搜</button>` : u ? `<button class="btn sm outline" data-action="open-link" data-url="${esc(u)}" style="padding:3px 10px;font-size:12px">查看 →</button>` : `<span class="tag gray">敬请期待</span>` }${starBtn(h.t)}</div></div></div>`; }).join('')}
+        </div>
+
+        <div class="section-title" data-c="pink">从 0 做千万账号</div>
+        <div class="card">
+          <details class="fold" style="border-top:0;margin-top:0;padding-top:0">
+            <summary>🚀 10 条核心增长方法论（点开查看）</summary>
+            <div style="margin-top:6px">
+              ${TOPIC_GROWTH.map((g,i)=>`<div class="item" style="padding:9px 0"><span class="tag pink" style="margin-right:8px">${i+1}</span>${g}</div>`).join('')}
+            </div>
+          </details>
         </div>`;
     }
 
@@ -25559,120 +25606,135 @@ function applyPmodTheme(t){
       const filterCat = state.bookCat || '全部';
       const filteredBooks = filterCat === '全部' ? OFFLINE_BOOKS : OFFLINE_BOOKS.filter(b => b.cat === filterCat);
       const cats = ['全部', ...new Set(OFFLINE_BOOKS.map(b => b.cat))];
-      const month = '2026-' + String(new Date().getMonth() + 1).padStart(2, '0');
-      const list = BOOKS.filter(b => b.m === month);
+      // 本月推荐：按「月份」匹配（书单只覆盖部分月份时自动轮换，避免出现空白）
+      const _mm = String(new Date().getMonth() + 1).padStart(2, '0');
+      let list = BOOKS.filter(b => b.m.slice(5) === _mm);
+      if (!list.length) {
+        const _ms = [...new Set(BOOKS.map(b => b.m))];
+        const _pick = _ms[new Date().getMonth() % _ms.length];
+        list = BOOKS.filter(b => b.m === _pick);
+      }
+      const month = list.length ? list[0].m : (new Date().getFullYear() + '-' + _mm);
       const shelfTab = state.bookShelfTab || 'reading';
       const shelfMap = { reading, want, done: doneList };
       const shelfList = shelfMap[shelfTab] || [];
+      const yTarget = B.goal.yearTarget || 24;
+      const yDone = bookYearDone();
+      const yPct = Math.min(100, Math.round(yDone / yTarget * 100));
+      const shelfEmptyTip = { reading:'还没有在读的书', want:'想读清单是空的', done:'今年还没读完一本' }[shelfTab];
 
       $('main').innerHTML = `
-        <div class="card">
-          <div class="flex-between">
-            <div class="card-title" style="margin:0">📚 阅读概览 · ${new Date().getFullYear()}</div>
-            <button class="btn sm outline" data-action="book-goal" style="padding:4px 10px;font-size:12px">🎯 设目标</button>
+        <div class="hero">
+          <div class="hero-greet">
+            <div class="hero-hi">📚 今年读完 <b>${yDone}</b> / ${yTarget} 本</div>
+            <div class="hero-date">${todayLog.done ? '今日已读 ✓' : '今天还没记录，10 分钟也算'}</div>
           </div>
-          ${bookGoalRing()}
-          <div style="display:flex;gap:8px;margin-top:14px">
-            <div style="flex:1;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--green)">${streak}</div><div style="font-size:11px;color:var(--muted)">连续天数</div></div>
-            <div style="flex:1;text-align:center"><div style="font-size:20px;font-weight:800">${reading.length}</div><div style="font-size:11px;color:var(--muted)">在读</div></div>
-            <div style="flex:1;text-align:center"><div style="font-size:20px;font-weight:800">${Math.round(monthMin)}</div><div style="font-size:11px;color:var(--muted)">本月分钟</div></div>
-            <div style="flex:1;text-align:center"><div style="font-size:20px;font-weight:800">${doneList.length}</div><div style="font-size:11px;color:var(--muted)">已读完</div></div>
-          </div>
+          <div class="hero-ring" style="--p:${yPct}" role="img" aria-label="年度目标完成 ${yPct}%"><span>${yPct}%</span></div>
+          <div class="hero-line">连续 <b>${streak}</b> 天 · 本月 <b>${Math.round(monthMin)}</b> 分钟 · 在读 <b>${reading.length}</b> 本</div>
         </div>
 
-        <div class="card">
-          <div class="card-title">📅 今日阅读打卡</div>
-          <div class="card-sub">每天读 10 分钟就够——关键是连续不断。</div>
-          <button class="btn sm ${todayLog.done ? 'outline' : 'accent'}" data-action="book-checkin" style="width:100%;justify-content:center;margin-top:8px">${todayLog.done ? '✓ 今日已读' : '✅ 今天读过了'}</button>
+        <div class="section-title" data-c="purple" style="margin-top:14px">今日阅读</div>
+        <div class="card tint tint-purple soft-purple">
+          <div class="card-sub">每天读 10 分钟就够——关键是连续不断。本周已读 ${bookWeekDays()} 天 🔥</div>
+          <button class="btn ${todayLog.done ? 'outline' : 'grad'} block" data-action="book-checkin" style="margin-top:10px">${todayLog.done ? '✓ 今日已读' : '✅ 今天读过了'}</button>
           <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
             <span style="font-size:12.5px;color:var(--muted);flex-shrink:0">时长</span>
-            <input type="range" id="bookMin" min="0" max="120" step="5" value="${todayLog.min || 10}" style="flex:1;accent-color:var(--primary)" />
-            <span id="bookMinLbl" style="font-size:13px;font-weight:600;min-width:50px;text-align:right">${todayLog.min || 10} 分钟</span>
+            <input type="range" id="bookMin" min="0" max="120" step="5" value="${todayLog.min || 10}" style="flex:1;accent-color:var(--purple)" aria-label="今日阅读时长（分钟）" />
+            <span id="bookMinLbl" style="font-size:13px;font-weight:700;min-width:52px;text-align:right">${todayLog.min || 10} 分钟</span>
           </div>
-          <div class="card-sub" style="margin-top:8px">本周已读 ${bookWeekDays()} 天 · 连续 ${streak} 天 🔥</div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">🔥 阅读热力图</div>
-          <div class="card-sub">颜色越深，当天读得越久。坚持看得见。</div>
-          <div style="width:fit-content;margin:0 auto">
-          <div style="margin-top:10px;padding-bottom:4px">${bookHeatmap()}</div>
-          <div style="display:flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;color:var(--muted);padding-left:22px">
-            <span>少</span><span style="width:13px;height:13px;border-radius:2px;background:var(--line-2);display:inline-block;vertical-align:middle"></span>
-            <span style="width:13px;height:13px;border-radius:2px;background:#c6f6d5;display:inline-block;vertical-align:middle"></span>
-            <span style="width:13px;height:13px;border-radius:2px;background:#9ae6b4;display:inline-block;vertical-align:middle"></span>
-            <span style="width:13px;height:13px;border-radius:2px;background:#68d391;display:inline-block;vertical-align:middle"></span>
-            <span style="width:13px;height:13px;border-radius:2px;background:#38a169;display:inline-block;vertical-align:middle"></span><span>多</span>
-          </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="flex-between" style="margin-bottom:10px">
-            <div class="card-title" style="margin:0">📚 我的书架</div>
-            <button class="btn sm outline" data-action="book-add-custom" style="padding:5px 12px;font-size:12px">+ 添加书</button>
-          </div>
-          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-            <button class="btn sm ${shelfTab === 'reading' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="reading" style="padding:5px 14px;font-size:12.5px">在读 ${reading.length}</button>
-            <button class="btn sm ${shelfTab === 'want' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="want" style="padding:5px 14px;font-size:12.5px">想读 ${want.length}</button>
-            <button class="btn sm ${shelfTab === 'done' ? '' : 'outline'}" data-action="book-shelf-tab" data-t="done" style="padding:5px 14px;font-size:12.5px">读完 ${doneList.length}</button>
-          </div>
-          ${shelfList.length ? shelfList.map(b => bookShelfCard(b)).join('') : `<div style="text-align:center;padding:28px 16px 20px">
-            <div style="font-size:40px;margin-bottom:8px">📚</div>
-            <div style="font-size:14px;font-weight:600;color:var(--ink-1);margin-bottom:4px">书架还是空的</div>
-            <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.6">从下方精选书单「加入书架」，<br>或直接「添加书」贴入你正在读的任何一本书</div>
-            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-              <button class="btn sm accent" data-action="book-add-custom" style="padding:5px 14px">＋ 添加书</button>
-              <button class="btn sm outline" data-action="book-shelf-tab" data-t="want" style="padding:5px 14px">去书库挑选 →</button>
-            </div>`}
-        </div>
-
-        <div class="card">
-          <div class="flex-between" style="margin-bottom:6px">
-            <div class="card-title" style="margin:0">📖 内置公版经典</div>
-            <span class="tag primary" style="font-size:10px">${(window.BUILTIN_BOOKS&&window.BUILTIN_BOOKS[0]&&window.BUILTIN_BOOKS[0].paras)?'全文就绪':'元数据就绪'}</span>
-          </div>
-          <div class="card-sub">公版经典可直接在 App 内阅读，进度自动同步。${(window.BUILTIN_BOOKS&&window.BUILTIN_BOOKS[0]&&window.BUILTIN_BOOKS[0].paras)?'':'点击「阅读」即可开始。'}</div>
-          ${(window.BUILTIN_BOOKS||[]).map(b=>{
-            const inShelf = state.books.shelf.find(s=>s.builtin===b.id);
-            const prog = inShelf ? (inShelf.progress||0) : 0;
-            const hasParas = !!(b.paras);
-            return `<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line-2)">
-              <div style="flex:1;min-width:0">
-                <div style="font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
-                <div style="font-size:11.5px;color:var(--muted);margin-top:1px">${esc(b.author)} · ${b.year}${prog?(' · 已读 '+prog+'%'):''}${!hasParas?' · 待加载正文':''}</div>
+          <details class="fold">
+            <summary>🔥 阅读热力图 · 颜色越深读得越久</summary>
+            <div style="width:fit-content;margin:0 auto">
+              <div style="margin-top:10px;padding-bottom:4px">${bookHeatmap()}</div>
+              <div style="display:flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;color:var(--muted);padding-left:22px">
+                <span>少</span><span style="width:13px;height:13px;border-radius:2px;background:var(--line-2);display:inline-block"></span>
+                <span style="width:13px;height:13px;border-radius:2px;background:#c6f6d5;display:inline-block"></span>
+                <span style="width:13px;height:13px;border-radius:2px;background:#9ae6b4;display:inline-block"></span>
+                <span style="width:13px;height:13px;border-radius:2px;background:#68d391;display:inline-block"></span>
+                <span style="width:13px;height:13px;border-radius:2px;background:#38a169;display:inline-block"></span><span>多</span>
               </div>
-              <button class="btn sm ${prog?'outline':(hasParas?'accent':'primary')}" data-action="book-read" data-builtin="${b.id}" style="flex-shrink:0;padding:5px 12px;font-size:12px">${prog?'📖 续读':(hasParas?'📖 阅读':'📥 加载')}</button>
-            </div>`;
-          }).join('') || '<div class="empty">内置书库未初始化</div>'}
+            </div>
+          </details>
+          <details class="fold">
+            <summary>🎯 年度目标 · ${yDone}/${yTarget} 本</summary>
+            ${bookGoalRing()}
+            <button class="btn sm outline block" data-action="book-goal" style="margin-top:10px">修改目标</button>
+          </details>
         </div>
 
+        <div class="section-title" data-c="purple">我的书架<span class="st-count">${B.shelf.length}</span></div>
         <div class="card">
-          <div class="card-title">📚 本月推荐(${month})</div>
+          <div class="diff-pills" role="tablist" aria-label="书架状态">
+            <button class="diff-pill ${shelfTab === 'reading' ? 'on' : ''}" role="tab" aria-selected="${shelfTab === 'reading'}" data-action="book-shelf-tab" data-t="reading">在读 ${reading.length}</button>
+            <button class="diff-pill ${shelfTab === 'want' ? 'on' : ''}" role="tab" aria-selected="${shelfTab === 'want'}" data-action="book-shelf-tab" data-t="want">想读 ${want.length}</button>
+            <button class="diff-pill ${shelfTab === 'done' ? 'on' : ''}" role="tab" aria-selected="${shelfTab === 'done'}" data-action="book-shelf-tab" data-t="done">读完 ${doneList.length}</button>
+            <span style="flex:1"></span>
+            <button class="btn sm outline" data-action="book-add-custom" style="padding:5px 12px;font-size:12px">＋ 添加书</button>
+          </div>
+          <div style="margin-top:12px">
+            ${shelfList.length ? shelfList.map(b => bookShelfCard(b)).join('') : `
+              <div class="empty-box">
+                <div class="eb-ic">📚</div>
+                <div class="eb-t">${shelfEmptyTip}</div>
+                <div class="card-sub" style="line-height:1.6">从下方「书库」加入书架，或直接添加你正在读的任何一本书</div>
+                <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+                  <button class="btn sm grad" data-action="book-add-custom">＋ 添加书</button>
+                  <button class="btn sm outline" data-action="book-jump-lib">去书库挑选 →</button>
+                </div>
+              </div>`}
+          </div>
+        </div>
+
+        <div class="section-title" data-c="purple">本月推荐<span class="st-count">${month}</span></div>
+        <div class="card tint tint-purple">
           <div class="card-sub">每月 2 本公认好书，每天打开会推送其中一本的经典语录。</div>
-          ${list.map(b => bookCard(b)).join('') || '<div class="empty">本月书单待定</div>'}
+          ${list.map(b => bookCard(b)).join('') || '<div class="empty-box"><div class="eb-ic">📖</div><div class="eb-t">本月书单待定</div></div>'}
         </div>
 
-        <div class="section-title">精选好书(${OFFLINE_BOOKS.length}本 · 离线内置,免搜索)</div>
+        <div class="section-title" data-c="purple" id="bookLib">书库 · 找下一本读什么</div>
         <div class="card">
-          <div class="card-sub">想读就「加入书架」，再点「📖 阅读」把正文贴进来，就能在 App 内读、进度自动同步。</div>
-          <div class="row" style="margin-bottom:12px;gap:6px;flex-wrap:wrap">
-            ${cats.map(c => `<button class="btn sm ${filterCat === c ? '' : 'outline'}" data-action="book-cat" data-c="${esc(c)}" style="min-width:54px">${c}</button>`).join('')}
-          </div>
-          ${filteredBooks.map(b => offlineBookCard(b)).join('')}
+          <details class="fold" open>
+            <summary>📖 内置公版经典 · 可直接在 App 内读<span class="st-count">${(window.BUILTIN_BOOKS||[]).length}</span></summary>
+            <div class="card-sub" style="margin-top:4px">公版经典阅读进度自动同步。${(window.BUILTIN_BOOKS&&window.BUILTIN_BOOKS[0]&&window.BUILTIN_BOOKS[0].paras)?'':'点击「加载」即可开始。'}</div>
+            ${(window.BUILTIN_BOOKS||[]).map(b=>{
+              const inShelf = state.books.shelf.find(s=>s.builtin===b.id);
+              const prog = inShelf ? (inShelf.progress||0) : 0;
+              const hasParas = !!(b.paras);
+              return `<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line-2)">
+                <div style="flex:1;min-width:0">
+                  <div style="font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
+                  <div style="font-size:11.5px;color:var(--muted);margin-top:1px">${esc(b.author)} · ${b.year}${prog?(' · 已读 '+prog+'%'):''}${!hasParas?' · 待加载正文':''}</div>
+                </div>
+                <button class="btn sm ${prog?'outline':(hasParas?'grad':'primary')}" data-action="book-read" data-builtin="${b.id}" style="flex-shrink:0;padding:5px 12px;font-size:12px">${prog?'📖 续读':(hasParas?'📖 阅读':'📥 加载')}</button>
+              </div>`;
+            }).join('') || '<div class="empty-box"><div class="eb-ic">📚</div><div class="eb-t">内置书库未初始化</div></div>'}
+          </details>
+          <details class="fold">
+            <summary>⭐ 精选好书 · 离线内置免搜索<span class="st-count">${OFFLINE_BOOKS.length}</span></summary>
+            <div class="card-sub" style="margin:4px 0 10px">想读就「加入书架」，再点「📖 阅读」把正文贴进来，就能在 App 内读、进度自动同步。</div>
+            <div class="diff-pills" style="margin-bottom:12px">
+              ${cats.map(c => `<button class="diff-pill ${filterCat === c ? 'on' : ''}" data-action="book-cat" data-c="${esc(c)}">${c}</button>`).join('')}
+            </div>
+            ${filteredBooks.map(b => offlineBookCard(b)).join('')}
+          </details>
+          <details class="fold">
+            <summary>🗓 全部精选书单 · 经典月推<span class="st-count">${BOOKS.length}</span></summary>
+            <div style="margin-top:8px">${BOOKS.map(b => bookCard(b)).join('')}</div>
+          </details>
         </div>
 
-        <div class="section-title">全部精选书单(经典月推)</div>
-        <div class="card">${BOOKS.map(b => bookCard(b)).join('')}</div>
-
-        <div class="section-title">我的阅读笔记</div>
+        <div class="section-title" data-c="purple">我的阅读笔记<span class="st-count">${state.bookNotes.length}</span></div>
         <div class="card">
-          <div class="row" style="margin-bottom:10px">
-            <input class="input" id="bnBook" placeholder="书名" style="flex:1" />
-            <input class="input" id="bnText" placeholder="笔记内容…" style="flex:2" />
-            <button class="btn" data-action="add-note">+</button>
+          <div class="quick-add">
+            <input class="input" id="bnBook" placeholder="书名" style="flex:1 1 100px" />
+            <input class="input" id="bnText" placeholder="记一句话、一个想法…" style="flex:2 1 160px" />
+            <button class="btn grad" data-action="add-note">＋ 记下</button>
           </div>
-          ${state.bookNotes.length ? state.bookNotes.slice().reverse().map(n => `<div class="memo-item"><div>${n.text}</div><div class="memo-date">📖 ${n.book} · ${n.date} <button data-action="del-note" data-id="${n.id}" style="background:none;border:none;color:inherit;text-decoration:underline;float:right">删除</button></div></div>`).join('') : '<div class="empty">还没有笔记</div>'}
+          <div style="margin-top:12px">
+            ${state.bookNotes.length
+              ? state.bookNotes.slice().reverse().map(n => `<div class="memo-item"><div>${n.text}</div><div class="memo-date">📖 ${n.book} · ${n.date} <button data-action="del-note" data-id="${n.id}" style="background:none;border:none;color:inherit;text-decoration:underline;float:right;cursor:pointer">删除</button></div></div>`).join('')
+              : '<div class="empty-box"><div class="eb-ic">✍️</div><div class="eb-t">还没有笔记</div><div class="card-sub">读到打动你的句子，随手记一条</div></div>'}
+          </div>
         </div>`;
 
       // 时长滑块联动（标签 + 已打卡则静默更新日志）
@@ -25787,65 +25849,111 @@ function applyPmodTheme(t){
       const dTotal = state.shootDaily.length;
       const dDone = state.shootDaily.filter(s=>s.done).length;
       const weeks = SHOOT_WEEKS.map(w => ({ wk:w.wk, items: state.shoot.filter(s => s.week === w.wk) }));
+      // 每日分解的周名从 SHOOT_WEEKS / 数据本身推导，避免与计划文案脱节
+      const dailyWeeks = [];
+      state.shootDaily.forEach(s => { if (s.wk && dailyWeeks.indexOf(s.wk) < 0) dailyWeeks.push(s.wk); });
+      const dOrder = SHOOT_WEEKS.map(w => w.wk).filter(wk => dailyWeeks.indexOf(wk) >= 0)
+        .concat(dailyWeeks.filter(wk => SHOOT_WEEKS.every(w => w.wk !== wk)));
+      const allTotal = total + dTotal, allDone = done + dDone;
+      const sRate = allTotal ? Math.round(allDone / allTotal * 100) : 0;
+      // 本周聚焦：第一个还有未完成每日任务的周
+      let focusWk = null, focusItems = [];
+      for (const wk of dOrder) {
+        const un = state.shootDaily.filter(s => s.wk === wk && !s.done);
+        if (un.length) { focusWk = wk; focusItems = un.slice(0, 3); break; }
+      }
+      const shootRow = (s, act) => `<div class="item ${s.done?'done':''}">
+        <div class="check" data-action="${act}" data-id="${s.id}" role="checkbox" aria-checked="${s.done}" aria-label="${s.t}">${s.done?'✓':''}</div>
+        <div class="item-body"><div class="item-title">${s.t}</div><div class="item-desc">${s.d}</div>
+          <span class="tag teal">${s.tag}</span></div></div>`;
+      const weekFold = (title, items, act, openIt) => {
+        const dn = items.filter(s=>s.done).length;
+        const pc = items.length ? Math.round(dn/items.length*100) : 0;
+        return `<details class="fold"${openIt?' open':''}>
+          <summary><span>${title}</span><span class="st-count">${dn}/${items.length}</span></summary>
+          <div class="progress teal" style="margin:6px 0 2px"><span style="width:${pc}%"></span></div>
+          ${items.map(s=>shootRow(s,act)).join('')}
+        </details>`;
+      };
+      let mOpen = true, dOpen = true;
       $('main').innerHTML = `
+        <div class="hero">
+          <div class="hero-greet">
+            <div class="hero-hi">📷 已完成 <b>${allDone}</b> / ${allTotal} 项</div>
+            <div class="hero-date">iPhone 15 Pro + 富士 X-M5 · 每天 5–15 分钟</div>
+          </div>
+          <div class="hero-ring" style="--p:${sRate}" role="img" aria-label="拍摄计划完成率 ${sRate}%"><span>${sRate}%</span></div>
+          <div class="hero-line">主线任务 <b>${done}/${total}</b> · 每日分解 <b>${dDone}/${dTotal}</b></div>
+        </div>
+
+        <div class="section-title" data-c="teal" style="margin-top:14px">本周聚焦<span class="st-count">${focusWk ? focusWk.split(' · ')[0] : '已完成'}</span></div>
+        <div class="card tint tint-teal soft-teal">
+          ${focusWk ? `
+            <div class="card-title" style="margin:0 0 2px">🎯 ${focusWk}</div>
+            <div class="card-sub" style="margin-bottom:6px">接下来这几件，随手就能练：</div>
+            ${focusItems.map(s=>shootRow(s,'shoot-daily-done')).join('')}
+          ` : `
+            <div class="empty-box"><div class="eb-ic">🎉</div><div class="eb-t">四周计划全部打卡完成</div>
+            <div class="card-sub">去「选题灵感」沉淀作品，或重开一轮练手。</div></div>
+          `}
+        </div>
+
+        <div class="section-title" data-c="teal">主线计划<span class="st-count">${done}/${total}</span></div>
         <div class="card">
-          <div class="card-title">📷 拍摄计划 · iPhone 15 Pro + 富士 X-M5</div>
-          <div class="card-sub">目标：把参数调明白、把富士玩熟。进度 <b>${done}/${total}</b>。每天 5–15 分钟，和工作台「今日计划」一起打卡。</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-            <span style="font-size:12.5px;padding:3px 10px;border-radius:20px;background:rgba(58,134,255,.15);color:#8ab4ff;border:1px solid rgba(58,134,255,.4)">📱 iPhone 15 Pro：随手 / 直出 / 练参数</span>
-            <span style="font-size:12.5px;padding:3px 10px;border-radius:20px;background:rgba(230,67,58,.15);color:#ff8a82;border:1px solid rgba(230,67,58,.4)">📷 富士 X-M5：虚化 / 胶片 / Vlog（无机身防抖）</span>
+          <div class="card-sub" style="margin-bottom:2px">按周推进，把参数调明白、把富士玩熟。点开每周查看任务。</div>
+          ${weeks.map(w=>{
+            const un = w.items.some(s=>!s.done);
+            const op = un && mOpen; if (un && mOpen) mOpen = false;
+            return weekFold(w.wk, w.items, 'shoot-done', op);
+          }).join('')}
+        </div>
+
+        <div class="section-title" data-c="teal">每日分解<span class="st-count">${dDone}/${dTotal}</span></div>
+        <div class="card">
+          <div class="card-sub" style="margin-bottom:2px">把每周拆成每天一个小任务，共 ${dOrder.length} 周 × 7 天。</div>
+          ${dOrder.map(wk=>{
+            const dw = state.shootDaily.filter(s=>s.wk===wk);
+            const un = dw.some(s=>!s.done);
+            const op = un && dOpen; if (un && dOpen) dOpen = false;
+            return weekFold('🗓 ' + wk, dw, 'shoot-daily-done', op);
+          }).join('')}
+        </div>
+
+        <div class="section-title" data-c="teal">装备与参考</div>
+        <div class="card">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="tag teal">📱 iPhone 15 Pro · 随手 / 直出 / 练参数</span>
+            <span class="tag red">📷 富士 X-M5 · 虚化 / 胶片 / Vlog（无机身防抖）</span>
           </div>
+          <details class="fold">
+            <summary>🧰 设备分工</summary>
+            <div class="grid cols-2" style="margin-top:8px">
+              ${SHOOT_DEVICES.map(d=>`
+                <div class="card soft-teal" style="margin:0;padding:12px 13px">
+                  <div class="card-title" style="margin:0 0 4px;font-size:13.5px">${d.emoji} ${d.name}</div>
+                  <div class="card-sub" style="margin-bottom:6px">${d.role}</div>
+                  <ul style="margin:0;padding-left:16px;font-size:12.5px;color:var(--ink-3);line-height:1.7">${d.points.map(p=>`<li>${p}</li>`).join('')}</ul>
+                </div>`).join('')}
+            </div>
+          </details>
+          <details class="fold">
+            <summary>📲 App 推荐（分三类）</summary>
+            ${SHOOT_APPS.map(g=>`
+              <div style="margin-top:10px">
+                <div style="font-weight:650;font-size:13px;color:var(--ink-2);margin-bottom:2px">${g.g}</div>
+                ${g.list.map(a=>`<div style="padding:7px 0;border-bottom:1px solid var(--line-2)">
+                  <div style="font-weight:600;font-size:13.5px">${a.n}</div>
+                  <div class="card-sub" style="margin-top:1px">${a.d}</div></div>`).join('')}
+              </div>`).join('')}
+          </details>
+          <details class="fold">
+            <summary>🎞 胶片模拟配方库（X-M5 杀手锏 · ${SHOOT_FILM.length} 种）</summary>
+            <div class="grid cols-2" style="gap:4px 12px;margin-top:8px">
+              ${SHOOT_FILM.map(f=>`<div style="font-size:12.5px;line-height:1.8"><b style="color:var(--red,#e6433a)">${f.n}</b> · <span class="sub">${f.u}</span></div>`).join('')}
+            </div>
+            <div class="card-sub" style="margin-top:8px">机顶胶片模拟转盘 + 3 个可自定义档位，把常用配方存进去一键切换。</div>
+          </details>
         </div>
-
-        <div class="section-title">设备分工</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          ${SHOOT_DEVICES.map(d=>`
-            <div class="card" style="margin:0">
-              <div class="card-title" style="margin:0 0 4px">${d.emoji} ${d.name}</div>
-              <div class="card-sub" style="margin-bottom:6px">${d.role}</div>
-              <ul style="margin:0;padding-left:18px;font-size:12.5px;color:var(--sub)">${d.points.map(p=>`<li>${p}</li>`).join('')}</ul>
-            </div>`).join('')}
-        </div>
-
-        <div class="section-title">App 推荐（分三类）</div>
-        ${SHOOT_APPS.map(g=>`
-          <div class="card" style="margin:10px 0">
-            <div class="card-title" style="margin:0 0 8px">${g.g}</div>
-            ${g.list.map(a=>`<div style="padding:7px 0;border-bottom:1px solid var(--line)">
-              <div style="font-weight:600;font-size:13.5px">${a.n}</div>
-              <div class="card-sub" style="margin-top:1px">${a.d}</div></div>`).join('')}
-          </div>`).join('')}
-
-        <div class="section-title">胶片模拟配方库（X-M5 杀手锏 · 20 种）</div>
-        <div class="card" style="margin:10px 0">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px">
-            ${SHOOT_FILM.map(f=>`<div style="font-size:12.5px"><b style="color:#e6433a">${f.n}</b> · <span class="sub">${f.u}</span></div>`).join('')}
-          </div>
-          <div class="card-sub" style="margin-top:8px">机顶胶片模拟转盘 + 3 个可自定义档位，把常用配方存进去一键切换。</div>
-        </div>
-
-        ${weeks.map(w=>`
-          <div class="section-title">${w.wk}</div>
-          <div class="card" style="margin:10px 0">
-            ${w.items.map(s=>`<div class="item ${s.done?'done':''}">
-              <div class="check" data-action="shoot-done" data-id="${s.id}">${s.done?'✓':''}</div>
-              <div class="item-body"><div class="item-title">${s.t}</div><div class="item-desc">${s.d}</div>
-                <span class="tag accent">${s.tag}</span></div>            </div>`).join('')}
-          </div>`).join('')}
-
-        ${['第1周 · 曝光三要素','第2周 · 胶片模拟','第3周 · M 档与弱光','第4周 · 视频与后期'].map(wk=>{
-          const dw = state.shootDaily.filter(s=>s.wk===wk);
-          const dwDone = dw.filter(s=>s.done).length;
-          return `
-        <div class="section-title">🗓 ${wk} · 每日分解（7 天）</div>
-        <div class="card" style="margin:10px 0">
-          <div class="card-sub" style="margin-bottom:8px">把本周拆成每天一个小任务，进度 <b>${dwDone}/${dw.length}</b>。</div>
-          ${dw.map(s=>`<div class="item ${s.done?'done':''}">
-            <div class="check" data-action="shoot-daily-done" data-id="${s.id}">${s.done?'✓':''}</div>
-            <div class="item-body"><div class="item-title">${s.t}</div><div class="item-desc">${s.d}</div>
-              <span class="tag accent">${s.tag}</span></div></div>`).join('')}
-        </div>`;
-        }).join('')}
       `;
     }
 
@@ -26006,26 +26114,40 @@ function applyPmodTheme(t){
       const todayKey = today();
       const his = state.gameHistory[todayKey] || {};
       const diff = state.gameDiff;
+      const gCount = Object.keys(his).length;
       $('main').innerHTML = `
-        <div class="card">
-          <div class="card-title">🎮 今日游戏：${names[gameType]}</div>
-          <div class="card-sub">每天自动更换一种；下方可切换尝试其他游戏。</div>
-          <div class="row" style="margin-top:8px">
-            <button class="btn sm ${gameType==='memory'?'':'outline'}" data-action="gtype" data-t="memory">记忆翻牌</button>
-            <button class="btn sm ${gameType==='guess'?'':'outline'}" data-action="gtype" data-t="guess">猜数字</button>
-            <button class="btn sm ${gameType==='sudoku'?'':'outline'}" data-action="gtype" data-t="sudoku">数独</button>
-            <button class="btn sm ${gameType==='crossword'?'':'outline'}" data-action="gtype" data-t="crossword">英文填字</button>
+        <div class="hero">
+          <div class="hero-greet">
+            <div class="hero-hi">${names[gameType]}</div>
+            <div class="hero-date">每天自动换一种，动动脑筋放松一下</div>
           </div>
-          <div class="card-sub" style="margin-top:10px">难度</div>
-          <div class="diff-pills">
-            <button class="diff-pill ${diff==='easy'?'on':''}" data-action="gdiff" data-d="easy">简单</button>
-            <button class="diff-pill ${diff==='medium'?'on':''}" data-action="gdiff" data-d="medium">中等</button>
-            <button class="diff-pill ${diff==='hard'?'on':''}" data-action="gdiff" data-d="hard">困难</button>
+          ${gCount ? `<span class="tag green" style="align-self:center">今天玩了 ${gCount} 种</span>` : ''}
+          <div class="hero-line">切换游戏与难度都在下面，随时换口味</div>
+        </div>
+
+        <div class="section-title" data-c="green" style="margin-top:14px">选个游戏</div>
+        <div class="seg-scroll" role="tablist" aria-label="游戏切换">
+          <button role="tab" aria-selected="${gameType==='memory'}" class="${gameType==='memory'?'active':''}" data-action="gtype" data-t="memory">🃏 记忆翻牌</button>
+          <button role="tab" aria-selected="${gameType==='guess'}" class="${gameType==='guess'?'active':''}" data-action="gtype" data-t="guess">🔢 猜数字</button>
+          <button role="tab" aria-selected="${gameType==='sudoku'}" class="${gameType==='sudoku'?'active':''}" data-action="gtype" data-t="sudoku">🧩 数独</button>
+          <button role="tab" aria-selected="${gameType==='crossword'}" class="${gameType==='crossword'?'active':''}" data-action="gtype" data-t="crossword">📝 英文填字</button>
+        </div>
+        <div class="card tint tint-green soft-green">
+          <div class="flex-between" style="margin-bottom:8px">
+            <div class="card-title" style="margin:0">难度</div>
+            <span class="card-sub" style="margin:0">${{easy:'轻松热身',medium:'刚刚好',hard:'来点挑战'}[diff]}</span>
+          </div>
+          <div class="diff-pills" role="tablist" aria-label="难度">
+            <button class="diff-pill ${diff==='easy'?'on':''}" role="tab" aria-selected="${diff==='easy'}" data-action="gdiff" data-d="easy">简单</button>
+            <button class="diff-pill ${diff==='medium'?'on':''}" role="tab" aria-selected="${diff==='medium'}" data-action="gdiff" data-d="medium">中等</button>
+            <button class="diff-pill ${diff==='hard'?'on':''}" role="tab" aria-selected="${diff==='hard'}" data-action="gdiff" data-d="hard">困难</button>
           </div>
         </div>
         <div class="card" id="gameArea"></div>
-        <div class="section-title">今日历史记录</div>
-        <div class="card">${Object.keys(his).length?Object.entries(his).map(([k,v])=>`<div class="item" style="padding:8px 0"><span class="tag primary" style="margin-right:8px">${k}</span>${v}</div>`).join(''):'<div class="empty">今天还没玩过</div>'}</div>`;
+        <div class="section-title" data-c="green">今日战绩<span class="st-count">${gCount}</span></div>
+        <div class="card">${gCount
+          ? Object.entries(his).map(([k,v])=>`<div class="item" style="padding:8px 0"><span class="tag green" style="margin-right:8px">${k}</span>${v}</div>`).join('')
+          : '<div class="empty-box"><div class="eb-ic">🎲</div><div class="eb-t">今天还没玩过</div><div class="card-sub">挑一个上面的游戏，5 分钟换换脑子</div></div>'}</div>`;
       renderGameArea();
     }
     function logGame(name, result){ const k=today(); (state.gameHistory[k]=state.gameHistory[k]||{})[name]=result; save(); }
@@ -26218,25 +26340,42 @@ function applyPmodTheme(t){
       if (!state.pianoLog || typeof state.pianoLog !== 'object') { state.pianoLog = {}; save(); }
       const pcal = [];
       for (let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); const k=dateStr(d); pcal.push({k, on:!!state.pianoLog[k]}); }
-      const pcalHtml = pcal.map(d=>`<div style="text-align:center;flex:1">
-        <div style="width:30px;height:30px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;${d.on?'background:linear-gradient(135deg,#5b8def,#7c5cff);color:#fff':'background:var(--line-2);color:var(--muted)'}">${d.on?'✓':'·'}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.k.slice(5)}</div>
+      const pcalHtml = pcal.map(d=>`<div style="text-align:center;flex:1" title="${d.k}${d.on?' 已练习':''}">
+        <div style="width:28px;height:28px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;${d.on?'background:var(--g-gold);color:#fff':'background:var(--line-2);color:var(--muted)'}">${d.on?'✓':'·'}</div>
+        <div style="font-size:9.5px;color:var(--muted);margin-top:3px">${d.k.slice(5)}</div>
       </div>`).join('');
       const pstreak = (()=>{ let s=0; for(let i=0;i<365;i++){ const d=new Date(); d.setDate(d.getDate()-i); if(state.pianoLog[dateStr(d)]) s++; else if(i>0) break; } return s; })();
             const pToday = !!(state.pianoLog && state.pianoLog[today()]);
       const pRoot = document.getElementById('htmlRoot') || document.documentElement;
       const ptheme = pRoot.getAttribute('data-theme')==='dark' ? 'dark' : 'light';
+      // 阶段路线图（此前 stageCard / 自定义曲目 编辑·删除·添加 已无入口 → 恢复为可折叠区）
+      const stagesHtml = PIANO_STAGES.map(st => stageCard(st, st.id > state.pianoUnlocked)).join('');
+      const pmStat = pianoModuleStat();
       $('main').innerHTML = `
-        <div class="card" style="margin-bottom:12px">
-          <div class="flex-between">
-            <div class="card-title" style="margin:0">🎹 钢琴练习</div>
-            <span class="tag ${pToday?'primary':'gray'}">${pToday?'今日已练 ✓':'未打卡'}</span>
+        <div class="hero">
+          <div class="hero-greet">
+            <div class="hero-hi">🎹 连续练琴 <b>${pstreak}</b> 天</div>
+            <div class="hero-date">已掌握 ${pmStat.mastered}/${pmStat.total} 首 · 第 ${state.pianoUnlocked} 阶段</div>
           </div>
-          <div style="display:flex;gap:8px;margin-top:10px">
-            <button class="btn sm" data-action="piano-checkin" style="flex:1;justify-content:center">✅ 今天练过了</button>
+          ${pToday
+            ? '<span class="tag gold" style="align-self:center">今日已练 ✓</span>'
+            : '<button class="btn sm grad gold" data-action="piano-checkin" style="align-self:center">✅ 今天练过了</button>'}
+          <div class="hero-line" style="padding:8px 10px">
+            <div style="display:flex;gap:2px">${pcalHtml}</div>
           </div>
         </div>
-        <div id="pianoHost"><iframe id="pianoFrame" style="width:100%;border:0;display:block;min-height:700px;background:transparent"></iframe></div>
+
+        <div class="section-title" data-c="gold" style="margin-top:14px">今日练习</div>
+        <div id="pianoHost"><iframe id="pianoFrame" title="钢琴练习模块" style="width:100%;border:0;display:block;min-height:700px;background:transparent"></iframe></div>
+
+        <div class="section-title" data-c="purple">阶段路线图</div>
+        <details class="card" style="padding:14px 16px">
+          <summary style="cursor:pointer;list-style:none;font-weight:650;color:var(--ink-1);font-size:14px">
+            📈 5 个阶段 · 当前第 ${state.pianoUnlocked} 阶段（点开管理自定义曲目）
+          </summary>
+          <div class="card-sub" style="margin:8px 0 12px">这里维护你「真实在练」的曲目清单，可编辑 / 删除 / 添加，并标记阶段掌握。</div>
+          ${stagesHtml}
+        </details>
       `;
       // 内联 srcdoc：把钢琴模块直接嵌入，零外部请求，nginx 不再 404
       const _pf = document.getElementById('pianoFrame');
@@ -26418,41 +26557,42 @@ function applyPmodTheme(t){
             <button class="btn sm ghost" data-action="diary-del" data-id="${e.id}" style="color:var(--red);border-color:var(--line)">🗑 删除</button>
           </div>
         </div>`;
-      }).join('') : `<div class="empty"><span class="big">🐾</span>还没有日记。选一只小动物，写下今天的第一页吧～</div>`;
+      }).join('') : `<div class="card"><div class="empty-box"><div class="eb-ic">🐾</div><div class="eb-t">还没有日记</div><div class="card-sub">选一只小动物，写下今天的第一页吧～</div></div></div>`;
 
       $('main').innerHTML = `
-        <div class="card" style="border:1px solid var(--primary);background:var(--primary-soft)">
-          <div class="card-title" style="color:var(--primary-dark)">🐾 排版小动物 · 治愈系日记</div>
-          <div class="card-sub" style="color:var(--primary-dark)">选一只小动物当你的「排版师」——把心情、生活、书摘随手写下来，它会帮你排成一张温柔的卡片。i 人友好，动物治愈。已写下 <b>${entries.length}</b> 篇 · 连续记录 <b>${streak}</b> 天</div>
+        <div class="hero">
+          <div class="hero-greet">
+            <div class="hero-hi">🐾 已写下 <b>${entries.length}</b> 页</div>
+            <div class="hero-date">连续记录 ${streak} 天 · 排版师：${a.name}</div>
+          </div>
+          <div class="hero-line">挑一只小动物当「排版师」，它会把你的心情排成一张温柔的卡片</div>
         </div>
 
-        <div class="grid cols-2" style="margin-top:18px">
-          <div class="card">
-            <div class="card-title">📝 ${ed ? '编辑这一页' : '写一页日记'}</div>
-            <div class="card-sub">${ed ? '修改后点保存即可覆盖原卡片' : '挑一只小动物，它会决定这页的样子'}</div>
-            <div class="row mb" style="gap:10px">
-              <input class="input" id="dDate" type="date" value="${ed ? ed.date : today()}" style="width:auto" />
-              <input class="input" id="dTitle" placeholder="标题（可留空）" value="${ed ? esc(ed.title) : ''}" style="flex:1" />
-            </div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">选排版师</div>
-            <div id="diaryAnimals" class="diary-animals">${animalChips}</div>
-            <div class="mt" style="font-size:12px;color:var(--muted);margin-bottom:6px">此刻心情</div>
-            <div id="diaryMoods" class="row wrap" style="gap:8px">${moodChips}</div>
-            <textarea class="input" id="dBody" rows="6" placeholder="今天发生了什么？有什么想说的、想记住的…" style="margin-top:12px;resize:vertical;line-height:1.8">${ed ? esc(ed.body) : ''}</textarea>
-            <div class="row mt" style="gap:8px;justify-content:flex-end">
-              ${ed ? `<button class="btn ghost" data-action="diary-cancel">取消</button>` : ''}
-              <button class="btn" data-action="diary-save">📥 收进纸箱</button>
-            </div>
+        <div class="section-title" data-c="rose" style="margin-top:14px">${ed ? '编辑这一页' : '写一页日记'}</div>
+        <div class="card tint tint-rose soft-rose">
+          <div class="card-sub">${ed ? '修改后点保存即可覆盖原卡片' : '挑一只小动物，它会决定这页的样子'}</div>
+          <div class="row mb" style="gap:10px;margin-top:10px">
+            <input class="input" id="dDate" type="date" value="${ed ? ed.date : today()}" style="width:auto" aria-label="日期" />
+            <input class="input" id="dTitle" placeholder="标题（可留空）" value="${ed ? esc(ed.title) : ''}" style="flex:1" aria-label="标题" />
           </div>
-
-          <div class="card">
-            <div class="card-title">👀 实时预览</div>
-            <div class="card-sub" id="diaryPreviewName">这就是「${a.name}」会排出来的样子</div>
-            <div id="diaryPreview">${diaryCardHTML({ date: ed ? ed.date : today(), title: ed ? ed.title : '', body: ed ? ed.body : '', animal: diarySel, mood: ed ? ed.mood : moodEmoji(diaryMood), _idx: entries.length + 1 })}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px">选排版师</div>
+          <div id="diaryAnimals" class="diary-animals">${animalChips}</div>
+          <div class="mt" style="font-size:12px;color:var(--muted);margin-bottom:6px">此刻心情</div>
+          <div id="diaryMoods" class="row wrap" style="gap:8px">${moodChips}</div>
+          <textarea class="input" id="dBody" rows="6" placeholder="今天发生了什么？有什么想说的、想记住的…" aria-label="日记正文" style="margin-top:12px;resize:vertical;line-height:1.8">${ed ? esc(ed.body) : ''}</textarea>
+          <div class="row mt" style="gap:8px;justify-content:flex-end">
+            ${ed ? `<button class="btn ghost" data-action="diary-cancel">取消</button>` : ''}
+            <button class="btn grad" data-action="diary-save">📥 收进纸箱</button>
           </div>
         </div>
 
-        <div class="section-title" style="margin:26px 0 12px">📦 我的纸箱 · 全部日记（${sorted.length}）</div>
+        <div class="section-title" data-c="rose">实时预览</div>
+        <div class="card">
+          <div class="card-sub" id="diaryPreviewName">这就是「${a.name}」会排出来的样子</div>
+          <div id="diaryPreview" style="margin-top:10px">${diaryCardHTML({ date: ed ? ed.date : today(), title: ed ? ed.title : '', body: ed ? ed.body : '', animal: diarySel, mood: ed ? ed.mood : moodEmoji(diaryMood), _idx: entries.length + 1 })}</div>
+        </div>
+
+        <div class="section-title" data-c="rose">我的纸箱 · 全部日记<span class="st-count">${sorted.length}</span></div>
         <div class="diary-list">${listHtml}</div>
       `;
     }
@@ -26558,6 +26698,12 @@ function applyPmodTheme(t){
         case 'save-profile': { state.health.profile.height=$('hHeight').value; state.health.profile.goalWeight=$('hGoal').value; save(); toast('已保存基础数据'); break; }
         case 'save-record': { const d=today(); state.health.records[d]={ sleep:$('recSleep').value, weight:$('recWeight').value, mood:+$('recMood').value, exercise:$('recEx').value, note:$('recNote').value, bedtime:$('recBedtime').value, wake:$('recWake').value, quality:+$('recQuality').value||0, awake:+$('recAwake').value||0 }; save(); toast('✅ 今日健康记录已保存'); break; }
         case 'save-topic': { const tt=t.dataset.t; if(state.topicSaved.includes(tt)) state.topicSaved=state.topicSaved.filter(x=>x!==tt); else state.topicSaved.push(tt); save(); renderTopic(); break; }
+        case 'add-topic': {
+          const el = $('topicNew'); const v = (el && el.value || '').trim();
+          if (!v) { toast('先写点什么吧'); break; }
+          if (state.topicSaved.includes(v)) { toast('灵感库里已经有了'); break; }
+          state.topicSaved.push(v); save(); toast('已存入灵感库 💡'); renderTopic(); break;
+        }
         case 'hot-tab': {
           if (!_hotspots) break;
           const k = t.dataset.k;
@@ -26579,7 +26725,7 @@ function applyPmodTheme(t){
               <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;align-items:center">
                 <span class="tag gray">🔥 ${(it.hot/10000).toFixed(0)} 万</span>
                 <a href="${esc(it.url)}" data-action="open-link" data-url="${esc(it.url)}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">查看 →</a>
-                <button class="btn sm outline" data-action="save-topic" data-t="${esc(it.title)}" style="padding:3px 10px;font-size:12px">⭐ 存灵感</button>
+                <button class="btn sm ${(state.topicSaved||[]).includes(it.title)?'outline':'grad pink'}" data-action="save-topic" data-t="${esc(it.title)}" style="padding:3px 10px;font-size:12px">${(state.topicSaved||[]).includes(it.title)?'★ 已存':'⭐ 存灵感'}</button>
               </div>
             </div>
           </div>`).join('') || '<div class="empty">暂无数据</div>';
@@ -26898,6 +27044,7 @@ function applyPmodTheme(t){
           state.books.shelf = state.books.shelf.filter(b => b.id !== t.dataset.id); save(); renderBook(); break;
         }
         case 'book-shelf-tab': { state.bookShelfTab = t.dataset.t; save(); renderBook(); break; }
+        case 'book-jump-lib': { const el = $('bookLib'); if (el) el.scrollIntoView({ behavior:'smooth', block:'start' }); break; }
         case 'book-read': {
           let item = null;
           if (t.dataset.builtin){
