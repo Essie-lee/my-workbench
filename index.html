@@ -23929,23 +23929,35 @@ function applyPmodTheme(t){
       const todayDone = !!state.studyLog[today()];
       const qn = studyQuizToday();
       const langs = Object.keys(LANG);
-      const tabsHtml = `<button class="${!curLang?'active':''}" data-action="lang-all">全部</button>` +
-        langs.map(k=>`<button class="${curLang===k?'active':''}" data-action="lang" data-k="${k}">${LANG[k].flag} ${LANG[k].name}</button>`).join('');
-      const modes = [['overview','📚 总览'],['quiz','🎯 闯关练习'],['flash','🔤 单词卡'],['listen','👂 精听跟读'],['dialog','🗣 情景对话']];
-      const modeHtml = `<div class="tabs" style="margin-bottom:10px">${modes.map(m=>`<button class="${studyMode===m[0]?'active':''}" data-action="study-mode" data-m="${m[0]}">${m[1]}</button>`).join('')}</div>`;
+      // ① 语言筛选标签（此前计算后未插入 DOM，功能丢失 → 恢复）
+      const langTabsHtml = `<div class="tabs" role="tablist" aria-label="语言筛选">` +
+        `<button role="tab" aria-selected="${!curLang}" class="${!curLang?'active':''}" data-action="lang-all">🌐 全部</button>` +
+        langs.map(k=>`<button role="tab" aria-selected="${curLang===k}" class="${curLang===k?'active':''}" data-action="lang" data-k="${k}">${LANG[k].flag} ${LANG[k].name}</button>`).join('') +
+        `</div>`;
+      // ② 学习模式：分段控件，比一排小圆角按钮更符合"单选"心智
+      const modes = [['overview','📚 总览'],['quiz','🎯 闯关'],['flash','🔤 单词卡'],['listen','👂 精听'],['dialog','🗣 对话']];
+      const modeHtml = `<div class="diff-pills" role="tablist" aria-label="学习模式" style="margin-bottom:12px">${modes.map(m=>`<button role="tab" aria-selected="${studyMode===m[0]}" class="diff-pill ${studyMode===m[0]?'on':''}" data-action="study-mode" data-m="${m[0]}">${m[1]}</button>`).join('')}</div>`;
+      const qPct = Math.min(100, qn*10);
       $('main').innerHTML = `
-        <div class="card" style="border:1px solid var(--primary);background:var(--primary-soft)">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div class="card-title" style="margin:0;color:var(--primary-dark)">🔥 连续学习 ${sstreak} 天</div>
-            ${todayDone?'<span class="tag primary">✅ 今日已学</span>':'<button class="btn sm" data-action="study-checkin">记一笔今日学习</button>'}
+        <div class="hero">
+          <div class="hero-greet">
+            <div class="hero-hi">🔥 连续学习 <b>${sstreak}</b> 天</div>
+            <div class="hero-date">${todayDone ? '今日已打卡 ✓' : '今天还没记录，10 分钟也算'}</div>
           </div>
-          <div class="card-sub" style="margin:6px 0 0">游戏化坚持（参考多邻国 streak）：每天 10 分钟，比周末突击更有效；间隔复习比一次性硬背更牢。</div>
-          <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
-            <div style="flex:1;height:8px;background:var(--line-2);border-radius:5px;overflow:hidden"><div style="height:100%;width:${Math.min(100,qn*10)}%;background:linear-gradient(90deg,#5b8def,#7c5cff)"></div></div>
-            <span style="font-size:12px;color:var(--muted)">今日练习 ${qn}/10</span>
+          ${todayDone
+            ? '<span class="tag accent" style="align-self:center">✅ 今日已学</span>'
+            : '<button class="btn sm grad accent" data-action="study-checkin" style="align-self:center">打卡</button>'}
+          <div class="hero-line">今日练习 <b>${qn}/10</b> 题
+            <span style="display:inline-block;vertical-align:middle;width:70px;height:6px;border-radius:4px;background:var(--line-2);overflow:hidden;margin-left:6px">
+              <span style="display:block;height:100%;width:${qPct}%;background:var(--g-accent)"></span>
+            </span>
           </div>
         </div>
-        ${modeHtml}
+        <div class="card" style="margin-top:12px;padding:12px 14px">
+          <div class="card-sub" style="margin:0 0 8px;font-size:12px">选语言 → 选模式，每天 10 分钟胜过周末突击</div>
+          ${langTabsHtml}
+          ${modeHtml}
+        </div>
         <div id="langBody"></div>`;
       studyRenderBody();
     }
@@ -23998,9 +24010,9 @@ function applyPmodTheme(t){
               <div class="mini-stat"><div class="ms-label">📰 新闻精读</div><div class="ms-value">${L.news.length} 篇</div></div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0">
-              <button class="btn sm outline" data-action="lang" data-k="${k}">🗣 情景</button>
-              <button class="btn sm outline" data-action="lang" data-k="${k}">🎴 单词</button>
-              <button class="btn sm outline" data-action="lang" data-k="${k}">✍️ 翻译</button>
+              <button class="btn sm outline" data-action="lang" data-k="${k}" data-m="dialog">🗣 情景</button>
+              <button class="btn sm outline" data-action="lang" data-k="${k}" data-m="flash">🎴 单词</button>
+              <button class="btn sm outline" data-action="lang" data-k="${k}" data-m="listen">👂 精听</button>
             </div>
             <div style="font-size:11px;color:var(--muted);background:var(--bg);border-radius:8px;padding:8px 10px;line-height:1.6">
               <div>🗣 今日一句 · ${todayLine?(todayLine.f||todayLine.ko):'—'}</div>
@@ -24221,21 +24233,29 @@ function applyPmodTheme(t){
       }
       const st = flashState, w = st.pick[st.idx];
       if (!w) { $('langBody').innerHTML = '<div class="card"><div class="empty">今日单词已刷完 🎉</div></div>'; return; }
+      const fPct = Math.round((st.idx) / st.pick.length * 100);
       $('langBody').innerHTML = `
-        <div class="card" style="text-align:center">
-          <div style="font-size:12px;color:var(--muted)">第 ${st.idx+1}/${st.pick.length} 张</div>
-          <div style="font-size:32px;font-weight:800;margin:10px 0">${esc(w.word)}</div>
-          <div style="color:var(--muted);font-size:13px">${esc(w.pron||'')}</div>
-          <button class="btn sm outline" data-action="speak" data-t="${encodeURIComponent(w.word)}" data-l="${L.tts}" style="margin:10px auto;display:block">🔊 发音</button>
-          ${st.flipped?`<div style="margin-top:8px;padding:14px;background:var(--bg);border-radius:10px">
+        <div class="card">
+          <div class="flex-between" style="margin-bottom:10px">
+            <span class="tag primary">第 ${st.idx+1}/${st.pick.length} 张</span>
+            <span class="lbl">${L.flag} ${L.name}</span>
+          </div>
+          <div class="progress" style="margin-bottom:14px"><span style="width:${fPct}%"></span></div>
+          <div class="card-front" data-action="flash-flip" role="button" tabindex="0" aria-label="翻转卡片">
+            <div style="font-size:32px;font-weight:800;letter-spacing:-.02em">${esc(w.word)}</div>
+            <div style="color:var(--muted);font-size:13px">${esc(w.pron||'')}</div>
+            ${st.flipped ? '' : '<div class="lbl" style="margin-top:6px">👆 点一下看释义与例句</div>'}
+          </div>
+          <button class="btn sm outline block" data-action="speak" data-t="${encodeURIComponent(w.word)}" data-l="${L.tts}" style="margin-top:10px">🔊 发音</button>
+          ${st.flipped?`<div style="margin-top:10px;padding:14px;background:var(--panel-ins);border-radius:var(--radius-sm)">
             <div style="font-size:18px;font-weight:700;color:var(--primary)">${esc(w.meaning)}</div>
             <div style="font-size:13px;color:var(--ink-2);margin-top:8px;font-style:italic">「${esc(w.example||'')}」</div>
-          </div>`:`<div class="card-sub" style="margin-top:8px">点击卡片看释义与例句</div>`}
+          </div>`:''}
         </div>
         <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="btn sm outline" data-action="flash-flip" style="flex:1">${st.flipped?'收起':'翻转看释义'}</button>
-          <button class="btn sm" data-action="flash-know" style="flex:1">✅ 认识</button>
-          <button class="btn sm outline" data-action="flash-unknow" style="flex:1">📌 不认识</button>
+          <button class="btn sm outline" data-action="flash-flip" style="flex:1">${st.flipped?'收起':'翻转'}</button>
+          <button class="btn sm grad green" data-action="flash-know" style="flex:1.3">✅ 认识</button>
+          <button class="btn sm outline" data-action="flash-unknow" style="flex:1.3">📌 不认识</button>
         </div>`;
     }
     // ============ 精听跟读（对标每日英语听力：单句精听 + 跟读打分）============
@@ -24884,10 +24904,43 @@ function applyPmodTheme(t){
       const prList = Object.entries(state.sport.pr||{});
       const prHtml = prList.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${prList.map(([n,w])=>`<span class="ex-pr-badge">🏆 ${n}: ${w}kg</span>`).join('')}</div>` : '';
 
+      // 信息架构重排：先「今天要做什么」→ 再「本周节奏」→ 最后「知识/探索工具」
       $('main').innerHTML = `
+        <div class="section-title" data-c="green">今日训练<span class="st-count">周${dayNames[dow-1]}</span></div>
+        <div class="card tint tint-green soft-green">
+          ${todayCard}
+          <div class="cardio-extra"><button class="btn sm outline block" data-action="add-extra-sport">+ 补记今天练了别的项目</button></div>
+        </div>
+
+        <div class="section-title">本周节奏</div>
+        <div class="card">
+          <div class="card-title">📅 每周排期</div>
+          <div class="card-sub">点任意一天可切换当日运动项目 · <span style="color:var(--primary)">■</span>有氧 <span style="color:var(--green)">■</span>力量</div>
+          <div class="week-grid" style="margin-top:10px">${weekHtml}</div>
+        </div>
+        <div class="grid cols-2" style="margin-top:12px">
+          <div class="card" style="margin:0">
+            <div class="card-title" style="font-size:13.5px">📊 本周训练量</div>
+            <div style="margin-top:8px">${svgBars(getWeekVolumeData(), 'var(--green)')}</div>
+            <div class="card-sub" style="font-size:11.5px">组数 + 有氧时长综合</div>
+          </div>
+          <div class="card" style="margin:0">
+            <div class="card-title" style="font-size:13.5px">🗓 本周已记录</div>
+            <div style="margin-top:6px">${renderWeekLogV2()}</div>
+          </div>
+        </div>
+
+        <div class="section-title" data-c="accent">动作库</div>
+        <div class="sport-tabs">
+          <div class="sport-tab ${activeTab==='cardio'?'active':''}" data-action="sport-tabs" data-stab="cardio">🏃 有氧运动</div>
+          <div class="sport-tab ${activeTab==='strength'?'active':''}" data-action="sport-tabs" data-stab="strength">💪 力量训练</div>
+        </div>
+        ${detailHtml}
+
+        <div class="section-title" data-c="purple">身体地图 · 探索</div>
         <div class="card" style="padding:0;overflow:hidden">
           <div class="card-title" style="padding:14px 16px 0">💪 3D 肌肉模型</div>
-          <div class="card-sub" style="padding:0 16px">点击肌肉部位高亮，查看名称和锻炼动作 · 拖拽旋转 · 双指缩放</div>
+          <div class="card-sub" style="padding:0 16px">点击肌肉部位高亮查看名称与动作 · 拖拽旋转 · 双指缩放</div>
           <div class="muscle-canvas-wrap" id="muscleCanvas" style="margin:8px;border-radius:var(--radius-sm)">
             <div class="muscle-toolbar">
               <button class="${muscleViewSide==='front'?'active':''}" data-action="muscle-tab" data-side="front">正面</button>
@@ -24899,32 +24952,11 @@ function applyPmodTheme(t){
             </div>
           </div>
           <div style="padding:0 16px 14px">
-            <div class="card-sub" style="margin-bottom:4px">🔥 肌肉恢复热力图（近7天训练组数）</div>
+            <div class="card-sub" style="margin-bottom:6px">🔥 肌肉恢复热力图（近 7 天训练组数）</div>
             <div class="muscle-heatmap">${renderHeatmap()}</div>
+            ${prHtml ? `<div class="card-sub" style="margin:12px 0 4px">🏆 个人记录 (PR)</div>${prHtml}` : ''}
           </div>
         </div>
-        <div class="card">
-          <div class="card-title">📅 每周排期</div>
-          <div class="card-sub">点任意一天可切换当日运动项目 · <span style="color:var(--blue,#3b82f6)">■</span>有氧 <span style="color:var(--green)">■</span>力量</div>
-          <div class="week-grid">${weekHtml}</div>
-        </div>
-        <div class="card">
-          <div class="card-title">🏃 今日打卡（周${dayNames[dow-1]}）</div>
-          ${todayCard}
-          <div class="cardio-extra"><button class="btn sm outline" data-action="add-extra-sport">+ 补记今天练了别的项目</button></div>
-        </div>
-        <div class="section-title">📊 本周训练量</div>
-        <div class="card">${svgBars(getWeekVolumeData(), 'var(--primary)')}
-          <div class="card-sub" style="margin:8px 0 4px">每日训练量（综合组数+有氧时长）</div>
-        </div>
-        ${prHtml ? `<div class="card"><div class="card-title">🏆 个人记录 (PR)</div>${prHtml}</div>` : ''}
-        <div class="section-title">本周已记录</div>
-        <div class="card">${renderWeekLogV2()}</div>
-        <div class="sport-tabs">
-          <div class="sport-tab ${activeTab==='cardio'?'active':''}" data-action="sport-tabs" data-stab="cardio">🏃 有氧运动</div>
-          <div class="sport-tab ${activeTab==='strength'?'active':''}" data-action="sport-tabs" data-stab="strength">💪 力量训练</div>
-        </div>
-        ${detailHtml}
       `;
 
       // 初始化 3D 模型
@@ -24946,49 +24978,59 @@ function applyPmodTheme(t){
       const rec = state.health.records[today()] || {};
       const days = [];
       for (let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); const k=dateStr(d); const v=state.health.records[k]; days.push({k, sleep:v?+v.sleep||0:0, weight:v?+v.weight||0:0, mood:v?v.mood||0:0, quality:v?+v.quality||0:0}); }
+      const avgSleep = (()=>{ const a=days.filter(d=>d.sleep>0); return a.length ? (a.reduce((x,d)=>x+d.sleep,0)/a.length).toFixed(1) : '—'; })();
+      const lastW = [...days].reverse().find(d=>d.weight>0);
+      const recDays = days.filter(d=>d.sleep>0||d.weight>0).length;
+      const savedToday = !!(rec.sleep || rec.weight || rec.note || rec.bedtime);
       $('main').innerHTML = `
-        <div class="card">
-          <div class="card-title">📐 身体基础数据</div>
-          <div class="row" style="gap:10px;margin-bottom:10px">
-            <input class="input" id="hHeight" placeholder="身高 cm" value="${p.height||''}" style="flex:1" />
-            <input class="input" id="hGoal" placeholder="目标体重 kg" value="${p.goalWeight||''}" style="flex:1" />
-            <button class="btn sm" data-action="save-profile">保存</button>
+        <div class="hero">
+          <div class="hero-greet">
+            <div class="hero-hi">${savedToday ? '今日已记录 ✓' : '今天还没记录'}</div>
+            <div class="hero-date">近 7 天记了 ${recDays} 天</div>
           </div>
-          <div class="card-sub">账号无法自动读取体重秤，请在下方每日手动记录（或连接蓝牙秤 App 后手动补录）。</div>
+          <div class="hero-line">平均睡眠 <b>${avgSleep}h</b> · 最近体重 <b>${lastW?lastW.weight+'kg':'—'}</b>${p.goalWeight?` · 目标 <b>${p.goalWeight}kg</b>`:''}</div>
         </div>
-        <div class="card">
-          <div class="card-title">🌙 今日记录</div>
-          <div class="row" style="gap:10px;margin-bottom:8px">
-            <input class="input" id="recSleep" type="number" step="0.1" placeholder="睡眠 h" value="${rec.sleep??''}" style="flex:1" />
-            <input class="input" id="recWeight" type="number" step="0.1" placeholder="体重 kg" value="${rec.weight??''}" style="flex:1" />
+
+        <div class="section-title" data-c="red">今日记录</div>
+        <div class="card tint tint-red">
+          <div class="grid cols-2">
+            <label class="lbl">睡眠时长（h）<input class="input" id="recSleep" type="number" step="0.1" placeholder="例如 7.5" value="${rec.sleep??''}" style="margin-top:4px" /></label>
+            <label class="lbl">体重（kg）<input class="input" id="recWeight" type="number" step="0.1" placeholder="例如 52.3" value="${rec.weight??''}" style="margin-top:4px" /></label>
+            <label class="lbl">今日心情<select class="input" id="recMood" style="margin-top:4px;font-size:15px">${[1,2,3,4,5].map(m=>`<option value="${m}" ${rec.mood===m?'selected':''}>${['😞 低落','🙁 一般','😐 平静','🙂 不错','😄 很好'][m-1]}</option>`).join('')}</select></label>
+            <label class="lbl">运动（min）<input class="input" id="recEx" type="number" placeholder="例如 30" value="${rec.exercise??''}" style="margin-top:4px" /></label>
           </div>
-          <div class="row" style="gap:10px;margin-bottom:8px">
-            <select class="input" id="recMood" style="flex:1;font-size:15px">${[1,2,3,4,5].map(m=>`<option value="${m}" ${rec.mood===m?'selected':''}>${['😞','🙁','😐','🙂','😄'][m-1]}</option>`).join('')}</select>
-            <input class="input" id="recEx" type="number" placeholder="运动 min" value="${rec.exercise??''}" style="flex:1" />
-          </div>
-          <input class="input" id="recNote" placeholder="备注（如：今天芭杆+游泳）" value="${rec.note||''}" style="margin-bottom:8px" />
-          <button class="btn" data-action="save-record">保存今日</button>
+          <input class="input" id="recNote" placeholder="备注（如：今天芭杆 + 游泳）" value="${rec.note||''}" style="margin:10px 0 0" />
+
+          <details class="fold" ${(rec.bedtime||rec.wake||rec.quality)?'open':''}>
+            <summary>😴 睡眠专项（作息 · 质量 · 夜醒）</summary>
+            <div class="grid cols-2" style="margin-top:10px">
+              <label class="lbl">入睡时间<input class="input" id="recBedtime" type="time" value="${rec.bedtime||''}" style="margin-top:4px" /></label>
+              <label class="lbl">起床时间<input class="input" id="recWake" type="time" value="${rec.wake||''}" style="margin-top:4px" /></label>
+              <label class="lbl">睡眠质量<select class="input" id="recQuality" style="margin-top:4px;font-size:15px">${[0,1,2,3,4,5].map(m=>`<option value="${m}" ${rec.quality===m?'selected':''}>${['未评','😵 很差','🙁 差','😐 一般','🙂 还行','😄 很好'][m]}</option>`).join('')}</select></label>
+              <label class="lbl">夜醒次数<input class="input" id="recAwake" type="number" placeholder="0" value="${rec.awake??''}" style="margin-top:4px" /></label>
+            </div>
+            <div class="card-sub" style="font-size:11.5px">参考小睡眠 / 潮汐：固定作息比补觉更有效，连续记录才看得出规律。</div>
+          </details>
+
+          <button class="btn grad block" data-action="save-record" style="margin-top:12px">💾 保存今日记录</button>
         </div>
-        <div class="card">
-          <div class="card-title">😴 失眠 / 睡眠专项（参考小睡眠·潮汐）</div>
-          <div class="card-sub">记录作息与睡眠质量，追踪规律。</div>
-          <div class="row" style="gap:10px;margin:10px 0 8px">
-            <input class="input" id="recBedtime" type="time" value="${rec.bedtime||''}" style="flex:1" placeholder="入睡时间" />
-            <input class="input" id="recWake" type="time" value="${rec.wake||''}" style="flex:1" placeholder="起床时间" />
-          </div>
-          <div class="row" style="gap:10px;margin-bottom:8px">
-            <select class="input" id="recQuality" style="flex:1;font-size:15px">${[0,1,2,3,4,5].map(m=>`<option value="${m}" ${rec.quality===m?'selected':''}>${['未评','😵 很差','🙁 差','😐 一般','🙂 还行','😄 很好'][m]}</option>`).join('')}</select>
-            <input class="input" id="recAwake" type="number" placeholder="夜醒次数" value="${rec.awake??''}" style="flex:1" />
-          </div>
-          <div class="card-sub" style="margin-bottom:2px">记录作息与睡眠质量，追踪规律。</div>
-        </div>
+
         <div class="section-title">近 7 天趋势</div>
-        <div class="card">${svgBars(days.map(d=>({label:d.k.slice(5),value:d.sleep})), 'var(--primary)')}
-          <div class="card-sub" style="margin:8px 0 4px">睡眠（小时）</div></div>
-        <div class="card">${svgBars(days.map(d=>({label:d.k.slice(5),value:d.weight})), 'var(--blue)')}
-          <div class="card-sub" style="margin:8px 0 4px">体重（kg）</div></div>
-        ${days.some(d=>d.quality>0)?`<div class="card">${svgBars(days.map(d=>({label:d.k.slice(5),value:d.quality})), '#8e7cc3')}
-          <div class="card-sub" style="margin:8px 0 4px">睡眠质量（1-5）</div></div>`:''}
+        <div class="grid cols-2">
+          <div class="card" style="margin:0"><div class="card-title" style="font-size:13.5px">😴 睡眠（小时）</div>${svgBars(days.map(d=>({label:d.k.slice(5),value:d.sleep})), 'var(--primary)')}</div>
+          <div class="card" style="margin:0"><div class="card-title" style="font-size:13.5px">⚖️ 体重（kg）</div>${svgBars(days.map(d=>({label:d.k.slice(5),value:d.weight})), 'var(--teal)')}</div>
+        </div>
+        ${days.some(d=>d.quality>0)?`<div class="card" style="margin-top:12px"><div class="card-title" style="font-size:13.5px">🌙 睡眠质量（1-5）</div>${svgBars(days.map(d=>({label:d.k.slice(5),value:d.quality})), 'var(--purple)')}</div>`:''}
+
+        <div class="section-title" data-c="teal">身体基础数据</div>
+        <div class="card">
+          <div class="card-sub" style="margin:0 0 10px">设定身高与目标体重，用于长期对照（体重秤数据需手动补录）。</div>
+          <div class="quick-add">
+            <input class="input" id="hHeight" placeholder="身高 cm" value="${p.height||''}" />
+            <input class="input" id="hGoal" placeholder="目标体重 kg" value="${p.goalWeight||''}" />
+            <button class="btn sm grad teal" data-action="save-profile">保存</button>
+          </div>
+        </div>
       `;
     }
     function svgBars(data, color) {
@@ -25855,7 +25897,7 @@ function applyPmodTheme(t){
             <div style="height:100%;width:${Math.round(x.v/maxCat*100)}%;background:linear-gradient(90deg,#ff9a3c,#ff6b6b);border-radius:6px"></div>
           </div>
           <span style="width:64px;text-align:right;font-size:12px;font-weight:600">${fmtMoney(x.v)}</span>
-        </div>`).join('') : '<div class="empty">本月还没有支出</div>';
+        </div>`).join('') : '<div class="empty-box" style="padding:18px 12px"><div class="eb-ic">📭</div><div>本月还没有支出</div></div>';
 
       // 按日分组的流水
       const byDay = {};
@@ -25875,18 +25917,20 @@ function applyPmodTheme(t){
             </div>
           </div>
         </div>`).join('')}
-      `).join('') : '<div class="empty">本月还没有记账，下面记一笔吧</div>';
+      `).join('') : '<div class="card"><div class="empty-box"><div class="eb-ic">🧾</div><div class="eb-t">本月还没有记账</div><div>用上面的「快速记账」记第一笔</div></div></div>';
 
       const catOpts = b.cats.map(c=>`<option value="${esc(c)}">${c}</option>`).join('');
       const bookOpts = b.books.map(bk=>`<option value="${esc(bk)}" ${bk===b.curBook?'selected':''}>${esc(bk)}</option>`).join('');
 
       $('main').innerHTML = `
-        <div class="card">
-          <div class="card-title">💰 本月概览 · ${mk}</div>
-          <div style="display:flex;gap:10px;margin-top:10px">
-            <div style="flex:1;text-align:center"><div style="font-size:22px;font-weight:800;color:#ff6b6b">${fmtMoney(exp)}</div><div style="font-size:11px;color:var(--muted)">支出</div></div>
-            <div style="flex:1;text-align:center"><div style="font-size:22px;font-weight:800;color:#2e9e5b">${fmtMoney(inc)}</div><div style="font-size:11px;color:var(--muted)">收入</div></div>
-            <div style="flex:1;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--ink-1)">${fmtMoney(balance)}</div><div style="font-size:11px;color:var(--muted)">结余</div></div>
+        <div class="card tint tint-green soft-green">
+          <div class="flex-between">
+            <div class="card-title">💰 本月概览</div><span class="tag green">${mk}</span>
+          </div>
+          <div class="metric-row">
+            <div class="metric"><div class="mv" style="color:var(--red)">${fmtMoney(exp)}</div><div class="ml">支出</div></div>
+            <div class="metric"><div class="mv" style="color:var(--green)">${fmtMoney(inc)}</div><div class="ml">收入</div></div>
+            <div class="metric"><div class="mv">${fmtMoney(balance)}</div><div class="ml">结余</div></div>
           </div>
 
           <div class="budget-dashboard ${over?'over':overForecast?'warn':''}">
@@ -25912,38 +25956,39 @@ function applyPmodTheme(t){
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-title">⚡ 快速记账</div>
-          <div class="card-sub">3 秒记一笔（参考钱迹/鲨鱼记账的极简流程）</div>
-          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-            <button class="btn sm ${b._type!=='inc'?'':'outline'}" data-action="bill-type" data-t="exp" style="flex:1;min-width:90px;justify-content:center">－ 支出</button>
-            <button class="btn sm ${b._type==='inc'?'':'outline'}" data-action="bill-type" data-t="inc" style="flex:1;min-width:90px;justify-content:center">＋ 收入</button>
+        <div class="section-title" data-c="green">快速记账</div>
+        <div class="card tint tint-green">
+          <div class="card-sub" style="margin:0 0 10px">3 秒记一笔 · 先选收支，再填金额</div>
+          <div class="diff-pills" style="margin-bottom:10px">
+            <button class="diff-pill ${b._type!=='inc'?'on':''}" data-action="bill-type" data-t="exp">－ 支出</button>
+            <button class="diff-pill ${b._type==='inc'?'on':''}" data-action="bill-type" data-t="inc">＋ 收入</button>
           </div>
-          <input class="input" id="billAmt" inputmode="decimal" placeholder="金额，如 38.5" style="margin-top:10px" />
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <select class="input" id="billCat" style="flex:1">${catOpts}</select>
-            <select class="input" id="billBook" style="flex:1">${bookOpts}</select>
+          <input class="input" id="billAmt" inputmode="decimal" placeholder="金额，如 38.5" style="font-size:20px;font-weight:700;text-align:center;padding:14px" aria-label="金额" />
+          <div class="grid cols-2" style="margin-top:8px">
+            <select class="input" id="billCat" aria-label="分类">${catOpts}</select>
+            <select class="input" id="billBook" aria-label="账本">${bookOpts}</select>
           </div>
-          <input class="input" id="billNote" placeholder="备注（可选）：如 午餐/钢琴课" style="margin-top:8px" />
-          <button class="btn" data-action="add-bill" style="width:100%;justify-content:center;margin-top:10px">💾 记一笔</button>
+          <input class="input" id="billNote" placeholder="备注（可选）：如 午餐 / 钢琴课" style="margin-top:8px" />
+          <button class="btn grad green block" data-action="add-bill" style="margin-top:10px">💾 记一笔</button>
         </div>
 
-        <div class="card">
-          <div class="card-title">📊 支出分类占比</div>
-          ${catBars}
-        </div>
-
-        <div class="card">
-          <div class="card-title">⚙️ 预算与账本</div>
-          <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
-            <span style="font-size:13px;color:var(--muted)">月度预算</span>
-            <input class="input" id="billBudget" type="number" value="${budget}" style="flex:1" />
-            <button class="btn sm" data-action="set-budget" style="flex-shrink:0">保存</button>
+        <div class="grid cols-2" style="margin-top:12px">
+          <div class="card" style="margin:0">
+            <div class="card-title" style="font-size:13.5px">📊 支出分类</div>
+            <div style="margin-top:6px">${catBars}</div>
           </div>
-          <div class="card-sub" style="margin-top:8px">账本：${b.books.join(' / ')} · 当前「${esc(b.curBook)}」</div>
+          <div class="card" style="margin:0">
+            <div class="card-title" style="font-size:13.5px">⚙️ 预算与账本</div>
+            <div class="lbl" style="margin-top:8px">月度预算</div>
+            <div class="row" style="margin-top:4px">
+              <input class="input" id="billBudget" type="number" value="${budget}" style="flex:1" aria-label="月度预算" />
+              <button class="btn sm grad green" data-action="set-budget">保存</button>
+            </div>
+            <div class="card-sub" style="font-size:11.5px">账本：${b.books.join(' / ')}<br>当前「${esc(b.curBook)}」</div>
+          </div>
         </div>
 
-        <div class="section-title">📜 本月流水</div>
+        <div class="section-title">本月流水<span class="st-count">${flows.length} 笔</span></div>
         ${flowHtml}
       `;
     }
@@ -26450,11 +26495,21 @@ function applyPmodTheme(t){
       if (t.dataset.view) { navigate(t.dataset.view); return; }
       switch(a){
         case 'go': if(_reader) finalizeReader(); navigate(t.dataset.v); break;
-        case 'toggle-task': { const g=t.dataset.g,id=t.dataset.id; const it=state.daily[g].find(x=>x.id===id); if(it){it.done=!it.done;save();renderDaily();} break; }
-        case 'del-task': { const g=t.dataset.g,id=t.dataset.id; state.daily[g]=state.daily[g].filter(x=>x.id!==id); save(); renderDaily(); break; }
+        case 'toggle-task': { const g=t.dataset.g,id=t.dataset.id; const it=state.daily[g].find(x=>x.id===id);
+          if(it){ it.done=!it.done; save(); currentView==='home'?renderHome():renderDaily(); } break; }
+        case 'del-task': { const g=t.dataset.g,id=t.dataset.id;
+          const it0=state.daily[g].find(x=>x.id===id);
+          if (it0 && !confirm(`删除任务「${it0.title}」？`)) break;
+          state.daily[g]=state.daily[g].filter(x=>x.id!==id); save();
+          currentView==='home'?renderHome():renderDaily(); toast('已删除'); break; }
         case 'add-task': { const v=$('newTask').value.trim(); if(!v)break; const ty=$('newType').value; state.daily[ty].push({id:uid(),title:v,tag:ty==='routine'?'每日必做':'创作任务',done:false}); save(); renderDaily(); break; }
-        case 'lang-all': curLang=null; studyRenderBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.action==='lang-all')); break;
-        case 'lang': curLang=t.dataset.k; quizState=null; flashState=null; listenState=null; dialogState=null; studyRenderBody(); document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.k===curLang)); break;
+        case 'lang-all': curLang=null; studyMode='overview'; renderStudy(); break;
+        case 'lang': {
+          curLang=t.dataset.k; quizState=null; flashState=null; listenState=null; dialogState=null;
+          if (t.dataset.m) studyMode = t.dataset.m;   // 「情景/单词/精听」入口直达对应模式
+          renderStudy();
+          break;
+        }
         case 'assess': startAssess(); break;
         case 'lang-done': { const i=+t.dataset.i; const L=LANG[curLang]; if(state.lang[curLang].level===i && i<L.plan.length-1){ state.lang[curLang].level=i+1; } save(); renderLangBody(); break; }
         case 'speak': speak(decodeURIComponent(t.dataset.t), t.dataset.l); break;
@@ -26904,8 +26959,10 @@ function applyPmodTheme(t){
         }
         case 'del-bill': {
           const id = t.dataset.id;
+          const f0 = state.bill.flows.find(f => f.id === id);
+          if (f0 && !confirm(`确定删除这笔「${f0.cat} ${f0.type==='inc'?'+':'-'}${f0.amount}」？删除后无法恢复。`)) break;
           state.bill.flows = state.bill.flows.filter(f => f.id !== id);
-          save(); renderBill(); break;
+          save(); renderBill(); toast('已删除'); break;
         }
         case 'set-budget': {
           const v = parseFloat(($('billBudget').value || '').trim());
