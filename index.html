@@ -23481,6 +23481,14 @@ function applyPmodTheme(t){
       ['done','weekPlan','log','setsLog','pr'].forEach(p => {
         if (typeof s.sport[p] !== 'object' || s.sport[p] === null || Array.isArray(s.sport[p])) s.sport[p] = {};
       });
+      // 学习中心：确保每种语言的进度对象都是合法结构（旧版可能把某语言存成 null / 字符串 / 数组）
+      if (typeof s.lang !== 'object' || s.lang === null || Array.isArray(s.lang)) s.lang = {};
+      Object.keys(ds.lang || {}).forEach(k => {
+        const defLang = ds.lang[k] || { level: null, progress: {} };
+        if (typeof s.lang[k] !== 'object' || s.lang[k] === null || Array.isArray(s.lang[k])) s.lang[k] = { level: null, progress: {} };
+        if (typeof s.lang[k].level === 'undefined') s.lang[k].level = defLang.level;
+        if (typeof s.lang[k].progress !== 'object' || s.lang[k].progress === null) s.lang[k].progress = {};
+      });
       return s;
     }
     function load() {
@@ -24023,6 +24031,25 @@ function applyPmodTheme(t){
       if (studyMode==='dialog') return renderStudyDialog();
       return renderLangBody();
     }
+    // 学习中心渲染失败时自愈：防止旧版 localStorage 字段异常导致「点击学习项目没反应」
+    function renderStudySafe() {
+      try { renderStudy(); }
+      catch (e) {
+        console.error('[study] 渲染失败，尝试自愈数据：', e);
+        try {
+          state.lang = (state.lang && typeof state.lang === 'object' && !Array.isArray(state.lang)) ? state.lang : {};
+          Object.keys(defaultState().lang).forEach(k => {
+            if (typeof state.lang[k] !== 'object' || state.lang[k] === null) state.lang[k] = { level: null, progress: {} };
+            if (typeof state.lang[k].level === 'undefined') state.lang[k].level = null;
+            if (typeof state.lang[k].progress !== 'object' || state.lang[k].progress === null) state.lang[k].progress = {};
+          });
+          save();
+          renderStudy();
+        } catch (e2) {
+          toast('学习中心数据异常，已自动修复，请再点一次');
+        }
+      }
+    }
 
     // 新增:三个语言总览
     function renderAllLangs() {
@@ -24030,7 +24057,7 @@ function applyPmodTheme(t){
       const dayKey = Math.floor(Date.now() / 86400000);
       const cards = langs.map(k => {
         const L = LANG[k];
-        const st = state.lang[k] || (state.lang[k] = { level: null });
+        const st = state.lang[k] || (state.lang[k] = { level: null, progress: {} });
         const lvIdx = st.level;
         const lvName = lvIdx === null ? '未测评' : L.levels[lvIdx];
         const lvTotal = L.levels.length;
@@ -24090,7 +24117,7 @@ function applyPmodTheme(t){
     function renderLangBody() {
       if(!curLang) return renderAllLangs();
       const L = LANG[curLang];
-      const st = state.lang[curLang];
+      const st = state.lang[curLang] || (state.lang[curLang] = { level: null, progress: {} });
       const lvIdx = st.level;
       const day = Math.floor(Date.now()/86400000);
       const pick = (arr,n)=>{ if(!arr||!arr.length) return []; const off=day%arr.length; const r=[]; for(let i=0;i<Math.min(n,arr.length);i++) r.push(arr[(off+i)%arr.length]); return r; };
@@ -24397,6 +24424,7 @@ function applyPmodTheme(t){
         else {
           const max = q.length*3; const ratio = score/max;
           const idx = Math.min(L.levels.length-1, Math.floor(ratio * L.levels.length));
+          if (typeof state.lang[curLang] !== 'object' || state.lang[curLang] === null) state.lang[curLang] = { level: null, progress: {} };
           state.lang[curLang].level = idx; save();
           openModal(`<h3>🎯 测评结果</h3>
             <p style="margin-bottom:10px">你的 ${L.name} 水平约为：</p>
@@ -26715,15 +26743,15 @@ function applyPmodTheme(t){
           state.daily[g]=state.daily[g].filter(x=>x.id!==id); save();
           currentView==='home'?renderHome():renderDaily(); toast('已删除'); break; }
         case 'add-task': { const v=$('newTask').value.trim(); if(!v)break; const ty=$('newType').value; state.daily[ty].push({id:uid(),title:v,tag:ty==='routine'?'每日必做':'创作任务',done:false}); save(); renderDaily(); break; }
-        case 'lang-all': curLang=null; studyMode='overview'; renderStudy(); break;
+        case 'lang-all': curLang=null; studyMode='overview'; renderStudySafe(); break;
         case 'lang': {
           curLang=t.dataset.k; quizState=null; flashState=null; listenState=null; dialogState=null;
           if (t.dataset.m) studyMode = t.dataset.m;   // 「情景/单词/精听」入口直达对应模式
-          renderStudy();
+          renderStudySafe();
           break;
         }
         case 'assess': startAssess(); break;
-        case 'lang-done': { const i=+t.dataset.i; const L=LANG[curLang]; if(state.lang[curLang].level===i && i<L.plan.length-1){ state.lang[curLang].level=i+1; } save(); renderLangBody(); break; }
+        case 'lang-done': { const i=+t.dataset.i; const L=LANG[curLang]; if (typeof state.lang[curLang] !== 'object' || state.lang[curLang] === null) state.lang[curLang] = { level: null, progress: {} }; if(state.lang[curLang].level===i && i<L.plan.length-1){ state.lang[curLang].level=i+1; } save(); renderLangBody(); break; }
         case 'speak': speak(decodeURIComponent(t.dataset.t), t.dataset.l); break;
         case 'sport-done': { const id=t.dataset.id; state.sport.done[id]=(state.sport.done[id]||0)+1; save(); toast('已记录 ' + SPORTS.find(s=>s.id===id).name + ' 打卡'); break; }
         case 'day-sport': { const day=+t.dataset.day; const dn=['一','二','三','四','五','六','日'][day-1]; const opts=SPORTS.map(s=>`<button class="btn sm outline" data-action="set-day-sport" data-day="${day}" data-id="${s.id}" style="margin:4px">${s.icon} ${s.name}</button>`).join('')+`<button class="btn sm outline" data-action="set-day-sport" data-day="${day}" data-id="rest" style="margin:4px">💤 休息</button>`; openModal(`<h3>周${dn} 安排哪个项目？</h3><div style="display:flex;flex-wrap:wrap">${opts}</div><div class="modal-actions"><button class="btn ghost" data-action="modal-close">取消</button></div>`); break; }
@@ -26867,9 +26895,9 @@ function applyPmodTheme(t){
         case 'gdiff': state.gameDiff=t.dataset.d; save(); renderGame(); break;
         case 'master': { const id=+t.dataset.id; if(!state.pianoMastered.includes(id))state.pianoMastered.push(id); if(state.pianoUnlocked===id&&state.pianoUnlocked<5)state.pianoUnlocked++; save(); renderPiano(); break; }
         case 'piano-checkin': { if(!state.pianoLog) state.pianoLog={}; state.pianoLog[today()]=true; save(); toast('✅ 已记录今日练习，保持手感！'); currentView==='daily'?renderDaily():renderPiano(); break; }
-        case 'study-checkin': { if(!state.studyLog) state.studyLog={}; state.studyLog[today()]=true; save(); toast('✅ 今日学习已打卡，保持连胜！'); currentView==='daily'?renderDaily():renderStudy(); break; }
+        case 'study-checkin': { if(!state.studyLog) state.studyLog={}; state.studyLog[today()]=true; save(); toast('✅ 今日学习已打卡，保持连胜！'); currentView==='daily'?renderDaily():renderStudySafe(); break; }
         // ===== 学习中心：模式切换 + 闯关 + 单词卡 + 精听跟读 =====
-        case 'study-mode': { studyMode = t.dataset.m; renderStudy(); break; }
+        case 'study-mode': { studyMode = t.dataset.m; renderStudySafe(); break; }
         case 'quiz-ans': {
           if (!quizState || quizState.chosen) break;
           quizState.chosen = t.dataset.o;
