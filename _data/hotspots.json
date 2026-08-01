@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-31T10:03:43.104Z",
+  "updatedAt": "2026-08-01T07:53:18.347Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -31,51 +31,51 @@
     "weibo": [],
     "bilibili": [
       {
-        "title": "【苏新皓｜4K直拍】囍 直拍｜梦寐以求·演唱会",
-        "url": "https://b23.tv/BV1Dx3i6nEm8",
-        "hot": 1126227,
-        "rank": 1
-      },
-      {
         "title": "小时候看不懂，长大后已是局中人",
         "url": "https://b23.tv/BV1qh3W6bEqf",
-        "hot": 3265948,
-        "rank": 2
-      },
-      {
-        "title": "【乾乾特工·剧场版】大制作来啦！！！",
-        "url": "https://b23.tv/BV1VC3q6ZEtP",
-        "hot": 3071144,
-        "rank": 3
+        "hot": 4558760,
+        "rank": 1
       },
       {
         "title": "古罗马离谱习俗——两千年前的古罗马，开放程度与市井智慧，完全颠覆现代人的认知。",
         "url": "https://b23.tv/BV1iAKb6xEEV",
-        "hot": 2696856,
-        "rank": 4
+        "hot": 3416596,
+        "rank": 2
       },
       {
         "title": "抵抗者2026实机演示",
         "url": "https://b23.tv/BV1rW326hEKe",
-        "hot": 8937462,
-        "rank": 5
-      },
-      {
-        "title": "化身Superman！摩托老哥解锁新技能",
-        "url": "https://b23.tv/BV1XU3z6AEQi",
-        "hot": 6073297,
-        "rank": 6
+        "hot": 9737559,
+        "rank": 3
       },
       {
         "title": "奇怪的玩具工厂 第五章 Part2，结局",
         "url": "https://b23.tv/BV1DT3x6XEYv",
-        "hot": 1986206,
-        "rank": 7
+        "hot": 2419778,
+        "rank": 4
+      },
+      {
+        "title": "化身Superman！摩托老哥解锁新技能",
+        "url": "https://b23.tv/BV1XU3z6AEQi",
+        "hot": 6792972,
+        "rank": 5
       },
       {
         "title": "挑战从东北徒步到西藏( 十倍速1小时5分版）",
         "url": "https://b23.tv/BV1c4326hEkj",
-        "hot": 5390937,
+        "hot": 5943879,
+        "rank": 6
+      },
+      {
+        "title": "《原神》7.0版本PV：「无神怜爱的雪国」",
+        "url": "https://b23.tv/BV1EpGA6uEDX",
+        "hot": 2348213,
+        "rank": 7
+      },
+      {
+        "title": "手绘469张！还原EVA主题曲",
+        "url": "https://b23.tv/BV1aP326jEi8",
+        "hot": 2922885,
         "rank": 8
       }
     ],
