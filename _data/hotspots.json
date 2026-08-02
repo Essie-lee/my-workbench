@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-01T07:53:18.347Z",
+  "updatedAt": "2026-08-02T07:54:22.105Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -33,49 +33,49 @@
       {
         "title": "小时候看不懂，长大后已是局中人",
         "url": "https://b23.tv/BV1qh3W6bEqf",
-        "hot": 4558760,
+        "hot": 5175134,
         "rank": 1
       },
       {
         "title": "古罗马离谱习俗——两千年前的古罗马，开放程度与市井智慧，完全颠覆现代人的认知。",
         "url": "https://b23.tv/BV1iAKb6xEEV",
-        "hot": 3416596,
+        "hot": 3895290,
         "rank": 2
-      },
-      {
-        "title": "抵抗者2026实机演示",
-        "url": "https://b23.tv/BV1rW326hEKe",
-        "hot": 9737559,
-        "rank": 3
-      },
-      {
-        "title": "奇怪的玩具工厂 第五章 Part2，结局",
-        "url": "https://b23.tv/BV1DT3x6XEYv",
-        "hot": 2419778,
-        "rank": 4
-      },
-      {
-        "title": "化身Superman！摩托老哥解锁新技能",
-        "url": "https://b23.tv/BV1XU3z6AEQi",
-        "hot": 6792972,
-        "rank": 5
-      },
-      {
-        "title": "挑战从东北徒步到西藏( 十倍速1小时5分版）",
-        "url": "https://b23.tv/BV1c4326hEkj",
-        "hot": 5943879,
-        "rank": 6
       },
       {
         "title": "《原神》7.0版本PV：「无神怜爱的雪国」",
         "url": "https://b23.tv/BV1EpGA6uEDX",
-        "hot": 2348213,
+        "hot": 2952632,
+        "rank": 3
+      },
+      {
+        "title": "⚡️宗 主 连 携 技⚡️",
+        "url": "https://b23.tv/BV1Nr3s6rE79",
+        "hot": 2719794,
+        "rank": 4
+      },
+      {
+        "title": "《次子就是次子》",
+        "url": "https://b23.tv/BV17n3b6rEHs",
+        "hot": 3363208,
+        "rank": 5
+      },
+      {
+        "title": "奇怪的玩具工厂 第五章 Part2，结局",
+        "url": "https://b23.tv/BV1DT3x6XEYv",
+        "hot": 2757859,
+        "rank": 6
+      },
+      {
+        "title": "我们拍到了水下风暴",
+        "url": "https://b23.tv/BV1c7GA6kEqN",
+        "hot": 3703008,
         "rank": 7
       },
       {
-        "title": "手绘469张！还原EVA主题曲",
-        "url": "https://b23.tv/BV1aP326jEi8",
-        "hot": 2922885,
+        "title": "抵抗者2026实机演示",
+        "url": "https://b23.tv/BV1rW326hEKe",
+        "hot": 10026533,
         "rank": 8
       }
     ],
