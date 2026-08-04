@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-03T12:39:31.060Z",
+  "updatedAt": "2026-08-04T10:14:32.361Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -31,51 +31,51 @@
     "weibo": [],
     "bilibili": [
       {
-        "title": "《原神》至冬交响音乐现场",
-        "url": "https://b23.tv/BV1riGw6zELu",
-        "hot": 1532938,
+        "title": "【苏新皓｜4K直拍】POWER 直拍｜梦寐以求·演唱会",
+        "url": "https://b23.tv/BV1D23262EaD",
+        "hot": 893534,
         "rank": 1
       },
       {
         "title": "⚡️宗 主 连 携 技⚡️",
         "url": "https://b23.tv/BV1Nr3s6rE79",
-        "hot": 3869615,
+        "hot": 4376041,
         "rank": 2
-      },
-      {
-        "title": "【苏新皓｜4K直拍】POWER 直拍｜梦寐以求·演唱会",
-        "url": "https://b23.tv/BV1D23262EaD",
-        "hot": 634429,
-        "rank": 3
-      },
-      {
-        "title": "我们拍到了水下风暴",
-        "url": "https://b23.tv/BV1c7GA6kEqN",
-        "hot": 5130410,
-        "rank": 4
-      },
-      {
-        "title": "不是只有伟大的艺术家才能创作出好的作品～",
-        "url": "https://b23.tv/BV18ZGw6sE2j",
-        "hot": 3621252,
-        "rank": 5
-      },
-      {
-        "title": "【合唱】千本樱（100000人）                                     【B萌应援】",
-        "url": "https://b23.tv/BV1dyGw6PEkQ",
-        "hot": 987450,
-        "rank": 6
       },
       {
         "title": "大家还想看我搬空什么店",
         "url": "https://b23.tv/BV1bz3Q6oEMP",
-        "hot": 2360018,
-        "rank": 7
+        "hot": 4211153,
+        "rank": 3
+      },
+      {
+        "title": "《原神》至冬交响音乐现场",
+        "url": "https://b23.tv/BV1riGw6zELu",
+        "hot": 1856778,
+        "rank": 4
+      },
+      {
+        "title": "老大，你的意思是我们抽烟抽的慢也得死吗？",
+        "url": "https://b23.tv/BV126GG62E9G",
+        "hot": 7283416,
+        "rank": 5
       },
       {
         "title": "第5集丨“零号大坝开满了鲜花？”",
         "url": "https://b23.tv/BV1WpGu6aEC7",
-        "hot": 1831668,
+        "hot": 1957526,
+        "rank": 6
+      },
+      {
+        "title": "几十块入手世界级顶尖好物——居家用品篇",
+        "url": "https://b23.tv/BV1Vo3C6VE1B",
+        "hot": 3327626,
+        "rank": 7
+      },
+      {
+        "title": "不是只有伟大的艺术家才能创作出好的作品～",
+        "url": "https://b23.tv/BV18ZGw6sE2j",
+        "hot": 3912204,
         "rank": 8
       }
     ],
