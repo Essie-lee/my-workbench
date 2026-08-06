@@ -441,6 +441,19 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 .dash-pill[data-v="health"]{--c:var(--red);     --c-soft:var(--red-soft); }
 .dash-pill[data-v="diary"]{ --c:var(--rose);    --c-soft:var(--rose-soft); }
 
+/* 今日聚焦 · 最小行动推荐引擎(P12) */
+.focus-card{ padding:8px; }
+.focus-row{ display:flex; align-items:center; gap:12px; padding:11px 10px; border-radius:14px; cursor:pointer; transition:background var(--t-fast), transform var(--t-fast); }
+.focus-row + .focus-row{ border-top:1px solid var(--line-2); }
+.focus-row:active{ transform:scale(.985); }
+.focus-row:hover{ background:var(--primary-soft); }
+.focus-ic{ width:42px; height:42px; flex:0 0 auto; border-radius:13px; display:grid; place-items:center; font-size:22px; background:var(--primary-soft); }
+.focus-main{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.focus-t{ font-size:14.5px; font-weight:680; color:var(--ink-1); }
+.focus-s{ font-size:11.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.focus-go{ flex:0 0 auto; font-size:12.5px; font-weight:620; color:var(--primary); padding-left:10px; white-space:nowrap; }
+.focus-done{ font-size:13.5px; color:var(--ink-2); line-height:1.7; text-align:center; padding:14px 8px; }
+
 /* 统计卡片 */
 .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .stat-card{
@@ -2821,6 +2834,7 @@ let LANG = window.LANG_DATA || {};
         gameHistory: {},
         pianoUnlocked: 1, pianoMastered: [], pianoLog: {}, studyLog: {}, studyQuiz: {}, flashDone: {},
         memos: [],
+        recents: [],           // 首页「最近使用」顺序（运行时动态写入）
         lastLearnUpdate: null,  // 由 AI 每次 push 学习内容时更新（ISO 日期 'YYYY-MM-DD'）
         bill: {
           flows: [],            // {id, type:'exp'|'inc', cat, book, amount, note, date:'YYYY-MM-DD', ts}
@@ -2839,6 +2853,66 @@ let LANG = window.LANG_DATA || {};
         }
       };
     }
+    // ---------- localStorage 分片（数据安全加固 · 评审 4.2 P1） ----------
+    // 把单一大 key 拆成按模块的多个小 key，消除「一个损坏全丢」的单点风险：
+    //   · 某个域的 key 解析失败 → 仅该域回落默认值，其余数据完好
+    //   · 首次运行从旧版单一 KEY 平滑迁移，历史不丢（旧 KEY 保留为只读备份）
+    const LS_NS = 'growth';
+    function _lsGet(key){ try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch(_){ return null; } }
+    function _lsSet(key, val){ try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch(_){ return false; } }
+    // 顶层字段 → 所属域（一个域一个 key）
+    const DOMAIN_MAP = {
+      wbName:'settings', avatar:'settings', bookCat:'settings', recents:'settings',
+      daily:'daily',
+      lang:'study', studyLog:'study', studyQuiz:'study', flashDone:'study', lastLearnUpdate:'study',
+      pianoUnlocked:'piano', pianoMastered:'piano', pianoLog:'piano',
+      books:'book', bookNotes:'book', bookSaved:'book', bookApi:'book',
+      sport:'sport',
+      health:'health',
+      shoot:'creation', shootDaily:'creation', topicSaved:'creation', memos:'creation', gameHistory:'creation',
+      bill:'bill',
+      diary:'diary'
+    };
+    const DOMAIN_KEYS = (function(){ const s=new Set(); for (const k in DOMAIN_MAP) s.add(DOMAIN_MAP[k]); return Array.from(s); })();
+    const LEGACY_KEY = KEY;                              // 旧版单一大 key，仅用于一次性迁移
+    const MIGRATED_MARK = LS_NS + '-migrated';
+    function _migrateFromLegacy(){
+      const legacy = _lsGet(LEGACY_KEY);
+      if (!legacy || typeof legacy !== 'object') return;
+      const buckets = {};
+      for (const field in DOMAIN_MAP) {
+        if (legacy[field] !== undefined) { const b = DOMAIN_MAP[field]; (buckets[b] = buckets[b] || {})[field] = legacy[field]; }
+      }
+      for (const b in buckets) _lsSet(LS_NS + ':' + b, buckets[b]);
+    }
+    function _splitSave(){
+      const buckets = {};
+      for (const field in DOMAIN_MAP) { const b = DOMAIN_MAP[field]; (buckets[b] = buckets[b] || {})[field] = state[field]; }
+      for (const b in buckets) _lsSet(LS_NS + ':' + b, buckets[b]);
+    }
+    function _splitLoad(){
+      const merged = defaultState();
+      for (const field in DOMAIN_MAP) {
+        const bucket = _lsGet(LS_NS + ':' + DOMAIN_MAP[field]);
+        if (bucket && typeof bucket === 'object' && (field in bucket)) merged[field] = bucket[field];
+      }
+      return normalizeState(merged);
+    }
+    function migrateIfNeeded(){
+      if (_lsGet(MIGRATED_MARK)) return;                 // 已处理过（无论是否真有旧数据）
+      const hasDomains = DOMAIN_KEYS.some(b => _lsGet(LS_NS + ':' + b) !== null);
+      if (!hasDomains) _migrateFromLegacy();             // 仅当尚无任何域 key 时才迁移，避免覆盖新数据
+      _lsSet(MIGRATED_MARK, 1);
+    }
+    function clearAllData(){
+      DOMAIN_KEYS.forEach(b => { try { localStorage.removeItem(LS_NS + ':' + b); } catch(_){} });
+      try { localStorage.removeItem(MIGRATED_MARK); } catch(_){}
+      try { localStorage.removeItem(KEY); } catch(_){}
+      // 应用级辅助 key 一并清空，让「清空所有数据」真正彻底（主题/引导/首访）
+      ['growth-os-theme','growth-os-first-visit','growth-os-onboard'].forEach(k => { try { localStorage.removeItem(k); } catch(_){} });
+    }
+    function load() { migrateIfNeeded(); return _splitLoad(); }
+    function save() { _splitSave(); }
     let state = load();
     // 状态归一化：把任意版本/碎片化的旧 localStorage 校正为当前结构，
     // 杜绝「字段类型错配（如 daily 是数组而非对象）→ 渲染抛错 → 整页崩溃 → 很多功能点了没反应」
@@ -2876,18 +2950,6 @@ let LANG = window.LANG_DATA || {};
       });
       return s;
     }
-    function load() {
-      try {
-        const raw = localStorage.getItem(KEY);
-        const s = raw ? JSON.parse(raw) : null;
-        if (s && typeof s === 'object') {
-          const merged = Object.assign({}, defaultState(), s);
-          return normalizeState(merged);
-        }
-      } catch(e){}
-      return defaultState();
-    }
-    function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
 
     const $ = id => document.getElementById(id);
     const dateStr = d => { const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`; };
@@ -3062,10 +3124,17 @@ let LANG = window.LANG_DATA || {};
         return r;
       };
     }
-    function navigate(view, arg) {
+    let _histInit = false;
+    function navigate(view, arg, opts) {
+      const _prev = currentView;
       // 离开运动页时清理 3D 模型，防止 WebGL 上下文泄漏
       if (currentView === 'sport' && view !== 'sport') disposeMuscleModel();
       currentView = view; navArg = arg || null;
+      // 浏览器返回键：让模块间返回，而非直接退出 App
+      try {
+        if (!_histInit) { history.replaceState({view:view, arg:arg||null}, ''); _histInit = true; }
+        else if (!(opts && opts.fromPop) && view !== _prev) { history.pushState({view:view, arg:arg||null}, ''); }
+      } catch(_) {}
       $('pageTitle').textContent = state.wbName && view==='home' ? state.wbName : TITLES[view];
       document.querySelectorAll('#drawerNav button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
       syncTab(view);
@@ -3086,6 +3155,12 @@ let LANG = window.LANG_DATA || {};
     }
     function openDrawer() { $('drawer').classList.add('open'); $('overlay').classList.add('show'); }
     function closeDrawer() { $('drawer').classList.remove('open'); $('overlay').classList.remove('show'); }
+    // 浏览器返回键：popstate 时按历史后退到对应模块（而非直接退出 App）
+    window.addEventListener('popstate', function(e){
+      const s = e.state || {};
+      if (s && s.view) navigate(s.view, s.arg, {fromPop:true});
+      else navigate('home', null, {fromPop:true});
+    });
 
     // ===================== 首页 =====================
     // 读取优化版钢琴模块（iframe 内）的本地进度，用于在首页统一展示
@@ -3095,6 +3170,20 @@ let LANG = window.LANG_DATA || {};
         if (s && Array.isArray(s.pianoMastered)) return { mastered: s.pianoMastered.length, total: 18 };
       } catch(e){}
       return { mastered: 0, total: 18 };
+    }
+    // 是否已有任意成长进度（用于欢迎条「完成首个任务后自动隐藏」）
+    function hasAnyProgress(){
+      try {
+        if ((state.daily.routine||[]).some(i=>i.done)) return true;
+        if ((state.daily.tasks||[]).some(i=>i.done)) return true;
+        if (state.pianoLog && Object.keys(state.pianoLog).length) return true;
+        if (state.studyLog && Object.keys(state.studyLog).length) return true;
+        if (state.bookLog && Object.keys(state.bookLog).length) return true;
+        if (state.books && state.books.log && Object.keys(state.books.log).length) return true;
+        if (state.sport && ((state.sport.log && Object.keys(state.sport.log).length) || (state.sport.setsLog && Object.keys(state.sport.setsLog).length))) return true;
+        if (state.diary && state.diary.entries && state.diary.entries.length) return true;
+      } catch(_) {}
+      return false;
     }
     function renderHome() {
       const r = [...state.daily.routine, ...state.daily.tasks];
@@ -3107,7 +3196,14 @@ let LANG = window.LANG_DATA || {};
       // 首次访问轻量引导（v14 新增，基于 localStorage，不影响数据模型）
       let onboard = '';
       let seenOnboard = false;
-      try { seenOnboard = localStorage.getItem('growth-os-onboard') === '1'; } catch (_) {}
+      try {
+        const _fv = localStorage.getItem('growth-os-first-visit');
+        if (!_fv) { try { localStorage.setItem('growth-os-first-visit', String(Date.now())); } catch(_){} }
+        const _first = _fv ? Number(_fv) : Date.now();
+        const _manual = localStorage.getItem('growth-os-onboard') === '1';
+        const _expired = (Date.now() - _first) > 24*3600*1000;
+        seenOnboard = _manual || _expired || hasAnyProgress();
+      } catch (_) {}
       if (!seenOnboard) {
         onboard = `<div class="card onboard-tip" style="border:1px solid var(--primary);background:var(--primary-soft);align-items:center;display:flex;justify-content:space-between">
           <span>👋 欢迎！点左上角 <b>☰</b> 切换模块，右上角 <b>🌗</b> 切换深浅色。</span>
@@ -3260,8 +3356,10 @@ let LANG = window.LANG_DATA || {};
             <span class="tag ${bookStreakN ? 'purple' : 'gray'}">🔥 连续 ${bookStreakN} 天</span>
           </div>
         </div>`;
+      const focusHtml = renderFocus();
       $('main').innerHTML = `
         ${heroHtml}
+        ${focusHtml}
         ${onboard}
         ${learnReminder}
         ${planHtml}
@@ -3272,6 +3370,73 @@ let LANG = window.LANG_DATA || {};
       `;
       const ob = $('onboardClose');
       if (ob) ob.addEventListener('click', () => { try { localStorage.setItem('growth-os-onboard','1'); } catch(_){} navigate('home'); });
+    }
+
+    // ===================== 今日聚焦 · 最小行动推荐引擎(P12) =====================
+    // 基于用户历史打卡数据，每天首页只推荐 1–3 件「最小行动」，
+    // 每件都用低压力的小目标口吻（"只需要 10 分钟"），降低启动门槛、提升完成率。
+    function renderFocus(){
+      const td = today();
+      const nKeys = o => (o && typeof o==='object') ? Object.keys(o).length : 0;
+      // 各模块历史打卡次数（= 习惯强度，用于排序：核心习惯优先）
+      const hist = {
+        piano: nKeys(state.pianoLog),
+        book:  nKeys(state.books && state.books.log),
+        sport: nKeys(state.sport && state.sport.log) + nKeys(state.sport && state.sport.setsLog),
+        study: nKeys(state.studyLog),
+        diary: (state.diary && Array.isArray(state.diary.entries)) ? state.diary.entries.length : 0,
+        health: nKeys(state.health && state.health.records)
+      };
+      const done = {
+        piano: !!(state.pianoLog && state.pianoLog[td]),
+        book:  !!(state.books && state.books.log && state.books.log[td]),
+        sport: !!(state.sport && ((state.sport.log&&state.sport.log[td])||(state.sport.setsLog&&state.sport.setsLog[td]))),
+        study: !!(state.studyLog && state.studyLog[td]),
+        diary: !!(state.diary && state.diary.entries && state.diary.entries.some(e=>e.date===td)),
+        health: !!(state.health && state.health.records && state.health.records[td])
+      };
+      const DEF = {
+        piano:{ ic:'🎹', t:'练琴 10 分钟', sub:'保持手感，今天只练一小段', v:'piano' },
+        book:{  ic:'📖', t:'读 10 分钟书', sub:'翻开上次那本，继续一点点', v:'book' },
+        study:{ ic:'📚', t:'学 10 分钟',   sub:'挑一个语种，过一小节',   v:'study' },
+        sport:{ ic:'🏊', t:'动 1 组',      sub:'让身体今天醒一下',       v:'sport' },
+        diary:{ ic:'📝', t:'写一句日记',   sub:'今天最想记住的一件事',   v:'diary' },
+        health:{ic:'😴', t:'记一下睡眠',   sub:'30 秒，留下身体信号',    v:'health' }
+      };
+      // 候选：历史上用过、且今天还没做的模块
+      let cands = Object.keys(DEF).filter(k => hist[k] > 0 && !done[k]).map(k => ({ k, w: hist[k], ...DEF[k] }));
+      cands.sort((a,b) => b.w - a.w);
+      let body;
+      if (cands.length) {
+        body = cands.slice(0,3).map(p => `
+          <div class="focus-row" data-action="go" data-v="${p.v}" role="button" tabindex="0" aria-label="${esc(p.t)}">
+            <span class="focus-ic">${p.ic}</span>
+            <span class="focus-main"><span class="focus-t">${p.t}</span><span class="focus-s">${esc(p.sub)}</span></span>
+            <span class="focus-go">去做 ›</span>
+          </div>`).join('');
+      } else if (Object.values(hist).some(Boolean)) {
+        // 习惯今天都完成了 → 鼓励型空状态
+        const total = Object.values(done).filter(Boolean).length;
+        body = `<div class="focus-done">🎉 今天已经完成 <b>${total}</b> 件小事，给自己鼓个掌！<br><span style="opacity:.7">想加点料？挑个模块随意逛逛 →</span></div>`;
+      } else {
+        // 全新用户：从每日计划第一件未完成开始，或从"加目标"起步
+        const first = [...state.daily.routine, ...state.daily.tasks].find(i => !i.done);
+        if (first) {
+          body = `<div class="focus-row" data-action="go" data-v="daily" role="button" tabindex="0" aria-label="开始 ${esc(first.title)}">
+            <span class="focus-ic">🌱</span>
+            <span class="focus-main"><span class="focus-t">${esc(first.title)}</span><span class="focus-s">从一件小事开始，今天只做这一个</span></span>
+            <span class="focus-go">去做 ›</span>
+          </div>`;
+        } else {
+          body = `<div class="focus-row" data-action="go" data-v="daily" role="button" tabindex="0" aria-label="添加今日计划">
+            <span class="focus-ic">🌱</span>
+            <span class="focus-main"><span class="focus-t">挑一个今天的目标</span><span class="focus-s">加一件小事，先动起来</span></span>
+            <span class="focus-go">去加 ›</span>
+          </div>`;
+        }
+      }
+      return `<div class="section-title" data-c="primary">今日聚焦<span class="st-count">基于你的习惯，今天先做这几件</span></div>
+        <div class="card focus-card">${body}</div>`;
     }
 
     // ===================== 首页「最近使用」(P2: 降低模块入口重复/信息过载) =====================
@@ -3388,7 +3553,7 @@ let LANG = window.LANG_DATA || {};
           ${body}
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
             <button class="btn sm grad ${meta.color}" data-action="go" data-v="${mod}" style="justify-content:center">进入${meta.lbl}</button>
-            <button class="btn sm outline" data-action="go" data-v="home" style="justify-content:center">← 返回首页</button>
+            <button class="btn sm outline" data-action="back" style="justify-content:center">← 返回首页</button>
           </div>
         </div>`;
     }
@@ -6240,6 +6405,7 @@ let LANG = window.LANG_DATA || {};
       if (t.dataset.view) { navigate(t.dataset.view); return; }
       try {
       switch(a){
+        case 'back': history.back(); break;
         case 'report': navigate('week', t.dataset.mod); break;
         case 'go': if(_reader) finalizeReader(); recordRecent(t.dataset.v); navigate(t.dataset.v); break;
         case 'toggle-task': { const g=t.dataset.g,id=t.dataset.id; const it=state.daily[g].find(x=>x.id===id);
@@ -6690,7 +6856,7 @@ let LANG = window.LANG_DATA || {};
         }
         case 'reset-data': {
           if (confirm('确定要清空所有数据吗?这会删除你所有的任务/学习进度/收藏/笔记,且无法恢复。')) {
-            localStorage.removeItem(KEY);
+            clearAllData();
             location.reload();
           }
           break;
