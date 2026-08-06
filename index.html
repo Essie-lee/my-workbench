@@ -3012,10 +3012,11 @@ let LANG = window.LANG_DATA || {};
 
     // ===================== 导航 =====================
     const VIEWS = { home:renderHome, daily:renderDaily, study:renderStudy, sport:renderSport, health:renderHealth,
-      topic:renderTopic, book:renderBook, shoot:renderShoot, game:renderGame, piano:renderPiano, bill:renderBill, diary:renderDiary };
+      topic:renderTopic, book:renderBook, shoot:renderShoot, game:renderGame, piano:renderPiano, bill:renderBill, diary:renderDiary, week:renderWeekReportView };
     let currentView = 'home';
+    let navArg = null;
     const TITLES = { home:'首页', daily:'每日计划', study:'学习中心', sport:'运动计划', health:'健康档案',
-      topic:'选题灵感', book:'读书计划', shoot:'拍摄计划', game:'益智游戏', piano:'钢琴练习', bill:'记账', diary:'日记' };
+      topic:'选题灵感', book:'读书计划', shoot:'拍摄计划', game:'益智游戏', piano:'钢琴练习', bill:'记账', diary:'日记', week:'本周复盘' };
 
     // 底部 Tab = 使用场景「域」，域内用顶部切换条横滑，任何模块都在 2 次点击内可达
     const DOMAIN_MODULES = {
@@ -3023,7 +3024,7 @@ let LANG = window.LANG_DATA || {};
       create: [ {v:'topic', ic:'💡', t:'选题灵感'}, {v:'shoot', ic:'📷', t:'拍摄计划'} ]
     };
     const lastDomainView = { growth:'study', create:'topic' };
-    const TAB_OF_VIEW = { home:'home', daily:'daily', study:'growth', piano:'growth', book:'growth', topic:'create', shoot:'create' };
+    const TAB_OF_VIEW = { home:'home', daily:'daily', study:'growth', piano:'growth', book:'growth', topic:'create', shoot:'create', week:'home' };
     function syncTab(view) {
       const tab = TAB_OF_VIEW[view] || 'more';
       document.querySelectorAll('#tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
@@ -3061,10 +3062,10 @@ let LANG = window.LANG_DATA || {};
         return r;
       };
     }
-    function navigate(view) {
+    function navigate(view, arg) {
       // 离开运动页时清理 3D 模型，防止 WebGL 上下文泄漏
       if (currentView === 'sport' && view !== 'sport') disposeMuscleModel();
-      currentView = view;
+      currentView = view; navArg = arg || null;
       $('pageTitle').textContent = state.wbName && view==='home' ? state.wbName : TITLES[view];
       document.querySelectorAll('#drawerNav button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
       syncTab(view);
@@ -3259,19 +3260,6 @@ let LANG = window.LANG_DATA || {};
             <span class="tag ${bookStreakN ? 'purple' : 'gray'}">🔥 连续 ${bookStreakN} 天</span>
           </div>
         </div>`;
-      const actionHtml = `
-        <div class="section-title" data-c="teal">一键开始</div>
-        <div class="card">
-          <div class="card-sub" style="margin:0 0 10px">语言 · 钢琴 · 运动 · 选题 · 记录，每天推进一点点。</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-            <button class="btn sm grad accent" data-action="go" data-v="study" style="justify-content:center">📚 学习</button>
-            <button class="btn sm grad gold" data-action="go" data-v="piano" style="justify-content:center">🎹 钢琴</button>
-            <button class="btn sm grad green" data-action="go" data-v="sport" style="justify-content:center">🏊 运动</button>
-            <button class="btn sm grad pink" data-action="go" data-v="topic" style="justify-content:center">💡 选题</button>
-            <button class="btn sm grad" data-action="go" data-v="diary" style="justify-content:center">🐾 日记</button>
-            <button class="btn sm grad purple" data-action="go" data-v="game" style="justify-content:center">🎮 游戏</button>
-          </div>
-        </div>`;
       $('main').innerHTML = `
         ${heroHtml}
         ${onboard}
@@ -3281,7 +3269,7 @@ let LANG = window.LANG_DATA || {};
         ${dashHtml}
         ${readHtml}
         ${renderWeekReview()}
-        ${actionHtml}`;
+      `;
       const ob = $('onboardClose');
       if (ob) ob.addEventListener('click', () => { try { localStorage.setItem('growth-os-onboard','1'); } catch(_){} navigate('home'); });
     }
@@ -3339,9 +3327,70 @@ let LANG = window.LANG_DATA || {};
           ` : `
             <div class="empty-box"><div class="eb-ic">🌱</div><div class="eb-t">这一周还没开始记录</div><div>随便点开一个模块做一点，回头这里就有你的成长曲线</div></div>
           `}
-          <button class="btn sm outline block" data-action="go" data-v="sport" style="margin-top:10px">查看运动周报 ›</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+            <button class="btn sm outline" data-action="report" data-mod="study" style="justify-content:center">📚 学习周报</button>
+            <button class="btn sm outline" data-action="report" data-mod="piano" style="justify-content:center">🎹 钢琴周报</button>
+            <button class="btn sm outline" data-action="report" data-mod="book" style="justify-content:center">📖 阅读周报</button>
+            <button class="btn sm outline" data-action="report" data-mod="sport" style="justify-content:center">🏊 运动周报</button>
+          </div>
         </div>`;
       if (!window.__langReady) { window.ensureLangData().then(function(){ if (currentView === 'home') renderHome(); }); }
+    }
+
+    // ===================== 模块专属周报页(各模块本周复盘) =====================
+    const REPORT_META = {
+      study:{ ic:'📚', lbl:'学习中心', color:'accent' },
+      piano:{ ic:'🎹', lbl:'钢琴练习', color:'gold' },
+      book:{ ic:'📖', lbl:'读书计划', color:'purple' },
+      sport:{ ic:'🏊', lbl:'运动计划', color:'green' },
+      diary:{ ic:'🐾', lbl:'我的日记', color:'pink' }
+    };
+    function renderWeekReportView(){
+      const mod = (navArg && REPORT_META[navArg]) ? navArg : 'study';
+      const meta = REPORT_META[mod];
+      const days = []; for (let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push(dateStr(d)); }
+      const isOn = (day) => { try {
+        if (mod==='study') return !!(state.studyLog && state.studyLog[day]);
+        if (mod==='piano') return !!(state.pianoLog && state.pianoLog[day]);
+        if (mod==='book')  return !!(state.books && state.books.log && state.books.log[day] && state.books.log[day].done);
+        if (mod==='sport') return !!(state.sport && ((state.sport.log&&state.sport.log[day]&&Object.keys(state.sport.log[day]).length)||(state.sport.setsLog&&state.sport.setsLog[day]&&Object.keys(state.sport.setsLog[day]).length)));
+        if (mod==='diary') return !!(state.diary && state.diary.entries && state.diary.entries.some(e=>(e.date||'').slice(0,10)===day));
+        return false;
+      } catch(_) { return false; } };
+      const activeDays = days.filter(isOn).length;
+      let streak=0; for (let i=0;i<7;i++){ const d=new Date(); d.setDate(d.getDate()-i); if (isOn(dateStr(d))) streak++; else break; }
+      let extra='';
+      try {
+        if (mod==='study'){ let sess=0, langs={}; days.forEach(d=>{ const o=state.studyLog&&state.studyLog[d]; if(o){ sess++; if(typeof o==='object') Object.keys(o).forEach(k=>langs[k]=1); } }); extra=`本周练习 <b>${sess}</b> 次${Object.keys(langs).length?`，覆盖 <b>${Object.keys(langs).length}</b> 个语种`:''}`; }
+        else if (mod==='piano'){ let mins=0; days.forEach(d=>{ mins+=(state.pianoMinutes&&state.pianoMinutes[d])||0; }); const mastered=(state.pianoMastered||[]).length; extra=`本周练琴 <b>${activeDays}</b> 天 · 累计掌握 <b>${mastered}/18</b> 曲${mins?` · 约 <b>${mins}</b> 分钟`:''}`; }
+        else if (mod==='book'){ let mins=0; days.forEach(d=>{ const o=state.books&&state.books.log&&state.books.log[d]; if(o&&o.done) mins+=(o.minutes||0); }); const bs=bookStreak(); extra=`本周读书 <b>${activeDays}</b> 天${bs?` · 🔥 连续 <b>${bs}</b> 天`:''}${mins?` · 约 <b>${mins}</b> 分钟`:''}`; }
+        else if (mod==='sport'){ let sets=0; days.forEach(d=>{ const a=state.sport&&state.sport.log&&state.sport.log[d]; const b=state.sport&&state.sport.setsLog&&state.sport.setsLog[d]; sets+=(a?Object.keys(a).length:0)+(b?Object.keys(b).length:0); }); extra=`本周运动 <b>${activeDays}</b> 天 · 完成 <b>${sets}</b> 组`; }
+        else if (mod==='diary'){ extra=`本周日记 <b>${activeDays}</b> 篇`; }
+      } catch(_){}
+      const wd = ['日','一','二','三','四','五','六'];
+      const dots = days.map(d=>{ const dt=new Date(d+'T00:00:00'); const on=isOn(d); return `<div style="flex:1;text-align:center">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${wd[dt.getDay()]}</div>
+        <div style="height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;${on?'background:var(--'+meta.color+');color:#fff':'background:var(--panel-ins);color:var(--muted)'}">${on?'✓':''}</div>
+      </div>`; }).join('');
+      const body = activeDays>0 ? `
+        <div style="display:flex;gap:6px;margin:6px 0 12px">${dots}</div>
+        <div class="card tint" style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;padding:8px 2px;border-bottom:1px solid var(--line-2)">
+            <span style="font-size:13px;color:var(--ink-2)">活跃天数</span><b style="font-size:15px">${activeDays} / 7 天</b></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 2px;border-bottom:1px solid var(--line-2)">
+            <span style="font-size:13px;color:var(--ink-2)">连续打卡</span><b style="font-size:15px">${streak} 天 🔥</b></div>
+          <div style="padding:8px 2px;font-size:13px;color:var(--ink-1)">${extra}</div>
+        </div>` : `
+        <div class="empty-box" style="margin:10px 0"><div class="eb-ic">🌱</div><div class="eb-t">这一周还没开始 ${meta.lbl}</div><div>去 ${meta.lbl} 做一点，明天这里就有你的记录</div></div>`;
+      $('main').innerHTML = `
+        <div class="section-title" data-c="${meta.color}">${meta.ic} ${meta.lbl} · 本周复盘</div>
+        <div class="card">
+          ${body}
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+            <button class="btn sm grad ${meta.color}" data-action="go" data-v="${mod}" style="justify-content:center">进入${meta.lbl}</button>
+            <button class="btn sm outline" data-action="go" data-v="home" style="justify-content:center">← 返回首页</button>
+          </div>
+        </div>`;
     }
 
     // ===================== 每日计划 =====================
@@ -6191,6 +6240,7 @@ let LANG = window.LANG_DATA || {};
       if (t.dataset.view) { navigate(t.dataset.view); return; }
       try {
       switch(a){
+        case 'report': navigate('week', t.dataset.mod); break;
         case 'go': if(_reader) finalizeReader(); recordRecent(t.dataset.v); navigate(t.dataset.v); break;
         case 'toggle-task': { const g=t.dataset.g,id=t.dataset.id; const it=state.daily[g].find(x=>x.id===id);
           if(it){ it.done=!it.done; save(); currentView==='home'?renderHome():renderDaily(); } break; }
