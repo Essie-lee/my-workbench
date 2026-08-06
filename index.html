@@ -6746,27 +6746,46 @@ let LANG = window.LANG_DATA || {};
     });
 
     function exportData(){
-      const data = JSON.stringify(state);
+      const fname = '我的工作台数据-' + new Date().toISOString().slice(0,10) + '.json';
+      const text = JSON.stringify(state);
+      // 优先：真正下载为文件（桌面 / 安卓 Chrome 可用）
       try {
-        const blob = new Blob([data], {type:'application/json'});
+        const blob = new Blob([text], {type:'application/json'});
+        if (window.navigator && navigator.msSaveOrOpenBlob) { navigator.msSaveOrOpenBlob(blob, fname); toast('已导出：'+fname); return; }
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = '我的工作台数据.json';
+        const a = document.createElement('a'); a.href = url; a.download = fname;
         document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(()=>URL.revokeObjectURL(url), 1000);
-      } catch(e) {
-        // file:// 下 download 可能受限，退化为复制文本
-        const ta = document.createElement('textarea'); ta.value = data; document.body.appendChild(ta); ta.select();
-        try { document.execCommand('copy'); alert('数据已复制到剪贴板，可粘贴保存为 .json 文件'); } catch(_) { alert('导出失败，请用桌面浏览器操作'); }
-        ta.remove();
-      }
+        setTimeout(function(){ try{ URL.revokeObjectURL(url); }catch(_){} }, 2000);
+        toast('已导出：'+fname+'（若未自动下载，可长按链接「存储到文件」）');
+        return;
+      } catch(e) { /* 落到剪贴板兜底 */ }
+      // 兜底：复制到剪贴板（移动端 Safari / 受限环境）
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function(){ toast('已复制数据到剪贴板，可存为 '+fname); },
+            function(){ legacyCopy(text); });
+          return;
+        }
+      } catch(_) {}
+      legacyCopy(text);
+    }
+    function legacyCopy(text){
+      const ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.top='-9999px'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try { document.execCommand('copy'); toast('已复制数据到剪贴板，可存为 .json 文件'); }
+      catch(_) { alert('导出失败：请改用桌面浏览器下载备份'); }
+      ta.remove();
     }
     function importData(file){
+      if (!file) return;
       const r = new FileReader();
       r.onload = () => { try {
         const s = JSON.parse(r.result);
-        if (!s || typeof s !== 'object') throw new Error('格式错误');
-        Object.assign(state, s); save(); alert('导入成功！'); navigate(currentView);
-      } catch(e){ alert('文件格式错误，导入失败'); } };
+        if (!s || typeof s !== 'object' || Array.isArray(s)) throw new Error('不是有效的工作台备份');
+        if (!confirm('导入会覆盖当前全部数据，确定继续？\n（建议先导出当前数据做好备份）')) return;
+        Object.assign(state, defaultState(), s); normalizeState(state); save(); toast('✅ 导入成功，已恢复数据'); navigate(currentView);
+      } catch(e){ toast('导入失败：' + (e.message || '文件格式错误')); } };
+      r.onerror = () => { toast('读取文件失败，导入取消'); };
       r.readAsText(file);
     }
 
