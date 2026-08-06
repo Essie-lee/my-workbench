@@ -7,9 +7,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="我的工作台">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
+  <!-- 允许浏览器/CDN 缓存：文件未变时走 304，避免每次重下 5MB；改版后用户强刷(Ctrl/Cmd+Shift+R)即更新 -->
+  <meta http-equiv="Cache-Control" content="public, max-age=300">
     <meta name="theme-color" content="#0078d4" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120.png" />
@@ -2178,9 +2177,9 @@ window.__staffShow=function(note, fromUser){
 /* ===================== 状态 / 打卡 / 阶段 ===================== */
 const LS_KEY='myWorkbenchPianoV2';
 let state=load();
-function load(){ try{ return JSON.parse(localStorage.getItem(LS_KEY))||initState(); }catch(e){ return initState(); } }
-function initState(){ return {pianoUnlocked:1, pianoMastered:[], pianoLog:{}, pianoMinutes:{}, pianoEx:{}}; }
-function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+function load(){  try{ const a = JSON.parse(localStorage.getItem(KEY)); if(a&&typeof a==='object') return a; }catch(e){}  try{ const b = JSON.parse(localStorage.getItem(LS_KEY)); if(b&&typeof b==='object') return b; }catch(e){}  return initState();}
+function initState(){  let pianoEx={};  try { if (typeof PIANO_STAGES!=='undefined'){ PIANO_STAGES.forEach(s=>{ pianoEx[s.id]=s.ex.map(e=>({id:uid(),title:e.title,desc:e.desc})); }); } } catch(_){}  return {pianoUnlocked:1, pianoMastered:[], pianoLog:{}, pianoMinutes:{}, pianoEx, recents:[]};}
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
 function today(){ return dateStr(new Date()); }
 function dateStr(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 
@@ -2406,7 +2405,39 @@ function applyPmodTheme(t){
       {id:"pg2701",title:"Moby-Dick",author:"Herman Melville",year:1851,lang:"en"}
     ];
   </script>
-  <script src="books-data.js"></script>
+  <!-- 公版书全文(2.3MB)改为「空闲预加载」，不再阻塞首屏；阅读器打开时若未就绪会按需等待 -->
+  <script>
+    window.__booksDataReady = false;
+    window.__booksDataPromise = null;
+    window.ensureBooksData = function () {
+      if (window.__booksDataReady) return Promise.resolve(true);
+      if (window.__booksDataPromise) return window.__booksDataPromise;
+      window.__booksDataPromise = new Promise((resolve) => {
+        const s = document.createElement("script");
+        s.src = "books-data.js";
+        s.onload = () => { window.__booksDataReady = true; resolve(true); };
+        s.onerror = () => { resolve(false); };
+        document.body.appendChild(s);
+      });
+      return window.__booksDataPromise;
+    };
+    // 浏览器空闲时再拉书库，不打断首屏渲染
+    const __idle = window.requestIdleCallback || function (cb) { setTimeout(cb, 1500); };
+    __idle(() => window.ensureBooksData());
+  </script>
+
+  <!-- 注册 Service Worker：静态资源离线缓存，二次打开秒开，且支持一键刷新到最新版 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.__swReg = null;
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then(r => { window.__swReg = r;
+          r.onupdatefound = () => { const w = r.installing; if(w) w.onstatechange = () => { if(w.state==='installed' && navigator.serviceWorker.controller){ toast('有新版本，点「PWA 没更新」可立即刷新'); } }; };
+        }).catch(()=>{});
+      });
+      window.updateSW = function(){ return navigator.serviceWorker.getRegistration().then(r => { if(!r) return false; return r.update().then(()=>{ return r.waiting ? (r.waiting.postMessage('skip'), true) : true; }); }); };
+    }
+  </script>
   <script>
     const KEY = 'growth-os-v1';
 
@@ -23815,18 +23846,11 @@ function applyPmodTheme(t){
             <div class="hero-date">${hDate}</div>
           </div>
           <div class="hero-ring" style="--p:${hRate}" role="img" aria-label="今日完成率 ${hRate}%"><span>${hRate}%</span></div>
-          <div class="hero-line">今日计划 <b>${done}/${r.length}</b> · 钢琴掌握 <b>${mastered}/18</b> · ${hTip}</div>
+          <div class="hero-line">先从一件小事开始 🌱 · 钢琴目标 ${mastered}/18 曲 · ${hTip}</div>
         </div>`;
       const doneCount = dashGroups.reduce((n,g)=>n+g.items.filter(i=>i.ok).length,0);
       const totalTrack = dashGroups.reduce((n,g)=>n+g.items.filter(i=>'ok' in i).length,0);
-      const dashHtml = `
-        <div class="section-title">今日一览<span class="st-count">${doneCount}/${totalTrack} 已完成</span></div>
-        <div class="dash-pill-groups">
-          ${dashGroups.map(g=>`
-            <div class="section-title" data-c="${g.c}" style="margin:14px 4px 8px;font-size:12px">${g.t}</div>
-            <div class="dash-row">${g.items.map(dashPill).join('')}</div>
-          `).join('')}
-        </div>`;
+      const dashHtml = renderDash();
       // 今日学习内容一览（v14 新增：从现有数据源聚合，让首页成为真正的"今日一览"）
       const eng = (LANG.english.fullTexts && LANG.english.fullTexts[0]) || null;
       const kor = (LANG.korean && LANG.korean.dialogs && LANG.korean.dialogs[0]) || null;
@@ -23858,7 +23882,7 @@ function applyPmodTheme(t){
       const undoneList = [...state.daily.routine.map(i=>({...i,g:'routine'})), ...state.daily.tasks.map(i=>({...i,g:'tasks'}))]
         .filter(i=>!i.done).slice(0,4);
       const planHtml = `
-        <div class="section-title">今日计划<span class="st-count">${done}/${r.length}</span></div>
+        <div class="section-title">今日计划<span class="st-count">${r.length} 项 · 挑一个先做</span></div>
         <div class="card tint">
           ${r.length === 0
             ? `<div class="empty-box"><div class="eb-ic">🌱</div><div class="eb-t">今天还没有安排</div><div>去「每日」加一件小事开始</div></div>`
@@ -23902,9 +23926,67 @@ function applyPmodTheme(t){
         ${learnPreviewHtml}
         ${dashHtml}
         ${readHtml}
+        ${renderWeekReview()}
         ${actionHtml}`;
       const ob = $('onboardClose');
       if (ob) ob.addEventListener('click', () => { try { localStorage.setItem('growth-os-onboard','1'); } catch(_){} navigate('home'); });
+    }
+
+    // ===================== 首页「最近使用」(P2: 降低模块入口重复/信息过载) =====================
+    const DASH_META = { study:{ic:'📚',lbl:'学习中心'}, piano:{ic:'🎹',lbl:'钢琴练习'}, book:{ic:'📖',lbl:'读书计划'}, topic:{ic:'💡',lbl:'选题灵感'}, shoot:{ic:'📷',lbl:'拍摄计划'}, sport:{ic:'🏊',lbl:'运动计划'}, health:{ic:'❤️',lbl:'健康档案'}, bill:{ic:'💰',lbl:'记账'}, diary:{ic:'🐾',lbl:'我的日记'}, game:{ic:'🎮',lbl:'益智游戏'} };
+    const DASH_DEFAULT = ['study','piano','book','topic','shoot','sport','health','bill','diary','game'];
+    function recordRecent(v){ const skip={home:1,daily:1}; if(skip[v]) return; try{ let r=Array.isArray(state.recents)?state.recents.slice():[]; r.unshift(v); r=r.filter((x,i)=>r.indexOf(x)===i); if(r.length>8) r=r.slice(0,8); state.recents=r; save(); }catch(_){} }
+    function renderDash(){ const order=(Array.isArray(state.recents)&&state.recents.length)?state.recents:DASH_DEFAULT; const pills=order.filter(v=>DASH_META[v]).map(v=>({...DASH_META[v],v}));
+      const dashPill=x=>`<div class=\"dash-pill\" data-action=\"go\" data-v=\"${x.v}\" role=\"button\" tabindex=\"0\" aria-label=\"${x.lbl}\"><div class=\"dp-top\"><span>${x.ic}</span><span>${x.lbl}</span></div><div class=\"dp-num\">点击进入</div><div class=\"dp-lbl\">最近使用</div></div>`;
+      return `<div class=\"section-title\">最近使用<span class=\"st-count\">${pills.length} 个模块 · 点过的会往前排</span></div><div class=\"dash-row\">${pills.map(dashPill).join('')}</div>`; }
+
+    // ===================== 本周回顾(P3: 成长复盘飞轮) =====================
+    function renderWeekReview(){
+      const days=[]; for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push(dateStr(d)); }
+      // 只统计真正「按天打卡」的活动（计划是长期共享数组，不能按天算，否则会误判 7 天全完成）
+      const MODS = ['study','piano','book','sport','diary'];
+      const keyOf = { study:'studyLog', piano:'pianoLog', book:'books.log', sport:'sport', diary:'diary' };
+      const isOn = (mod,day)=>{
+        if(mod==='study') return !!(state.studyLog && state.studyLog[day]);
+        if(mod==='piano') return !!(state.pianoLog && state.pianoLog[day]);
+        if(mod==='book')  return !!(state.books && state.books.log && state.books.log[day] && state.books.log[day].done);
+        if(mod==='sport') return !!(state.sport && ((state.sport.log&&state.sport.log[day]&&Object.keys(state.sport.log[day]).length)||(state.sport.setsLog&&state.sport.setsLog[day]&&Object.keys(state.sport.setsLog[day]).length)));
+        if(mod==='diary') return !!(state.diary && state.diary.entries && state.diary.entries.some(e=>(e.date||'').slice(0,10)===day));
+        return false;
+      };
+      const agg = days.map(day=>({ day, on: MODS.filter(m=>isOn(m,day)) }));
+      const act = agg.map(a=>a.on.length);
+      const anyActive = act.some(x=>x>0);
+      const weekRate = Math.round(act.reduce((s,x)=>s+x,0)/(7*MODS.length)*100);
+      const litDays = act.filter(x=>x>0).length;
+      const row = (ic,lbl,on) => `<div style="display:flex;align-items:center;gap:8px;padding:7px 2px;border-bottom:1px solid var(--line-2)"><span style="font-size:16px">${ic}</span><span style="flex:1;font-size:13px;color:var(--ink-2)">${lbl}</span><span style="font-size:12px;color:${on?'var(--green)':'var(--muted)'}">${on?'本周有打卡 ✓':'还没开始'}</span></div>`;
+      const rows = [
+        row('📚','学习中心', agg.some(a=>a.on.includes('study'))),
+        row('🎹','钢琴练习', agg.some(a=>a.on.includes('piano'))),
+        row('📖','读书计划', agg.some(a=>a.on.includes('book'))),
+        row('🏊','运动计划', agg.some(a=>a.on.includes('sport'))),
+        row('🐾','我的日记', agg.some(a=>a.on.includes('diary')))
+      ].join('');
+      // 今日计划完成情况（单独展示，不计入点亮天数）
+      const plan = state.daily && ((state.daily.routine||[]).concat(state.daily.tasks||[]));
+      const pDone = plan ? plan.filter(x=>x.done).length : 0, pTotal = plan ? plan.length : 0;
+      const planRow = pTotal ? row('✅','今日计划', pDone>0) + `<div style="text-align:right;font-size:12px;color:var(--muted);margin:-4px 2px 4px">今天 ${pDone}/${pTotal} 完成</div>` : '';
+      const praise = weekRate>=80?'这一周太稳了，保持节奏 💪' : weekRate>=50?'稳步推进，再多点坚持 ✨' : weekRate>0?'已经开始，明天多做一个小动作 🌱' : '新的一周，从一个小习惯开始吧 🌱';
+      return `
+        <div class="section-title" data-c="teal">本周回顾</div>
+        <div class="card">
+          ${anyActive ? `
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <div class="hero-ring" style="--p:${weekRate};width:46px;height:46px;font-size:13px"><span>${weekRate}%</span></div>
+              <div style="font-size:12px;color:var(--ink-3);line-height:1.5">${praise}<br><span style="color:var(--muted)">过去 7 天，你点亮了 ${litDays} 天</span></div>
+            </div>
+            ${rows}
+            ${planRow}
+          ` : `
+            <div class="empty-box"><div class="eb-ic">🌱</div><div class="eb-t">这一周还没开始记录</div><div>随便点开一个模块做一点，回头这里就有你的成长曲线</div></div>
+          `}
+          <button class="btn sm outline block" data-action="go" data-v="sport" style="margin-top:10px">查看运动周报 ›</button>
+        </div>`;
     }
 
     // ===================== 每日计划 =====================
@@ -24458,13 +24540,25 @@ function applyPmodTheme(t){
       // 清理旧的
       disposeMuscleModel();
       const THREE = window.THREE;
+      // 同步探测 WebGL 是否可用：不可用则降级显示，避免在无 GPU / 受限环境下卡死或抛错
+      let webglOK = false;
+      try { const _c = document.createElement('canvas'); webglOK = !!(window.WebGLRenderingContext && (_c.getContext('webgl') || _c.getContext('experimental-webgl'))); } catch(_) { webglOK = false; }
+      if (!webglOK) {
+        container.innerHTML = '<div class="muscle-fallback">💪<span>当前环境不支持 3D 模型<br>训练打卡功能不受影响</span></div>';
+        return;
+      }
       muscleScene = new THREE.Scene();
       muscleCamera = new THREE.PerspectiveCamera(35, container.clientWidth/container.clientHeight, 0.1, 100);
       muscleCamera.position.set(0, 0.3, 5);
-      muscleRenderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
-      muscleRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      muscleRenderer.setSize(container.clientWidth, container.clientHeight);
-      container.appendChild(muscleRenderer.domElement);
+      try {
+        muscleRenderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+        muscleRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        muscleRenderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(muscleRenderer.domElement);
+      } catch(e) {
+        container.innerHTML = '<div class="muscle-fallback">💪<span>3D 模型初始化失败<br>训练打卡功能不受影响</span></div>';
+        return;
+      }
 
       // 光源
       const amb = new THREE.AmbientLight(0xffffff, 0.7);
@@ -25484,6 +25578,12 @@ function applyPmodTheme(t){
       save();
     }
     function renderReader(item){
+      // 内置书正文来自 books-data.js（已懒加载）；若尚未就绪，先等它加载再渲染
+      if (item && item.builtin && window.BUILTIN_BOOKS && !window.__booksDataReady) {
+        toast('正在加载书库…');
+        window.ensureBooksData().then(() => renderReader(item));
+        return;
+      }
       let paras = bookItemParas(item);
       // 内置书有元数据但正文未从 books-data.js 加载 → 尝试补全
       if (!paras.length && item.builtin && window.BUILTIN_BOOKS){
@@ -26733,8 +26833,9 @@ function applyPmodTheme(t){
         return;
       }
       if (t.dataset.view) { navigate(t.dataset.view); return; }
+      try {
       switch(a){
-        case 'go': if(_reader) finalizeReader(); navigate(t.dataset.v); break;
+        case 'go': if(_reader) finalizeReader(); recordRecent(t.dataset.v); navigate(t.dataset.v); break;
         case 'toggle-task': { const g=t.dataset.g,id=t.dataset.id; const it=state.daily[g].find(x=>x.id===id);
           if(it){ it.done=!it.done; save(); currentView==='home'?renderHome():renderDaily(); } break; }
         case 'del-task': { const g=t.dataset.g,id=t.dataset.id;
@@ -27069,6 +27170,8 @@ function applyPmodTheme(t){
         case 'export': exportData(); break;
         case 'import': $('importFile').click(); break;
         case 'help-update': {
+          if (window.updateSW) { window.updateSW().then(ok => { if(ok){ setTimeout(()=>location.reload(), 600); } }); }
+
           openModal(`<h3>🔄 如何让 PWA 加载最新版</h3>
             <div class="card-sub" style="margin-bottom:14px">iOS PWA 会永久缓存之前的版本,所以即使代码更新了,你的桌面图标打开的还是旧版。</div>
             <div style="line-height:1.8;font-size:14px">
@@ -27279,6 +27382,10 @@ function applyPmodTheme(t){
         }
         case 'diary-cancel': { diaryEditId = null; renderDiary(); break; }
         case 'modal-close': closeModal(); break;
+      }
+      } catch(err) {
+        console.error('click-handler action error:', err);
+        try { toast('该操作未生效：' + (err && err.message ? err.message : err) + '（可刷新页面，或在「更多 → 设置」重置数据）'); } catch(_) {}
       }
     });
 
