@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-07T05:52:44.886Z",
+  "updatedAt": "2026-08-08T03:59:28.618Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "发烧梗",
+        "url": "https://b23.tv/BV1Unub69EpX",
+        "hot": 1401671,
+        "rank": 1
+      },
+      {
+        "title": "《死》死亡是什么？",
+        "url": "https://b23.tv/BV115un6dE9a",
+        "hot": 2341352,
+        "rank": 2
+      },
+      {
+        "title": "欢迎来到研究生的世界",
+        "url": "https://b23.tv/BV1R53R6rE7a",
+        "hot": 7986455,
+        "rank": 3
+      },
+      {
+        "title": "《原神》奥黛塔角色PV——「柔雪的幻象」",
+        "url": "https://b23.tv/BV1wZMy6DE31",
+        "hot": 1922812,
+        "rank": 4
+      },
+      {
+        "title": "犯罪高手",
+        "url": "https://b23.tv/BV1LbMy66EWf",
+        "hot": 2895637,
+        "rank": 5
+      },
+      {
+        "title": "当我被外星人取代【B萌应援】",
+        "url": "https://b23.tv/BV1RoMf6mEra",
+        "hot": 3305915,
+        "rank": 6
+      },
+      {
+        "title": "聪明猫在一起久了也会有一些共同点……",
+        "url": "https://b23.tv/BV1Guu46sEkA",
+        "hot": 2690473,
+        "rank": 7
+      },
+      {
+        "title": "当和你一起玩的那个兄弟延迟过高：",
+        "url": "https://b23.tv/BV1JQuc6fEsA",
+        "hot": 5942411,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
