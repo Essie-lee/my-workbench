@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-09T04:42:07.756Z",
+  "updatedAt": "2026-08-10T05:09:59.037Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "发烧梗",
+        "url": "https://b23.tv/BV1Unub69EpX",
+        "hot": 3809251,
+        "rank": 1
+      },
+      {
+        "title": "聪明猫在一起久了也会有一些共同点……",
+        "url": "https://b23.tv/BV1Guu46sEkA",
+        "hot": 4041796,
+        "rank": 2
+      },
+      {
+        "title": "哈哈哈哈哈哈哈！！！",
+        "url": "https://b23.tv/BV1NRun6bEgv",
+        "hot": 3348200,
+        "rank": 3
+      },
+      {
+        "title": "不要“做”挑战？（第二十一期）",
+        "url": "https://b23.tv/BV18Jub6sECJ",
+        "hot": 3863161,
+        "rank": 4
+      },
+      {
+        "title": "怪兽中 出了一个奥特曼的卧底",
+        "url": "https://b23.tv/BV1gnub6REqy",
+        "hot": 6498111,
+        "rank": 5
+      },
+      {
+        "title": "青春没有售价！面包车？ 直达拉萨！！",
+        "url": "https://b23.tv/BV1CLuE67Ep9",
+        "hot": 3797951,
+        "rank": 6
+      },
+      {
+        "title": "《死》死亡是什么？",
+        "url": "https://b23.tv/BV115un6dE9a",
+        "hot": 3414467,
+        "rank": 7
+      },
+      {
+        "title": "住宅低频噪音现场溯源-山东4家",
+        "url": "https://b23.tv/BV19juJ6vEqh",
+        "hot": 2917568,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
