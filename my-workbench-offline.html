@@ -2367,43 +2367,35 @@ function applyPmodTheme(t){
         </div>
       </div>
       <div class="drawer-nav" id="drawerNav">
-        <div class="drawer-group">总览</div>
-        <button data-view="home" class="active">🏠 首页</button>
-        <div class="drawer-group">每日</div>
+        <div class="drawer-group">今天</div>
+        <button data-view="home" class="active">🏠 今日</button>
         <button data-view="daily">📝 每日计划</button>
         <div class="drawer-group">成长</div>
         <button data-view="study">📚 学习中心</button>
         <button data-view="piano">🎹 钢琴练习</button>
         <button data-view="book">📖 读书计划</button>
+        <button data-view="sport">🏊 运动计划</button>
+        <button data-view="health">❤️ 健康档案</button>
+        <button data-view="diary">🐾 我的日记</button>
         <div class="drawer-group">创作</div>
         <button data-view="topic">💡 选题灵感</button>
         <button data-view="shoot">📷 拍摄计划</button>
-        <div class="drawer-group">生活</div>
-        <button data-view="sport">🏊 运动计划</button>
-        <button data-view="health">❤️ 健康档案</button>
-        <button data-view="bill">💰 记账</button>
-        <button data-view="diary">🐾 我的日记</button>
-        <div class="drawer-group">休闲</div>
         <button data-view="game">🎮 益智游戏</button>
+        <div class="drawer-group">我</div>
+        <button data-view="me">⚙️ 我的</button>
+        <button data-view="bill">💰 记账</button>
       </div>
-      <div style="padding:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
-        <button class="btn sm outline" data-action="export" style="width:100%">⬇️ 导出数据(备份/传手机)</button>
-        <button class="btn sm outline" data-action="import" style="width:100%">⬆️ 导入数据</button>
-        <input type="file" id="importFile" accept="application/json,.json" hidden />
-        <button class="btn sm outline" data-action="help-update" style="width:100%;margin-top:6px">🔄 PWA 没更新?点这里</button>
-        <div class="card-sub" style="margin:2px 0 0;font-size:11px">数据存在本机浏览器,换设备/清缓存会丢,记得常导出。当前版本:v15</div>
-      </div>
+      <input type="file" id="importFile" accept="application/json,.json" hidden />
     </nav>
     <div class="overlay" id="overlay"></div>
 
     <main id="main"></main>
 
     <nav id="tabbar">
-      <button data-tab="home" class="active"><span class="ic">🏠</span>首页</button>
-      <button data-tab="daily"><span class="ic">📝</span>每日</button>
+      <button data-tab="today" class="active"><span class="ic">🏠</span>今天</button>
       <button data-tab="growth"><span class="ic">🚀</span>成长</button>
       <button data-tab="create"><span class="ic">✨</span>创作</button>
-      <button data-tab="more"><span class="ic">☰</span>更多</button>
+      <button data-tab="me"><span class="ic">⚙️</span>我</button>
     </nav>
   </div>
 
@@ -2422,19 +2414,117 @@ function applyPmodTheme(t){
   <script>
     window.__booksDataReady = !!window.BUILTIN_BOOKS;
     window.__booksDataPromise = null;
+    // 公版书全文(2.3MB)改为「IndexedDB 缓存」：首次从 books-data.js 加载并写入 IDB，
+    // 之后从 IDB 直接读取并合并到内联元数据，省去每次重新拉取大文件，
+    // 且不受 Service Worker 缓存被浏览器回收的影响。
+    const BOOKS_IDB_NAME = 'growth-os-books';
+    const BOOKS_IDB_VERSION = '2025-08-06'; // 书库内容更新时递增此版本号，触发重新拉取
+    const BOOKS_IDB_META = '__meta__';
+    function _openBooksDB(){
+      return new Promise((resolve, reject) => {
+        if (!('indexedDB' in window) || !window.indexedDB) { reject(new Error('no-idb')); return; }
+        let req;
+        try { req = indexedDB.open(BOOKS_IDB_NAME, 1); }
+        catch (e) { reject(e); return; }
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('books')) db.createObjectStore('books', { keyPath: 'id' });
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error || new Error('open-failed'));
+      });
+    }
+    function _idbGetAll(db){
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('books', 'readonly');
+        const req = tx.objectStore('books').getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+      });
+    }
+    function _idbPutAll(db, rows){
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('books', 'readwrite');
+        const store = tx.objectStore('books');
+        (rows || []).forEach(r => store.put(r));
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+    function _idbGetMeta(db){
+      return new Promise((resolve) => {
+        const tx = db.transaction('books', 'readonly');
+        const req = tx.objectStore('books').get(BOOKS_IDB_META);
+        req.onsuccess = () => resolve(req.result ? req.result.value : null);
+        req.onerror = () => resolve(null);
+      });
+    }
+    function _idbSetMeta(db, val){
+      return new Promise((resolve) => {
+        const tx = db.transaction('books', 'readwrite');
+        tx.objectStore('books').put({ id: BOOKS_IDB_META, value: val });
+        tx.oncomplete = () => resolve(true);
+      });
+    }
+    // 把 IDB 里的全文合并回内联元数据（只合并确实带正文的条目）
+    function _applyBooksFromIDB(rows){
+      const map = {};
+      (rows || []).forEach(r => { if (r && r.id && r.id !== BOOKS_IDB_META) map[r.id] = r; });
+      let applied = 0;
+      window.BUILTIN_BOOKS.forEach(meta => {
+        const full = map[meta.id];
+        if (full && Array.isArray(full.paras) && full.paras.length) { meta.paras = full.paras; applied++; }
+      });
+      return applied;
+    }
+    function _afterBooksReady(ok){
+      window.__booksDataReady = !!ok;
+      try { if (typeof currentView !== 'undefined' && currentView === 'book' && typeof renderBook === 'function') renderBook(); } catch(_){}
+    }
+    function _fetchBooksScript(){
+      return new Promise((resolve) => {
+        const s = document.createElement('script');
+        s.src = 'books-data.js';
+        s.onload = () => resolve(true);
+        s.onerror = () => resolve(false);
+        document.body.appendChild(s);
+      });
+    }
+    function _persistBooksToIDB(){
+      try {
+        if (!(window.BUILTIN_BOOKS && window.BUILTIN_BOOKS.length && window.BUILTIN_BOOKS[0].paras)) return;
+        _openBooksDB()
+          .then(db => _idbPutAll(db, window.BUILTIN_BOOKS).then(() => _idbSetMeta(db, BOOKS_IDB_VERSION)).then(() => db.close()))
+          .catch(() => {});
+      } catch(_) {}
+    }
     window.ensureBooksData = function () {
       if (window.__booksDataReady) return Promise.resolve(true);
       if (window.__booksDataPromise) return window.__booksDataPromise;
-      window.__booksDataPromise = new Promise((resolve) => {
-        const s = document.createElement("script");
-        s.src = "books-data.js";
-        s.onload = () => { window.__booksDataReady = true; resolve(true); };
-        s.onerror = () => { resolve(false); };
-        document.body.appendChild(s);
-      });
+      window.__booksDataPromise = (async () => {
+        // 1) 优先从 IndexedDB 读取（无网络、快、持久）
+        try {
+          const db = await _openBooksDB();
+          const ver = await _idbGetMeta(db);
+          if (ver === BOOKS_IDB_VERSION) {
+            const rows = await _idbGetAll(db);
+            db.close();
+            const n = _applyBooksFromIDB(rows);
+            // 必须全部命中才算就绪，避免个别书缺失导致只读一半
+            if (n > 0 && n === window.BUILTIN_BOOKS.length) { _afterBooksReady(true); return true; }
+          } else {
+            db.close();
+          }
+        } catch(_) { /* IDB 不可用，回退到网络拉取 */ }
+        // 2) 回退：拉取 books-data.js，并写入 IDB 供下次使用
+        const ok = await _fetchBooksScript();
+        if (ok) _persistBooksToIDB();
+        _afterBooksReady(ok);
+        return ok;
+      })();
       return window.__booksDataPromise;
     };
-    // 浏览器空闲时再拉书库，不打断首屏渲染
+    // 浏览器空闲时再加载书库，不打断首屏渲染
     const __idle = window.requestIdleCallback || function (cb) { setTimeout(cb, 1500); };
     __idle(() => window.ensureBooksData());
   </script>
@@ -3074,32 +3164,44 @@ let LANG = window.LANG_DATA || {};
 
     // ===================== 导航 =====================
     const VIEWS = { home:renderHome, daily:renderDaily, study:renderStudy, sport:renderSport, health:renderHealth,
-      topic:renderTopic, book:renderBook, shoot:renderShoot, game:renderGame, piano:renderPiano, bill:renderBill, diary:renderDiary, week:renderWeekReportView };
+      topic:renderTopic, book:renderBook, shoot:renderShoot, game:renderGame, piano:renderPiano, bill:renderBill, diary:renderDiary, me:renderMe, week:renderWeekReportView };
     let currentView = 'home';
     let navArg = null;
     const TITLES = { home:'首页', daily:'每日计划', study:'学习中心', sport:'运动计划', health:'健康档案',
-      topic:'选题灵感', book:'读书计划', shoot:'拍摄计划', game:'益智游戏', piano:'钢琴练习', bill:'记账', diary:'日记', week:'本周复盘' };
+      topic:'选题灵感', book:'读书计划', shoot:'拍摄计划', game:'益智游戏', piano:'钢琴练习', bill:'记账', diary:'日记', me:'我的', week:'本周复盘' };
 
     // 底部 Tab = 使用场景「域」，域内用顶部切换条横滑，任何模块都在 2 次点击内可达
     const DOMAIN_MODULES = {
-      growth: [ {v:'study', ic:'📚', t:'学习中心'}, {v:'piano', ic:'🎹', t:'钢琴练习'}, {v:'book', ic:'📖', t:'读书计划'} ],
-      create: [ {v:'topic', ic:'💡', t:'选题灵感'}, {v:'shoot', ic:'📷', t:'拍摄计划'} ]
+      today:  [ {v:'home', ic:'🏠', t:'今日'}, {v:'daily', ic:'📝', t:'每日计划'} ],
+      growth: [ {v:'study', ic:'📚', t:'学习中心'}, {v:'piano', ic:'🎹', t:'钢琴练习'}, {v:'book', ic:'📖', t:'读书计划'}, {v:'sport', ic:'🏊', t:'运动计划'}, {v:'health', ic:'❤️', t:'健康档案'}, {v:'diary', ic:'🐾', t:'我的日记'} ],
+      create: [ {v:'topic', ic:'💡', t:'选题灵感'}, {v:'shoot', ic:'📷', t:'拍摄计划'}, {v:'game', ic:'🎮', t:'益智游戏'} ],
+      me:     [ {v:'me', ic:'⚙️', t:'我的'}, {v:'bill', ic:'💰', t:'记账'} ]
     };
-    const lastDomainView = { growth:'study', create:'topic' };
-    const TAB_OF_VIEW = { home:'home', daily:'daily', study:'growth', piano:'growth', book:'growth', topic:'create', shoot:'create', week:'home' };
+    const lastDomainView = { today:'home', growth:'study', create:'topic', me:'me' };
+    const TAB_OF_VIEW = { home:'today', daily:'today', study:'growth', piano:'growth', book:'growth', sport:'growth', health:'growth', diary:'growth', topic:'create', shoot:'create', game:'create', me:'me', bill:'me', week:'growth' };
     function syncTab(view) {
       const tab = TAB_OF_VIEW[view] || 'more';
       document.querySelectorAll('#tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     }
     // 绑定包装（函数声明已提升，可安全重绑定；同时同步 VIEWS 引用）
     function installModuleSwitch() {
+      renderHome  = withModuleSwitch('home', renderHome);
+      renderDaily = withModuleSwitch('daily', renderDaily);
       renderStudy = withModuleSwitch('study', renderStudy);
       renderPiano = withModuleSwitch('piano', renderPiano);
       renderBook  = withModuleSwitch('book',  renderBook);
+      renderSport = withModuleSwitch('sport', renderSport);
+      renderHealth= withModuleSwitch('health', renderHealth);
+      renderDiary = withModuleSwitch('diary', renderDiary);
       renderTopic = withModuleSwitch('topic', renderTopic);
       renderShoot = withModuleSwitch('shoot', renderShoot);
-      VIEWS.study = renderStudy; VIEWS.piano = renderPiano; VIEWS.book = renderBook;
-      VIEWS.topic = renderTopic; VIEWS.shoot = renderShoot;
+      renderGame  = withModuleSwitch('game',  renderGame);
+      renderMe    = withModuleSwitch('me',    renderMe);
+      renderBill  = withModuleSwitch('bill',  renderBill);
+      VIEWS.home = renderHome; VIEWS.daily = renderDaily; VIEWS.study = renderStudy;
+      VIEWS.piano = renderPiano; VIEWS.book = renderBook; VIEWS.sport = renderSport;
+      VIEWS.health = renderHealth; VIEWS.diary = renderDiary; VIEWS.topic = renderTopic;
+      VIEWS.shoot = renderShoot; VIEWS.game = renderGame; VIEWS.me = renderMe; VIEWS.bill = renderBill;
     }
 
     // 域内模块切换条：让「成长 / 创作」域下的兄弟模块一眼可见、一点直达
@@ -3357,9 +3459,11 @@ let LANG = window.LANG_DATA || {};
           </div>
         </div>`;
       const focusHtml = renderFocus();
+      const hotspotsHomeHtml = renderHotspotsHome();
       $('main').innerHTML = `
         ${heroHtml}
         ${focusHtml}
+        ${hotspotsHomeHtml}
         ${onboard}
         ${learnReminder}
         ${planHtml}
@@ -4836,6 +4940,8 @@ let LANG = window.LANG_DATA || {};
         if (currentView === 'topic') {
           const el = document.getElementById('hotspots-section');
           if (el) el.outerHTML = renderHotspotsSection(_hotspots);
+        } else if (currentView === 'home') {
+          renderHome();   // 让首页「今日选题灵感」卡刷新为最新热点
         }
       } catch(e) { _hotspots = _FALLBACK_HOTSPOTS; }
     }
@@ -4864,6 +4970,27 @@ let LANG = window.LANG_DATA || {};
         <div class="tabs" style="margin-bottom:10px">${tabs}</div>
         <div id="hotItems">${list || '<div class="empty">暂无数据</div>'}</div>
       </div>`;
+    }
+    // 首页紧凑版：把每日动态热点接到首页「今日选题灵感」，点击直达选题视图
+    function renderHotspotsHome(){
+      const hot = _hotspots;
+      if (!hot || !hot.items) return '';
+      const srcs = Object.keys(hot.sources || {});
+      if (!srcs.length) return '';
+      const rows = [];
+      for (const k of srcs) { const arr = hot.items[k] || []; if (arr.length) rows.push({ src:k, it:arr[0] }); if (rows.length >= 3) break; }
+      if (!rows.length) return '';
+      const time = hot.updatedAt ? new Date(hot.updatedAt).toLocaleString('zh-CN', { month:'long', day:'numeric' }) : '';
+      const body = rows.map(r => {
+        const s = hot.sources[r.src];
+        return `<div class="focus-row" data-action="go" data-v="topic" role="button" tabindex="0" aria-label="${esc(r.it.title)}">
+          <span class="focus-ic">${s.icon}</span>
+          <span class="focus-main"><span class="focus-t">${esc(r.it.title)}</span><span class="focus-s">${s.label} · 🔥 ${(r.it.hot/10000).toFixed(0)} 万</span></span>
+          <span class="focus-go">灵感 ›</span>
+        </div>`;
+      }).join('');
+      return `<div class="section-title" data-c="pink">今日选题灵感<span class="st-count">GitHub Actions 每日更新${time ? (' · ' + time) : ''}</span></div>
+        <div class="card focus-card">${body}</div>`;
     }
 
     function renderTopic() {
@@ -6383,6 +6510,33 @@ let LANG = window.LANG_DATA || {};
       if (mo) mo.innerHTML = DIARY_MOODS.map(diaryMoodChipHTML).join('');
     }
 
+    // ===================== 「我」视图（导航重构：底部第四Tab）=====================
+    function renderMe(){
+      const html = `
+        <div class="section-title" data-c="primary">我的</div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="avatar" data-action="open-avatar" title="点击换头像" style="cursor:pointer;font-size:30px">${esc(state.avatar||'🎯')}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(state.wbName||'我的工作台')}</div>
+              <div class="card-sub">Personal Growth OS · v15</div>
+            </div>
+            <button class="btn sm outline" data-action="rename-me">改名</button>
+          </div>
+        </div>
+        <div class="section-title" data-c="primary">数据与备份</div>
+        <div class="card" style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn sm outline" data-action="export" style="width:100%">⬇️ 导出数据(备份/传手机)</button>
+          <button class="btn sm outline" data-action="import" style="width:100%">⬆️ 导入数据</button>
+          <button class="btn sm outline" data-action="help-update" style="width:100%">🔄 PWA 没更新?点这里</button>
+          <button class="btn sm outline" data-action="reset-data" style="width:100%;color:var(--red)">🗑️ 清空所有数据</button>
+        </div>
+        <div class="card-sub" style="margin:2px 2px 14px;font-size:11px">数据存在本机浏览器,换设备/清缓存会丢,记得常导出。</div>
+        <button class="btn outline" data-action="open-drawer" style="width:100%">☰ 查看全部模块</button>
+      `;
+      $('main').innerHTML = html;
+    }
+
     // ===================== 弹窗 =====================
     function openModal(html){ const m=document.createElement('div'); m.className='modal-mask'; m.id='mask'; m.innerHTML=`<div class="modal">${html}</div>`;
       m.addEventListener('click',e=>{ if(e.target===m) closeModal(); }); document.body.appendChild(m); }
@@ -6397,15 +6551,16 @@ let LANG = window.LANG_DATA || {};
       const a = t.dataset.action;
       if (t.dataset.tab) {
         const tb = t.dataset.tab;
-        if (tb === 'more') { openDrawer(); }
-        else if (DOMAIN_MODULES[tb]) { navigate(lastDomainView[tb] || DOMAIN_MODULES[tb][0].v); }
-        else { navigate(tb); }
+        if (DOMAIN_MODULES[tb]) navigate(lastDomainView[tb] || DOMAIN_MODULES[tb][0].v);
+        else navigate(tb);
         return;
       }
       if (t.dataset.view) { navigate(t.dataset.view); return; }
       try {
       switch(a){
         case 'back': history.back(); break;
+        case 'open-drawer': openDrawer(); break;
+        case 'rename-me': rename(); if (currentView === 'me') renderMe(); break;
         case 'report': navigate('week', t.dataset.mod); break;
         case 'go': if(_reader) finalizeReader(); recordRecent(t.dataset.v); navigate(t.dataset.v); break;
         case 'toggle-task': { const g=t.dataset.g,id=t.dataset.id; const it=state.daily[g].find(x=>x.id===id);
@@ -6918,6 +7073,7 @@ let LANG = window.LANG_DATA || {};
             renderDrawerAvatar();
             closeAvatarModal();
             closeDrawer(); // 自动关闭抽屉,避免头像被 modal 半透明遮罩"压"住
+            if (currentView === 'me') renderMe(); // 「我」视图头像即时刷新
             toast(`已切换为${AVATARS[k].name} · 桌面图标需重新添加 PWA 才能同步`);
           }
           break;
