@@ -401,7 +401,6 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 .card + .card{ margin-top:12px; }
 .card-title{ font-size:15px; font-weight:680; color:var(--ink-1); }
 .card-sub{ font-size:13px; color:var(--ink-3); margin-top:4px; line-height:1.6; }
-.onboard-tip{ align-items:center; }
 
 /* ===== 个性化 Hero 头部 ===== */
 .hero{
@@ -439,6 +438,33 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
   background:radial-gradient(circle, color-mix(in srgb, var(--gold) 28%, transparent), transparent 70%);
 }
 .hero.piano-hero .hero-hi b{ color:var(--gold); }
+
+/* 首页：区块统一间距 + 可折叠大卡片 */
+.home-stack{ display:block; }
+.home-stack > * + *{ margin-top:14px; }
+.home-stack .hero{ margin:0; }
+.home-sec{
+  background:var(--panel); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:var(--shadow-sm); overflow:hidden;
+}
+.home-sec > summary.home-sec-head{
+  list-style:none; -webkit-tap-highlight-color:transparent;
+  display:flex; align-items:center; gap:10px;
+  padding:14px 16px; font-size:14.5px; font-weight:680; color:var(--ink-1);
+  cursor:pointer; user-select:none;
+}
+.home-sec > summary.home-sec-head::-webkit-details-marker{ display:none; }
+.home-sec .hs-chev{
+  order:-1; font-size:11px; line-height:1; color:var(--muted);
+  transition:transform var(--t-fast);
+}
+.home-sec[open] > summary.home-sec-head .hs-chev{ transform:rotate(90deg); }
+.home-sec[open] > summary.home-sec-head{ border-bottom:1px solid var(--line-2); }
+.home-sec-body{ padding:12px 14px 14px; }
+.home-sec-body > .section-title:first-child{ display:none; }
+.home-sec-body > .card:first-child{ margin-top:0; }
+/* 折叠块展开时：内层卡片去掉边框/阴影、贴边，避免与外层大卡片双重边框（保留 tint 底色） */
+.home-sec[open] .home-sec-body > .card{ border:none; box-shadow:none; padding:0; }
 
 /* 首页模块 → 签名色磁贴 */
 .dash-row{
@@ -598,6 +624,8 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 .item-body{ flex:1; min-width:0; }
 .item-title{ font-size:14px; font-weight:600; color:var(--ink-1); }
 .item-desc{ font-size:12px; color:var(--muted); margin-top:3px; display:flex; gap:6px; align-items:center; }
+@keyframes itemFlash { 0%{ background:var(--primary-soft); } 100%{ background:transparent; } }
+.item.flash{ animation:itemFlash 1.7s ease-out; border-radius:var(--radius-sm); }
 .item-actions{ flex:0 0 auto; }
 
 /* =====================================================================
@@ -924,7 +952,12 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
    日记 (Diary)
    ===================================================================== */
 .diary-list{ display:flex; flex-direction:column; gap:10px; }
-.diary-entry{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:14px; box-shadow:var(--shadow-sm); }
+.diary-entry{ margin-bottom:10px; }
+.diary-row{ display:flex; align-items:center; gap:10px; padding:11px 12px; cursor:pointer; border-radius:12px; background:var(--panel); border:1px solid var(--line); transition:filter .15s; }
+.diary-row:hover{ filter:brightness(.98); }
+.diary-row .chev{ transition:transform .2s; color:var(--muted); font-size:12px; }
+.diary-row.open .chev{ transform:rotate(90deg); }
+.diary-detail{ margin-top:6px; }
 .diary-chip{ display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:var(--radius-pill); background:var(--pink-soft); color:var(--pink); font-size:12px; font-weight:650; margin-right:6px; }
 .diary-animals{ display:flex; gap:10px; flex-wrap:wrap; }
 
@@ -1739,7 +1772,7 @@ body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; tex
   .diary-chip{ display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; cursor:pointer; font-size:13px; transition:.15s; text-align:left; }
   .diary-chip:hover{ filter:brightness(.98); transform:translateY(-1px); }
   .diary-chip.on{ box-shadow:0 2px 10px rgba(0,0,0,.12); }
-  .diary-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; }
+  .diary-list{ display:flex; flex-direction:column; gap:10px; }
   @media (max-width:720px){ .diary-list{ grid-template-columns:1fr; } .diary-animals{ grid-template-columns:1fr; } }
   .diary-entry{ display:flex; flex-direction:column; }
 </style>
@@ -3349,8 +3382,8 @@ let LANG = window.LANG_DATA || {};
       DOMAIN_KEYS.forEach(b => { try { localStorage.removeItem(LS_NS + ':' + b); } catch(_){} });
       try { localStorage.removeItem(MIGRATED_MARK); } catch(_){}
       try { localStorage.removeItem(KEY); } catch(_){}
-      // 应用级辅助 key 一并清空，让「清空所有数据」真正彻底（主题/引导/首访）
-      ['growth-os-theme','growth-os-first-visit','growth-os-onboard'].forEach(k => { try { localStorage.removeItem(k); } catch(_){} });
+      // 应用级辅助 key 一并清空，让「清空所有数据」真正彻底（主题）
+      ['growth-os-theme'].forEach(k => { try { localStorage.removeItem(k); } catch(_){} });
     }
     function load() { migrateIfNeeded(); return _splitLoad(); }
     function save() { _splitSave(); }
@@ -3638,6 +3671,13 @@ let LANG = window.LANG_DATA || {};
       } catch(_) {}
       return false;
     }
+    // 首页可折叠大卡片：标题常驻、内容默认收起（open=true 则展开）
+    function homeFold(title, body, open) {
+      return `<details class="home-sec"${open ? ' open' : ''}>
+        <summary class="home-sec-head"><span class="hs-chev">▶</span><span>${title}</span></summary>
+        <div class="home-sec-body">${body || ''}</div>
+      </details>`;
+    }
     function renderHome() {
       const r = [...state.daily.routine, ...state.daily.tasks];
       const done = r.filter(i=>i.done).length;
@@ -3646,23 +3686,6 @@ let LANG = window.LANG_DATA || {};
       const todayBook = BOOKS.find(b => b.m === _bm.getFullYear() + '-' + String(_bm.getMonth()+1).padStart(2,'0'))
         || BOOKS.find(b => b.m && b.m.endsWith('-' + String(_bm.getMonth()+1).padStart(2,'0'))) || BOOKS[0];
       const quote = (todayBook.q[new Date().getDate() % todayBook.q.length]);
-      // 首次访问轻量引导（v14 新增，基于 localStorage，不影响数据模型）
-      let onboard = '';
-      let seenOnboard = false;
-      try {
-        const _fv = localStorage.getItem('growth-os-first-visit');
-        if (!_fv) { try { localStorage.setItem('growth-os-first-visit', String(Date.now())); } catch(_){} }
-        const _first = _fv ? Number(_fv) : Date.now();
-        const _manual = localStorage.getItem('growth-os-onboard') === '1';
-        const _expired = (Date.now() - _first) > 24*3600*1000;
-        seenOnboard = _manual || _expired || hasAnyProgress();
-      } catch (_) {}
-      if (!seenOnboard) {
-        onboard = `<div class="card onboard-tip" style="border:1px solid var(--primary);background:var(--primary-soft);align-items:center;display:flex;justify-content:space-between">
-          <span>👋 欢迎！点左上角 <b>☰</b> 切换模块，右上角 <b>🌗</b> 切换深浅色。</span>
-          <button class="btn sm subtle" id="onboardClose" style="flex-shrink:0;margin-left:8px">知道了</button>
-        </div>`;
-      }
       // 每日学习内容更新提醒
       const tdy = today();
       const lastUpd = state.lastLearnUpdate;
@@ -3794,22 +3817,28 @@ let LANG = window.LANG_DATA || {};
               <span style="color:var(--primary);font-size:13px">›</span>
             </div>`).join('')}
         </div>` : '';
-      // 今日计划：首屏直接可勾选（原先必须进「每日」页才能操作）
+      // 今日计划：首屏直接可勾选（"今日快照"——与「每日计划」模块形成 快照 vs 编辑台 的分工，避免重复感）
       const undoneList = [...state.daily.routine.map(i=>({...i,g:'routine'})), ...state.daily.tasks.map(i=>({...i,g:'tasks'}))]
         .filter(i=>!i.done).slice(0,4);
+      const planPct = r.length ? Math.round(done / r.length * 100) : 0;
       const planHtml = `
-        <div class="section-title">今日计划<span class="st-count">${r.length} 项 · 挑一个先做</span></div>
+        <div class="section-title">今日计划<span class="st-count">今日快照 · ${done}/${r.length} 完成</span></div>
         <div class="card tint">
           ${r.length === 0
             ? `<div class="empty-box"><div class="eb-ic">🌱</div><div class="eb-t">今天还没有安排</div><div>去「每日」加一件小事开始</div></div>`
-            : (undoneList.length
-              ? undoneList.map(i=>`<div class="item">
-                  <div class="check" data-action="toggle-task" data-g="${i.g}" data-id="${i.id}" role="checkbox" aria-checked="false" aria-label="完成 ${esc(i.title)}"></div>
-                  <div class="item-body"><div class="item-title">${esc(i.title)}</div>
-                    <div class="item-desc"><span class="tag ${i.g==='routine'?'primary':'accent'}">${esc(i.tag||'')}</span></div></div>
-                </div>`).join('')
-              : `<div class="empty-box"><div class="eb-ic">🎉</div><div class="eb-t">今日计划全部完成</div><div>休息一下，或者加点新目标</div></div>`)}
-          <button class="btn sm outline block" data-action="go" data-v="daily" style="margin-top:10px">查看全部计划 ›</button>
+            : `
+          <div style="display:flex;align-items:center;gap:8px;margin:2px 0 10px">
+            <div style="flex:1;height:6px;border-radius:4px;background:var(--line-2);overflow:hidden"><div style="height:100%;width:${planPct}%;background:var(--g-primary);border-radius:4px"></div></div>
+            <span style="font-size:12px;font-weight:700;color:var(--primary);min-width:40px;text-align:right">${planPct}%</span>
+          </div>
+          ${undoneList.length
+            ? undoneList.map(i=>`<div class="item">
+                <div class="check" data-action="toggle-task" data-g="${i.g}" data-id="${i.id}" role="checkbox" aria-checked="false" aria-label="完成 ${esc(i.title)}"></div>
+                <div class="item-body"><div class="item-title">${esc(i.title)}</div>
+                  <div class="item-desc"><span class="tag ${i.g==='routine'?'primary':'accent'}">${esc(i.tag||'')}</span></div></div>
+              </div>`).join('')
+            : `<div class="empty-box"><div class="eb-ic">🎉</div><div class="eb-t">今日计划全部完成</div><div>休息一下，或者加点新目标</div></div>`}`}
+          <button class="btn sm outline block" data-action="go" data-v="daily" style="margin-top:10px">查看全部 / 添加 ›</button>
         </div>`;
       const readHtml = `
         <div class="section-title" data-c="purple">今日阅读</div>
@@ -3817,26 +3846,28 @@ let LANG = window.LANG_DATA || {};
           <div class="card-title">📖 今日书摘</div>
           <div class="quote">「${quote}」<span class="by">— 《${todayBook.t}》</span></div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
-            <button class="btn sm ${bookTodayDone ? 'outline' : 'grad purple'}" data-action="book-checkin" style="flex:1;justify-content:center">${bookTodayDone ? '✓ 今日已读' : '✅ 今天读过了'}</button>
+            ${bookTodayDone
+              ? `<button class="btn sm outline" data-action="go" data-v="book" style="flex:1;justify-content:center" title="今天已读 ✓ 点此继续读书">📖 今日已读 · 去读书</button>`
+              : `<button class="btn sm grad purple" data-action="book-checkin" style="flex:1;justify-content:center">✅ 今天读过了</button>`}
             <span class="tag ${bookStreakN ? 'purple' : 'gray'}">🔥 连续 ${bookStreakN} 天</span>
           </div>
         </div>`;
       const focusHtml = renderFocus();
       const hotspotsHomeHtml = renderHotspotsHome();
+      const weekReviewHtml = renderWeekReview();
       $('main').innerHTML = `
-        ${heroHtml}
-        ${focusHtml}
-        ${hotspotsHomeHtml}
-        ${onboard}
-        ${learnReminder}
-        ${planHtml}
-        ${learnPreviewHtml}
-        ${dashHtml}
-        ${readHtml}
-        ${renderWeekReview()}
+        <div class="home-stack">
+          ${heroHtml}
+          ${focusHtml}
+          ${hotspotsHomeHtml ? homeFold('今日选题灵感', hotspotsHomeHtml, false) : ''}
+          ${learnReminder ? homeFold('学习更新提醒', learnReminder, false) : ''}
+          ${planHtml}
+          ${learnPreviewHtml ? homeFold('今日学习内容', learnPreviewHtml, false) : ''}
+          ${homeFold('最近使用', dashHtml, false)}
+          ${readHtml ? homeFold('今日阅读', readHtml, false) : ''}
+          ${homeFold('本周回顾', weekReviewHtml, false)}
+        </div>
       `;
-      const ob = $('onboardClose');
-      if (ob) ob.addEventListener('click', () => { try { localStorage.setItem('growth-os-onboard','1'); } catch(_){} navigate('home'); });
     }
 
     // ===================== 今日聚焦 · 最小行动推荐引擎(P12) =====================
@@ -3889,7 +3920,7 @@ let LANG = window.LANG_DATA || {};
         // 全新用户：从每日计划第一件未完成开始，或从"加目标"起步
         const first = [...state.daily.routine, ...state.daily.tasks].find(i => !i.done);
         if (first) {
-          body = `<div class="focus-row" data-action="go" data-v="daily" role="button" tabindex="0" aria-label="开始 ${esc(first.title)}">
+          body = `<div class="focus-row" data-action="go" data-v="daily" data-id="${first.id}" role="button" tabindex="0" aria-label="开始 ${esc(first.title)}">
             <span class="focus-ic">🌱</span>
             <span class="focus-main"><span class="focus-t">${esc(first.title)}</span><span class="focus-s">从一件小事开始，今天只做这一个</span></span>
             <span class="focus-go">去做 ›</span>
@@ -4064,19 +4095,7 @@ let LANG = window.LANG_DATA || {};
 
         <div class="section-title" data-c="accent">创作任务<span class="st-count">${tkDone}/${tk.length}</span></div>
         <div class="card tint tint-accent">${tk.length ? tk.map(i=>taskItem(i,'tasks')).join('') : emptyBox('🎬','还没有创作任务','用上面的输入框添加，选「创作」')}</div>
-
-        <div class="section-title" data-c="gold">习惯打卡<span class="st-count">${habitDone}/3</span></div>
-        <div class="card">
-          ${habits.map((h,idx)=>`
-          <div class="item" ${idx?'style="border-top:1px solid var(--line-2)"':''}>
-            <span style="font-size:22px;width:34px;text-align:center">${h.ic}</span>
-            <div class="item-body">
-              <div class="item-title">${h.t}</div>
-              <div class="item-desc">${h.done ? h.doneTxt + ' ✓' : h.todoTxt}</div>
-            </div>
-            ${h.done ? `<span class="tag green">已完成</span>` : `<button class="btn sm grad" ${h.act}>${h.btn}</button>`}
-          </div>`).join('')}
-        </div>`;
+`;
       // 回车即添加，减少一次点击
       const nt = $('newTask');
       if (nt) nt.addEventListener('keydown', e => {
@@ -4089,7 +4108,7 @@ let LANG = window.LANG_DATA || {};
       const titleHtml = goV
         ? `<div class="item-title" data-action="go" data-v="${goV}" style="cursor:pointer">${i.title} <span class="tag teal" style="font-size:10.5px;padding:1px 7px;margin-left:4px">↗ ${goLbl}</span></div>`
         : `<div class="item-title">${i.title}</div>`;
-      return `<div class="item ${i.done?'done':''}">
+      return `<div class="item ${i.done?'done':''}" id="task-${i.id}">
       <div class="check" data-action="toggle-task" data-g="${g}" data-id="${i.id}" role="checkbox" aria-checked="${i.done?'true':'false'}" aria-label="${i.done?'取消完成':'标记完成'} ${esc(i.title)}">${i.done?'✓':''}</div>
       <div class="item-body">${titleHtml}
         <div class="item-desc"><span class="tag ${g==='routine'?'primary':'accent'}">${i.tag}</span></div></div>
@@ -5894,7 +5913,12 @@ let LANG = window.LANG_DATA || {};
         <div class="section-title" data-c="purple" style="margin-top:14px">今日阅读</div>
         <div class="card tint tint-purple soft-purple">
           <div class="card-sub">每天读 10 分钟就够——关键是连续不断。本周已读 ${bookWeekDays()} 天 🔥</div>
-          <button class="btn ${todayLog.done ? 'outline' : 'grad'} block" data-action="book-checkin" style="margin-top:10px">${todayLog.done ? '✓ 今日已读' : '✅ 今天读过了'}</button>
+          ${todayLog.done
+            ? `<div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+                 <button class="btn outline block" style="flex:1;justify-content:center;cursor:default" tabindex="-1">✓ 今日已读</button>
+                 <button class="btn ghost sm" data-action="book-uncheckin" style="flex-shrink:0">取消打卡</button>
+               </div>`
+            : `<button class="btn grad block" data-action="book-checkin" style="margin-top:10px">✅ 今天读过了</button>`}
           <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
             <span style="font-size:12.5px;color:var(--muted);flex-shrink:0">时长</span>
             <input type="range" id="bookMin" min="0" max="120" step="5" value="${todayLog.min || 10}" style="flex:1;accent-color:var(--purple)" aria-label="今日阅读时长（分钟）" />
@@ -6759,6 +6783,8 @@ let LANG = window.LANG_DATA || {};
     let diarySel = 'tsuki';
     let diaryMood = 'calm';
     let diaryEditId = null;
+    let diaryPhotos = [];   // 编辑中的照片（压缩后的 base64 JPEG），保存时并入 entry.photos
+    let diaryOpen = new Set();  // 已展开的日记 id（折叠列表：默认全收起，点行展开）
 
     function moodEmoji(k){ const m = DIARY_MOODS.find(x => x.k === k); return m ? m.e : ''; }
     function moodKey(e){ const m = DIARY_MOODS.find(x => x.e === e); return m ? m.k : 'calm'; }
@@ -6804,6 +6830,10 @@ let LANG = window.LANG_DATA || {};
         <div style="font-weight:700;font-size:18px;line-height:1.4;margin-bottom:10px;text-align:${ta}">${e.title ? esc(e.title) : '<span style="opacity:.45;font-weight:400;font-size:14px">无题</span>'}</div>
         <div style="height:1px;background:${a.accent};opacity:.35;margin:0 0 12px"></div>
         <div style="white-space:pre-wrap;line-height:1.95;font-size:14.5px;text-align:${ta};word-break:break-word">${e.body ? esc(e.body) : '<span style="opacity:.4">（这一页还是空白的）</span>'}</div>
+        ${e.photos && e.photos.length ? `
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px;margin-top:12px">
+          ${e.photos.map((p,i)=>`<img src="${p}" data-action="diary-photo" data-id="${e.id}" data-i="${i}" alt="日记照片" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;cursor:pointer;background:var(--line-2)" />`).join('')}
+        </div>` : ''}
         <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:flex-end;font-size:12px;color:${a.accent}">
           <span>${e.mood ? e.mood : ''}</span>
           <span style="opacity:.85">—— 排版师 ${a.name} ${a.emoji}</span>
@@ -6816,6 +6846,37 @@ let LANG = window.LANG_DATA || {};
         : '';
       const wrap = `position:relative;background:${ruled}${a.bg};color:${a.color};font-family:${a.font};border-radius:14px;padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.07);border:1px solid rgba(0,0,0,.05);line-height:1.6`;
       return `<div style="${wrap}">${diaryCardInner(a, e)}</div>`;
+    }
+    // 本地压缩图片：缩到最长边 ≤ maxDim，转 JPEG(0.82)，避免 localStorage 配额被原始照片撑爆
+    function diaryCompressImg(file, maxDim, cb) {
+      if (!file || !/^image\//.test(file.type)) { cb(null); return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            let { width, height } = img;
+            const scale = Math.min(1, maxDim / Math.max(width, height));
+            const w = Math.max(1, Math.round(width * scale)), h = Math.max(1, Math.round(height * scale));
+            const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+            cv.getContext('2d').drawImage(img, 0, 0, w, h);
+            cb(cv.toDataURL('image/jpeg', 0.82));
+          } catch (_) { cb(null); }
+        };
+        img.onerror = () => cb(null);
+        img.src = reader.result;
+      };
+      reader.onerror = () => cb(null);
+      reader.readAsDataURL(file);
+    }
+    // 局部刷新缩略图（不重建整个编辑器，避免打字内容丢失）
+    function renderDiaryThumbs() {
+      const box = $('diaryThumbs'); if (!box) return;
+      box.innerHTML = diaryPhotos.map((p, i) => `<div style="position:relative;width:72px;height:72px">
+        <img src="${p}" alt="照片" style="width:72px;height:72px;object-fit:cover;border-radius:10px" />
+        <button class="icon-btn" data-action="diary-del-photo" data-i="${i}" style="position:absolute;top:-7px;right:-7px;width:22px;height:22px;font-size:12px;line-height:1;background:var(--red);color:#fff;border:none" aria-label="删除照片">✕</button>
+      </div>`).join('');
+      const cnt = $('diaryPhotoCount'); if (cnt) cnt.textContent = diaryPhotos.length ? (diaryPhotos.length + ' 张') : '可选';
     }
     function diaryChipHTML(x, sel) {
       const base = 'diary-chip' + (x.key === sel ? ' on' : '');
@@ -6843,17 +6904,32 @@ let LANG = window.LANG_DATA || {};
       const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date) || b.ts - a.ts);
       const a = DIARY_ANIMALS.find(x => x.key === diarySel) || DIARY_ANIMALS[0];
       const ed = diaryEditId ? entries.find(x => x.id === diaryEditId) : null;
+      diaryPhotos = ed && ed.photos ? ed.photos.slice() : [];
+      diaryOpen = new Set();   // 「我的纸箱」默认全收起，点行展开
       const streak = diaryStreak(entries);
 
       const animalChips = DIARY_ANIMALS.map(x => diaryChipHTML(x, diarySel)).join('');
       const moodChips = DIARY_MOODS.map(diaryMoodChipHTML).join('');
+      const allOpen = sorted.length > 0 && diaryOpen.size === sorted.length;
       const listHtml = sorted.length ? sorted.map(e => {
+        const a = DIARY_ANIMALS.find(x => x.key === e.animal) || DIARY_ANIMALS[0];
+        const open = diaryOpen.has(e.id);
         const card = diaryCardHTML(Object.assign({}, e, { _idx: idxMap[e.id] }));
-        return `<div class="diary-entry">
-          ${card}
-          <div class="row" style="margin-top:8px;gap:8px">
-            <button class="btn sm ghost" data-action="diary-edit" data-id="${e.id}">✏️ 编辑</button>
-            <button class="btn sm ghost" data-action="diary-del" data-id="${e.id}" style="color:var(--red);border-color:var(--line)">🗑 删除</button>
+        return `<div class="diary-entry" data-id="${e.id}">
+          <div class="diary-row${open ? ' open' : ''}" data-action="diary-toggle" data-id="${e.id}">
+            <span style="font-size:20px;line-height:1">${a.emoji}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13.5px;font-weight:600;color:var(--ink-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.title ? esc(e.title) : '无题'}</div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${e.date} · ${e.mood || ''}${e.photos && e.photos.length ? ' · 📷' + e.photos.length : ''}</div>
+            </div>
+            <span class="chev">▶</span>
+          </div>
+          <div class="diary-detail" id="ddet-${e.id}" style="display:${open ? 'block' : 'none'}">
+            ${card}
+            <div class="row" style="margin-top:8px;gap:8px">
+              <button class="btn sm ghost" data-action="diary-edit" data-id="${e.id}">✏️ 编辑</button>
+              <button class="btn sm ghost" data-action="diary-del" data-id="${e.id}" style="color:var(--red);border-color:var(--line)">🗑 删除</button>
+            </div>
           </div>
         </div>`;
       }).join('') : `<div class="card"><div class="empty-box"><div class="eb-ic">🐾</div><div class="eb-t">还没有日记</div><div class="card-sub">选一只小动物，写下今天的第一页吧～</div></div></div>`;
@@ -6879,6 +6955,17 @@ let LANG = window.LANG_DATA || {};
           <div class="mt" style="font-size:12px;color:var(--muted);margin-bottom:6px">此刻心情</div>
           <div id="diaryMoods" class="row wrap" style="gap:8px">${moodChips}</div>
           <textarea class="input" id="dBody" rows="6" placeholder="今天发生了什么？有什么想说的、想记住的…" aria-label="日记正文" style="margin-top:12px;resize:vertical;line-height:1.8">${ed ? esc(ed.body) : ''}</textarea>
+          <div class="row mt" style="gap:8px;align-items:center">
+            <button class="btn sm outline" data-action="diary-add-photo" type="button">📷 添加照片</button>
+            <span id="diaryPhotoCount" style="font-size:12px;color:var(--muted)">${diaryPhotos.length ? diaryPhotos.length + ' 张' : '可选（本地压缩存储）'}</span>
+            <input id="diaryFile" type="file" accept="image/*" multiple style="display:none" />
+          </div>
+          <div id="diaryThumbs" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+            ${diaryPhotos.map((p, i) => `<div style="position:relative;width:72px;height:72px">
+              <img src="${p}" alt="照片" style="width:72px;height:72px;object-fit:cover;border-radius:10px" />
+              <button class="icon-btn" data-action="diary-del-photo" data-i="${i}" style="position:absolute;top:-7px;right:-7px;width:22px;height:22px;font-size:12px;line-height:1;background:var(--red);color:#fff;border:none" aria-label="删除照片">✕</button>
+            </div>`).join('')}
+          </div>
           <div class="row mt" style="gap:8px;justify-content:flex-end">
             ${ed ? `<button class="btn ghost" data-action="diary-cancel">取消</button>` : ''}
             <button class="btn grad" data-action="diary-save">📥 收进纸箱</button>
@@ -6888,12 +6975,26 @@ let LANG = window.LANG_DATA || {};
         <div class="section-title" data-c="rose">实时预览</div>
         <div class="card">
           <div class="card-sub" id="diaryPreviewName">这就是「${a.name}」会排出来的样子</div>
-          <div id="diaryPreview" style="margin-top:10px">${diaryCardHTML({ date: ed ? ed.date : today(), title: ed ? ed.title : '', body: ed ? ed.body : '', animal: diarySel, mood: ed ? ed.mood : moodEmoji(diaryMood), _idx: entries.length + 1 })}</div>
+          <div id="diaryPreview" style="margin-top:10px">${diaryCardHTML({ date: ed ? ed.date : today(), title: ed ? ed.title : '', body: ed ? ed.body : '', animal: diarySel, mood: ed ? ed.mood : moodEmoji(diaryMood), photos: diaryPhotos, _idx: entries.length + 1 })}</div>
         </div>
 
-        <div class="section-title" data-c="rose">我的纸箱 · 全部日记<span class="st-count">${sorted.length}</span></div>
+        <div class="section-title" data-c="rose" style="display:flex;align-items:center;gap:8px">我的纸箱 · 全部日记<span class="st-count">${sorted.length}</span>
+          <button class="btn sm outline" data-action="diary-expand-all" style="margin-left:auto;padding:3px 10px;font-size:11px">${allOpen ? '收起全部' : '展开全部'}</button>
+        </div>
         <div class="diary-list">${listHtml}</div>
       `;
+      const _df = $('diaryFile');
+      if (_df) _df.addEventListener('change', ev => {
+        const files = Array.from(ev.target.files || []);
+        if (!files.length) return;
+        if (diaryPhotos.length + files.length > 9) { toast('每篇日记最多 9 张照片'); ev.target.value = ''; return; }
+        let pending = files.length;
+        files.forEach(f => diaryCompressImg(f, 1080, data => {
+          if (data) diaryPhotos.push(data);
+          pending--;
+          if (pending === 0) { renderDiaryThumbs(); ev.target.value = ''; }
+        }));
+      });
     }
     // 仅局部刷新（选小动物 / 选心情时，不重建输入框，避免打字内容丢失）
     function renderDiaryPreview() {
@@ -6970,7 +7071,24 @@ let LANG = window.LANG_DATA || {};
         case 'open-drawer': openDrawer(); break;
         case 'rename-me': rename(); if (currentView === 'me') renderMe(); break;
         case 'report': navigate('week', t.dataset.mod); break;
-        case 'go': if(_reader) finalizeReader(); recordRecent(t.dataset.v); navigate(t.dataset.v); break;
+        case 'go': {
+          if(_reader) finalizeReader();
+          recordRecent(t.dataset.v);
+          const focusId = t.dataset.id;
+          navigate(t.dataset.v);
+          // 今日聚焦回退项带 data-id：跳到目标视图后滚动并高亮那条具体任务（"去做"=带你找到它）
+          if (focusId) {
+            setTimeout(() => {
+              const el = document.getElementById('task-' + focusId);
+              if (el) {
+                try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(_) {}
+                el.classList.add('flash');
+                setTimeout(() => el.classList.remove('flash'), 1700);
+              }
+            }, 70);
+          }
+          break;
+        }
         case 'toggle-task': { const g=t.dataset.g,id=t.dataset.id; const it=state.daily[g].find(x=>x.id===id);
           if(it){ it.done=!it.done; save(); currentView==='home'?renderHome():renderDaily(); } break; }
         case 'del-task': { const g=t.dataset.g,id=t.dataset.id;
@@ -7335,9 +7453,16 @@ let LANG = window.LANG_DATA || {};
           if (!state.books) state.books = { shelf: [], goal: { year: new Date().getFullYear(), yearTarget: 24, monthTarget: 2 }, log: {} };
           const minEl = $('bookMin');
           const min = minEl ? (+minEl.value || 0) : 10;
-          if (state.books.log[today()] && state.books.log[today()].done) { delete state.books.log[today()]; toast('已取消今日打卡'); }
-          else { state.books.log[today()] = { done: true, min: min || 10 }; toast('✅ 今日已读，连续 ' + bookStreak() + ' 天 🔥'); }
+          // 只做「打卡」，绝不反手取消：避免首页顺手一点就把今日阅读打卡删掉（导致的首页/阅读界面不同步）
+          const cur = state.books.log[today()];
+          state.books.log[today()] = { done: true, min: (min && min > 0) ? min : ((cur && cur.min) || 10) };
           save();
+          if (currentView === 'book') renderBook(); else if (typeof renderHome === 'function') renderHome(); else navigate('home');
+          toast('✅ 今日已读，连续 ' + bookStreak() + ' 天 🔥');
+          break;
+        }
+        case 'book-uncheckin': {
+          if (state.books && state.books.log[today()]) { delete state.books.log[today()]; save(); toast('已取消今日阅读打卡'); }
           if (currentView === 'book') renderBook(); else if (typeof renderHome === 'function') renderHome(); else navigate('home');
           break;
         }
@@ -7497,14 +7622,15 @@ let LANG = window.LANG_DATA || {};
           const title = ($('dTitle') ? $('dTitle').value : '').trim();
           const body = ($('dBody') ? $('dBody').value : '').trim();
           const date = ($('dDate') ? $('dDate').value : today()) || today();
-          if (!title && !body) { toast('写点什么再保存吧 🐾'); break; }
+          if (!title && !body && !diaryPhotos.length) { toast('写点什么再保存吧 🐾'); break; }
           if (diaryEditId) {
             const e = state.diary.entries.find(x => x.id === diaryEditId);
-            if (e) { e.date = date; e.title = title; e.body = body; e.animal = diarySel; e.mood = moodEmoji(diaryMood); e.ts = Date.now(); }
-            diaryEditId = null;
+            if (e) { e.date = date; e.title = title; e.body = body; e.animal = diarySel; e.mood = moodEmoji(diaryMood); e.photos = diaryPhotos.slice(); e.ts = Date.now(); }
+            diaryEditId = null; diaryPhotos = [];
             save(); toast('已更新这一页 ✏️'); renderDiary();
           } else {
-            state.diary.entries.push({ id: uid(), date, title, body, animal: diarySel, mood: moodEmoji(diaryMood), ts: Date.now() });
+            state.diary.entries.push({ id: uid(), date, title, body, animal: diarySel, mood: moodEmoji(diaryMood), photos: diaryPhotos.slice(), ts: Date.now() });
+            diaryPhotos = [];
             save(); toast('已收进纸箱 📦'); renderDiary();
           }
           break;
@@ -7518,7 +7644,42 @@ let LANG = window.LANG_DATA || {};
           if (e) { diaryEditId = e.id; diarySel = e.animal; diaryMood = moodKey(e.mood); renderDiary(); }
           break;
         }
-        case 'diary-cancel': { diaryEditId = null; renderDiary(); break; }
+        case 'diary-toggle': {
+          const id = t.dataset.id;
+          if (diaryOpen.has(id)) diaryOpen.delete(id); else diaryOpen.add(id);
+          const det = document.getElementById('ddet-' + id);
+          if (det) det.style.display = diaryOpen.has(id) ? 'block' : 'none';
+          t.classList.toggle('open', diaryOpen.has(id));
+          break;
+        }
+        case 'diary-expand-all': {
+          const entries = (state.diary && state.diary.entries) || [];
+          if (diaryOpen.size === entries.length && entries.length) diaryOpen.clear();
+          else entries.forEach(e => diaryOpen.add(e.id));
+          entries.forEach(e => {
+            const det = document.getElementById('ddet-' + e.id);
+            const row = document.querySelector('.diary-row[data-id="' + e.id + '"]');
+            if (det) det.style.display = diaryOpen.has(e.id) ? 'block' : 'none';
+            if (row) row.classList.toggle('open', diaryOpen.has(e.id));
+          });
+          const btn = document.querySelector('[data-action="diary-expand-all"]');
+          if (btn) btn.textContent = (diaryOpen.size === entries.length && entries.length) ? '收起全部' : '展开全部';
+          break;
+        }
+        case 'diary-cancel': { diaryEditId = null; diaryPhotos = []; renderDiary(); break; }
+        case 'diary-add-photo': { const fi = $('diaryFile'); if (fi) fi.click(); break; }
+        case 'diary-del-photo': { diaryPhotos.splice(+t.dataset.i, 1); renderDiaryThumbs(); break; }
+        case 'diary-photo': {
+          const e = state.diary && state.diary.entries.find(x => x.id === t.dataset.id);
+          const i = +t.dataset.i;
+          if (e && e.photos && e.photos[i]) {
+            openModal(`<div style="position:relative">
+              <button class="icon-btn" data-action="modal-close" style="position:absolute;top:-12px;right:-12px;background:var(--red);color:#fff;border:none;width:30px;height:30px;border-radius:50%;font-size:15px;z-index:2" aria-label="关闭">✕</button>
+              <img src="${e.photos[i]}" alt="日记照片" style="width:100%;border-radius:12px;display:block;background:#000" />
+            </div>`);
+          }
+          break;
+        }
         case 'modal-close': closeModal(); break;
       }
       } catch(err) {
