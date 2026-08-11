@@ -430,6 +430,16 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 .hero-ring::before{ content:''; position:absolute; inset:6px; border-radius:50%; background:var(--panel); }
 .hero-ring span{ position:relative; font-size:14px; font-weight:780; color:var(--ink-1); font-feature-settings:"tnum"; }
 
+/* 钢琴模块专用金色 hero */
+.hero.piano-hero{
+  background:linear-gradient(135deg, var(--gold-soft), color-mix(in srgb, var(--gold-soft) 65%, transparent));
+  border-color:color-mix(in srgb, var(--gold) 22%, var(--line));
+}
+.hero.piano-hero::before{
+  background:radial-gradient(circle, color-mix(in srgb, var(--gold) 28%, transparent), transparent 70%);
+}
+.hero.piano-hero .hero-hi b{ color:var(--gold); }
+
 /* 首页模块 → 签名色磁贴 */
 .dash-row{
   display:grid; grid-template-columns:repeat(2,1fr); gap:12px;
@@ -535,6 +545,8 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
   box-shadow:none;
 }
 .btn.outline:hover{ background:var(--panel-ins); border-color:var(--muted); }
+.btn.outline.gold{ color:var(--gold); border-color:color-mix(in srgb, var(--gold) 45%, var(--line-1)); background:var(--gold-soft); }
+.btn.outline.gold:hover{ background:color-mix(in srgb, var(--gold-soft) 80%, var(--gold)); border-color:var(--gold); }
 
 .btn.subtle{ background:var(--panel-ins); color:var(--ink-2); box-shadow:none; }
 .btn.subtle:hover{ background:var(--line); }
@@ -1552,7 +1564,10 @@ body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; tex
     --bg:#1f1f1f; --panel:rgba(45,45,45,.62); --panel-2:#2a2a2a; --line:#3a3a3a;
     --ink:#f0f0f0; --muted:#9b948b; --primary:#6f9bff; --primary-2:#84aaff;
     --primary-hover:#84aaff; --primary-pressed:#5a86f0; --primary-soft:rgba(80,120,255,.16);
-    --green:#3fd089; --red:#ff6b6f; --gold:#ffc861; --radius:8px; --radius-sm:6px;
+    --green:#3fd089; --green-soft:rgba(24,165,88,.18);
+    --red:#ff6b6f; --gold:#ffc861; --gold-soft:rgba(217,154,28,.18);
+    --teal:#34d0e0; --teal-soft:rgba(14,165,183,.18);
+    --radius:8px; --radius-sm:6px;
     --shadow:0 2px 4px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.18);
   }
   /* 浅色主题：与主工作台设计令牌保持一致（主色 #3b6fff / 金 #d99a1c） */
@@ -1560,11 +1575,14 @@ body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; tex
     --bg:#f3f2f1; --panel:rgba(255,255,255,.72); --panel-2:#faf9f8; --line:#e1dfdd;
     --ink:#201f1e; --muted:#8a8886; --primary:#3b6fff; --primary-2:#2f5fe6;
     --primary-hover:#2f5fe6; --primary-pressed:#2750c9; --primary-soft:#e9f0ff;
-    --green:#18a558; --red:#e5484d; --gold:#d99a1c; --radius:8px; --radius-sm:6px;
+    --green:#18a558; --green-soft:#d6f3e6;
+    --red:#e5484d; --gold:#d99a1c; --gold-soft:#fbf0d6;
+    --teal:#0ea5b7; --teal-soft:#d6f3f6;
+    --radius:8px; --radius-sm:6px;
     --shadow:0 2px 4px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
   }
   :root.pmod-light body{background:transparent;color:var(--ink)}
-  :root.pmod-light .piano-shell{background:linear-gradient(180deg,#fbfbfc,#eef0f3);border-color:#d8dadf}
+  :root.pmod-light .piano-shell{background:linear-gradient(180deg,var(--panel-2),color-mix(in srgb,var(--panel-2) 92%,var(--line)));border-color:var(--line)}
   :root.pmod-light .chip.on{background:rgba(59,111,255,.12);border-color:var(--primary);color:var(--primary)}
   :root.pmod-light .btn.ghost.on{background:rgba(59,111,255,.14);border-color:var(--primary);color:var(--primary)}
   :root.pmod-light .stage .std{color:#5a5a5a}
@@ -1620,15 +1638,15 @@ body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; tex
   .wkey{flex:1;background:linear-gradient(180deg,#fdfdfd,#e9ecf2);border:1px solid #c9ced8;
     border-radius:0 0 7px 7px;margin:0 1px;position:relative;display:flex;flex-direction:column;
     justify-content:flex-end;align-items:center;padding-bottom:8px;cursor:pointer;z-index:1;transition:background .05s}
-  .wkey.active{background:linear-gradient(180deg,#cfe4fb,#9ec8f0)}
-  .wkey.target{background:linear-gradient(180deg,#fff2c2,#ffd766)}
-  .wkey.targetL{background:linear-gradient(180deg,#bff7ec,#5fe0c8);box-shadow:inset 0 0 0 2px #2fd3b6}
+  .wkey.active{background:linear-gradient(180deg,color-mix(in srgb,var(--primary) 28%,#fdfdfd),color-mix(in srgb,var(--primary) 48%,#e9ecf2))}
+  .wkey.target{background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 22%,#fff),color-mix(in srgb,var(--gold) 48%,#fff8e1))}
+  .wkey.targetL{background:linear-gradient(180deg,color-mix(in srgb,var(--teal) 22%,#fff),color-mix(in srgb,var(--teal) 45%,#e0f7f5));box-shadow:inset 0 0 0 2px var(--teal)}
   .bkey{position:absolute;top:0;width:4.2%;height:62%;background:linear-gradient(180deg,#2a2d34,#05070b);
     border:1px solid #000;border-radius:0 0 5px 5px;transform:translateX(-50%);z-index:3;cursor:pointer;
     display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding-bottom:6px;transition:background .05s}
-  .bkey.active{background:linear-gradient(180deg,#2b88d8,#005a9e)}
-  .bkey.target{background:linear-gradient(180deg,#caa12f,#9c7a17)}
-  .bkey.targetL{background:linear-gradient(180deg,#1f9e8a,#0c6b5c);box-shadow:0 0 12px #2fd3b6}
+  .bkey.active{background:linear-gradient(180deg,var(--primary),var(--primary-pressed))}
+  .bkey.target{background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 75%,#000),color-mix(in srgb,var(--gold) 50%,#000))}
+  .bkey.targetL{background:linear-gradient(180deg,color-mix(in srgb,var(--teal) 65%,#000),color-mix(in srgb,var(--teal) 40%,#000));box-shadow:0 0 12px var(--teal)}
   .nbox.lhand{background:var(--primary-soft);border-color:var(--primary)}
   .klabel{font-size:10px;font-weight:700;color:#5a6172;pointer-events:none}
   .bkey .klabel{color:#cfd4df;font-size:9px}
@@ -1647,8 +1665,8 @@ body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; tex
   .notestrip{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;min-height:34px}
   .nbox{width:30px;height:30px;border-radius:8px;background:var(--panel-2);border:1px solid var(--line);
     display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);transition:.12s}
-  .nbox.done{background:rgba(70,201,139,.22);border-color:var(--green);color:var(--green)}
-  .nbox.cur{background:linear-gradient(135deg,var(--gold),#ffb02e);color:#3a2c00;border-color:#ffb02e;transform:scale(1.12)}
+  .nbox.done{background:var(--green-soft);border-color:var(--green);color:var(--green)}
+  .nbox.cur{background:linear-gradient(135deg,var(--gold),color-mix(in srgb,var(--gold) 70%,#fff));color:color-mix(in srgb,var(--gold) 55%,#000);border-color:var(--gold);transform:scale(1.12)}
   .nbox.err{animation:shake .3s;border-color:var(--red)}
   @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
   .follow-stat{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap}
@@ -1680,11 +1698,11 @@ body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; tex
   .stage .hd{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .stage .ttl{font-weight:800;font-size:14.5px}
   .stage .goal{color:var(--muted);font-size:12.5px;margin:6px 0}
-  .stage .std{font-size:12.5px;color:#cdd3df}
+  .stage .std{font-size:12.5px;color:var(--ink-3)}
   .tag{font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
-  .tag.on{background:rgba(70,201,139,.18);border-color:var(--green);color:var(--green)}
+  .tag.on{background:var(--green-soft);border-color:var(--green);color:var(--green)}
   .ex{margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
-  .ex .e{font-size:13px;margin:4px 0;color:#dde2ec}
+  .ex .e{font-size:13px;margin:4px 0;color:var(--ink-3)}
   .ex .e b{color:var(--ink)}
   .empty{color:var(--muted);font-size:13px;text-align:center;padding:14px}
   .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
@@ -1694,8 +1712,8 @@ body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; tex
   footer{color:var(--muted);font-size:11.5px;text-align:center;margin-top:24px;line-height:1.8}
   a{color:var(--primary-2)}
   /* ===== 乐理高亮与卡片 ===== */
-  .wkey.lit{background:linear-gradient(180deg,#bff7ec,#5fe0c8);box-shadow:inset 0 0 0 2px #2fd3b6}
-  .bkey.lit{background:linear-gradient(180deg,#1f9e8a,#0c6b5c);box-shadow:0 0 12px #2fd3b6}
+  .wkey.lit{background:linear-gradient(180deg,var(--teal-soft),color-mix(in srgb,var(--teal) 45%,var(--teal-soft)));box-shadow:inset 0 0 0 2px var(--teal)}
+  .bkey.lit{background:linear-gradient(180deg,color-mix(in srgb,var(--teal) 65%,#000),color-mix(in srgb,var(--teal) 40%,#000));box-shadow:0 0 12px var(--teal)}
   .theory-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
   .mini{font-size:12.5px;color:var(--muted);background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:7px 10px}
   .note-pill{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:36px;padding:7px 5px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line);margin:4px 3px}
@@ -1707,8 +1725,8 @@ body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; tex
   .chord-card small{display:block;color:var(--muted);font-size:10.5px;margin-top:2px}
   .opt{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:12px 16px;cursor:pointer;font-weight:700;font-size:14px;color:var(--ink);transition:.15s}
   .opt:hover{border-color:var(--primary)}
-  .info{font-size:13px;color:#dde2ec;margin-top:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:10px 12px;line-height:1.7}
-  .info b{color:#fff}
+  .info{font-size:13px;color:var(--ink-2);margin-top:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:10px 12px;line-height:1.7}
+  .info b{color:var(--ink-1)}
   /* 嵌入工作台模式：隐藏独立页面的标题栏和页脚，与主界面融合 */
   header.top{display:none}
   footer{display:none}
@@ -6615,17 +6633,33 @@ let LANG = window.LANG_DATA || {};
       // 阶段路线图（此前 stageCard / 自定义曲目 编辑·删除·添加 已无入口 → 恢复为可折叠区）
       const stagesHtml = PIANO_STAGES.map(st => stageCard(st, st.id > state.pianoUnlocked)).join('');
       const pmStat = pianoModuleStat();
+      const pWeekDays = pcal.filter(d => d.on).length;
       $('main').innerHTML = `
-        <div class="hero">
+        <div class="hero piano-hero">
           <div class="hero-greet">
             <div class="hero-hi">🎹 连续练琴 <b>${pstreak}</b> 天</div>
             <div class="hero-date">已掌握 ${pmStat.mastered}/${pmStat.total} 首 · 第 ${state.pianoUnlocked} 阶段</div>
           </div>
           ${pToday
             ? '<span class="tag gold" style="align-self:center">今日已练 ✓</span>'
-            : '<button class="btn sm grad gold" data-action="piano-checkin" style="align-self:center">✅ 今天练过了</button>'}
+            : '<button class="btn sm grad gold" data-action="piano-checkin" style="align-self:center">✅ 今日练琴打卡</button>'}
           <div class="hero-line" style="padding:8px 10px">
             <div style="display:flex;gap:2px">${pcalHtml}</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15px;font-weight:700;color:var(--ink-1)">${pToday ? '今日已练 ✓ 保持手感' : '今天还没练琴，先弹 5 分钟'}</div>
+              <div style="font-size:12.5px;color:var(--ink-3);margin-top:3px">
+                ${pstreak ? `连续 <b style="color:var(--gold)">${pstreak}</b> 天 · ` : ''}
+                本周已练 <b style="color:var(--gold)">${pWeekDays}</b>/7 天
+              </div>
+            </div>
+            ${pToday
+              ? '<span class="tag gold" style="flex:0 0 auto;font-size:13px;padding:6px 12px">今日已练 ✓</span>'
+              : '<button class="btn grad gold" data-action="piano-checkin" style="flex:0 0 auto">✅ 今日练琴打卡</button>'}
           </div>
         </div>
 
@@ -7095,7 +7129,9 @@ let LANG = window.LANG_DATA || {};
         case 'gtype': gameType=t.dataset.t; renderGameArea(); break;
         case 'gdiff': state.gameDiff=t.dataset.d; save(); renderGame(); break;
         case 'master': { const id=+t.dataset.id; if(!state.pianoMastered.includes(id))state.pianoMastered.push(id); if(state.pianoUnlocked===id&&state.pianoUnlocked<5)state.pianoUnlocked++; save(); renderPiano(); break; }
-        case 'piano-checkin': { if(!state.pianoLog) state.pianoLog={}; state.pianoLog[today()]=true; save(); toast('✅ 已记录今日练习，保持手感！'); currentView==='daily'?renderDaily():renderPiano(); break; }
+        case 'piano-checkin': { if(!state.pianoLog) state.pianoLog={}; const existing=state.pianoLog[today()]; if(existing && existing.done){ delete state.pianoLog[today()]; save(); toast('已取消今日练琴打卡'); }
+          else { state.pianoLog[today()]={done:true, min: (existing && existing.min) || 5}; save(); toast('✅ 已记录今日练习，保持手感！'); }
+          currentView==='daily'?renderDaily():renderPiano(); break; }
         case 'study-checkin': { if(!state.studyLog) state.studyLog={}; state.studyLog[today()]=true; save(); toast('✅ 今日学习已打卡，保持连胜！'); currentView==='daily'?renderDaily():renderStudySafe(); break; }
         // ===== 学习中心：模式切换 + 闯关 + 单词卡 + 精听跟读 =====
         case 'study-mode': { studyMode = t.dataset.m; renderStudySafe(); break; }
