@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="我的工作台">
   <!-- 允许浏览器/CDN 缓存：文件未变时走 304，避免每次重下 5MB；改版后用户强刷(Ctrl/Cmd+Shift+R)即更新 -->
   <meta http-equiv="Cache-Control" content="public, max-age=300">
-    <meta name="theme-color" content="#0078d4" />
+    <meta name="theme-color" content="#3b6fff" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120.png" />
   <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152.png" />
@@ -83,6 +83,22 @@
   --rose:        #e8597a;
   --rose-soft:   #fce0e8;
 
+  /* 补充语义色（修复未定义令牌的兜底泄漏） */
+  --blue:        var(--primary);
+  --blue-soft:   var(--primary-soft);
+  --gray:        #9aa3b2;
+  --gray-soft:   #eceff5;
+
+  /* 语义 / 反馈色（报警、校验、收入、热力） */
+  --red-ink:      #b3261e;
+  --heat-1:       #d8f3e0;
+  --heat-2:       #b6e8c8;
+  --heat-3:       #7fd6a3;
+  --heat-4:       #3fa76a;
+  --expense-a:    var(--accent);
+  --expense-b:    var(--red);
+  --accent-bright:#ffb066;
+
   /* 圆角 */
   --radius:    18px;
   --radius-sm: 12px;
@@ -148,6 +164,20 @@
   --teal-soft:   rgba(14,165,183,.18);
   --rose:        #ff8fb0;
   --rose-soft:   rgba(232,89,122,.18);
+
+  --blue:        var(--primary);
+  --blue-soft:   var(--primary-soft);
+  --gray:        #5b6472;
+  --gray-soft:   rgba(255,255,255,.06);
+
+  --red-ink:      #ff8a8a;
+  --heat-1:       #173326;
+  --heat-2:       #1f4231;
+  --heat-3:       #2a5e42;
+  --heat-4:       #3fa76a;
+  --expense-a:    var(--accent);
+  --expense-b:    var(--red);
+  --accent-bright:#ffb066;
 
   --shadow-sm:  0 1px 2px rgba(0,0,0,.3), 0 2px 6px rgba(0,0,0,.25);
   --shadow:     0 6px 18px rgba(0,0,0,.35);
@@ -425,8 +455,8 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 }
 .dash-pill .dp-top span:last-child{ font-size:13px; font-weight:660; color:var(--ink-2); }
 .dash-pill .dp-num{
-  font-size:25px; font-weight:780; color:var(--ink-1); line-height:1;
-  font-feature-settings:"tnum"; letter-spacing:-.02em;
+  font-size:12.5px; font-weight:650; color:var(--ink-3); line-height:1.3;
+  letter-spacing:.02em; margin-top:1px;
 }
 .dash-pill .dp-lbl{ font-size:11px; color:var(--muted); }
 .dash-pill.done{ border-color:color-mix(in srgb, var(--green) 38%, var(--line)); }
@@ -568,7 +598,7 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 }
 .progress span{
   display:block; height:100%; border-radius:var(--radius-pill);
-  background:linear-gradient(90deg, var(--primary), #6f9bff);
+  background:linear-gradient(90deg, var(--primary), var(--primary-hover));
   transition:width .5s var(--ease);
 }
 
@@ -615,16 +645,39 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
    学习中心 / 多语言 (Study & Languages)
    ===================================================================== */
 .lang-sec{ margin-bottom:14px; }
+.lang-sec > summary{
+  list-style:none; display:flex; align-items:center; gap:12px;
+  padding:12px 14px; cursor:pointer; user-select:none;
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-sm);
+  transition:border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+}
+.lang-sec > summary::-webkit-details-marker{ display:none; }
+.lang-sec > summary:hover{ border-color:var(--line-1); box-shadow:var(--shadow-sm); }
+.lang-sec[open] > summary{ border-radius:var(--radius-sm) var(--radius-sm) 0 0; border-bottom-color:transparent; }
+.lang-sec .chev{ order:-1; color:var(--muted); font-size:12px; transition:transform var(--t-fast); flex-shrink:0; width:14px; text-align:center; }
+.lang-sec[open] > summary .chev{ transform:rotate(90deg); }
+.lang-sec .sec-count{
+  order:-2; font-size:11px; font-weight:650; line-height:1;
+  padding:4px 8px; border-radius:var(--radius-pill);
+  background:var(--accent-soft); color:var(--accent-ink);
+}
+.lang-sec .sec-body{
+  padding:12px; background:var(--panel); border:1px solid var(--line); border-top:0;
+  border-radius:0 0 var(--radius-sm) var(--radius-sm); font-size:14px; line-height:1.8; color:var(--ink-2);
+}
 .lv-bar{
   height:8px; border-radius:var(--radius-pill); background:var(--panel-ins); overflow:hidden;
 }
-.lv-bar > * , .lv-bar > div{ height:100%; border-radius:var(--radius-pill); background:linear-gradient(90deg,var(--accent),#ffb066); }
+.lv-bar > * , .lv-bar > div{ height:100%; border-radius:var(--radius-pill); background:linear-gradient(90deg,var(--accent),var(--accent-bright)); }
 .lv-dash{ display:flex; gap:4px; }
 .goal-banner{
-  background:linear-gradient(135deg, var(--primary-soft), var(--purple-soft));
-  border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px;
+  background:linear-gradient(135deg, var(--accent-soft), color-mix(in srgb, var(--accent) 14%, var(--panel)));
+  border:1px solid color-mix(in srgb, var(--accent) 22%, var(--line)); border-radius:var(--radius); padding:18px;
   font-size:13.5px; color:var(--ink-1); line-height:1.6;
 }
+.goal-banner .gb-label{ font-weight:700; font-size:14px; margin-bottom:6px; }
+.goal-banner .gb-text{ font-weight:600; font-size:15px; margin-bottom:8px; }
+.goal-banner .gb-sub{ font-size:12.5px; color:var(--ink-3); line-height:1.6; }
 .goal-chip{ display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:var(--radius-pill); background:var(--panel-ins); font-size:12px; font-weight:600; color:var(--ink-2); }
 
 .tabs{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
@@ -634,6 +687,7 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 }
 .tabs button:hover{ color:var(--ink-2); }
 .tabs button.active{ background:var(--primary-soft); color:var(--primary-dark); }
+.lang-tabs button.active{ background:var(--accent-soft); color:var(--accent-ink); }
 
 .opt{
   display:block; width:100%; text-align:left; padding:12px 14px;
@@ -643,35 +697,92 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 }
 .opt:hover{ border-color:var(--primary); }
 .opt.sel{ border-color:var(--primary); background:var(--primary-soft); color:var(--primary-dark); font-weight:600; }
+#langBody .opt:hover, #aq .opt:hover{ border-color:var(--accent); }
+#langBody .opt.sel, #aq .opt.sel{ border-color:var(--accent); background:var(--accent-soft); color:var(--accent-ink); }
 
 .sentence{ font-size:16px; line-height:1.7; color:var(--ink-1); font-weight:500; }
 .cn,.zh{ color:var(--ink-2); }
 .en{ color:var(--ink-1); }
 .sl-body{ display:flex; flex-direction:column; gap:10px; }
 .sl-r{ display:flex; gap:10px; padding:12px; border-radius:var(--radius-sm); background:var(--panel-ins); }
-.sl-r.you{ background:var(--primary-soft); }
-.sl-role{ font-size:11px; font-weight:700; color:var(--muted); min-width:42px; }
+.sl-r.you{ background:var(--accent-soft); }
+.sl-role{ font-size:10px; font-weight:700; color:var(--muted); min-width:42px; text-align:center; padding:3px 8px; border-radius:var(--radius-pill); background:var(--panel-ins); }
+.scene-line .sl-role.you{ background:var(--accent-soft); color:var(--accent-ink); }
 .sl-f{ flex:1; font-size:14px; color:var(--ink-1); }
 .sl-play{ align-self:center; }
 .sl-zh{ font-size:12.5px; color:var(--muted); }
-.sg-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.sg-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; font-weight:650; color:var(--ink-1); }
 .sg-icon{ font-size:22px; }
 .scene-group{ display:flex; flex-direction:column; gap:8px; }
-.scene-line{ display:flex; gap:10px; padding:10px 12px; border-radius:var(--radius-sm); background:var(--panel-ins); }
+.scene-line{ display:flex; align-items:flex-start; gap:10px; padding:12px; border-radius:var(--radius-sm); background:var(--panel); border:1px solid var(--line); }
 .video-card{ display:block; padding:14px; border-radius:var(--radius-sm); background:var(--panel-ins); border:1px solid var(--line); color:var(--ink-1); font-weight:600; }
 .video-card:hover{ border-color:var(--primary); }
+.lang-sec .video-card:hover{ border-color:var(--accent); }
 .sec-body{ font-size:14px; line-height:1.8; color:var(--ink-2); }
 .sec-count{ font-size:12px; color:var(--muted); }
 .reading{ color:var(--ink-2); }
 
+/* 语言学习 overview 当前阶段仪表盘 */
+.lang-dash{ padding:18px; }
+.lang-dash .ld-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.lang-dash .ld-label{ font-size:12px; color:var(--muted); }
+.lang-dash .ld-stage{ font-weight:700; font-size:18px; color:var(--ink-1); margin-top:4px; }
+.lang-dash .ld-stage small{ font-weight:400; font-size:12px; color:var(--muted); margin-left:4px; }
+.lang-dash .ld-bar{ margin-top:16px; }
+.lang-dash .ld-stats{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px; }
+@media (min-width:480px){
+  .lang-dash .ld-stats{ grid-template-columns:1fr 1fr 1fr; }
+}
+.lang-dash .ld-stat{ background:var(--panel-ins); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px; }
+.lang-dash .ld-stat .ldsl{ font-size:11px; color:var(--muted); margin-bottom:4px; }
+.lang-dash .ld-stat .ldsv{ font-weight:700; font-size:15px; color:var(--ink-1); }
+.lang-dash .ld-stat .ldsv small{ font-weight:400; font-size:12px; color:var(--muted); }
+.lang-dash .ld-action{ margin-top:16px; }
+
+/* 今日三件套：移动端垂直堆叠更透气 */
+.today-pick{ display:flex; flex-direction:column; gap:10px; }
+.today-pick .tp-card{ padding:14px 16px; }
+
+/* 语言学习模块内默认按钮/描边按钮统一用 accent */
+#langBody{ margin-top:16px; }
+#langBody .btn.sm:not(.outline):not(.ghost){ background:var(--accent); }
+#langBody .btn.sm.outline{ color:var(--accent-ink); border-color:color-mix(in srgb, var(--accent) 35%, var(--line-1)); }
+#langBody .btn.sm.outline:hover{ background:var(--accent-soft); border-color:var(--accent); }
+
 /* 词汇高亮 */
-.vocab-hl{ color:var(--primary); font-weight:650; cursor:pointer; border-bottom:1px dotted var(--primary); }
+.vocab-hl{ color:var(--accent); font-weight:650; cursor:pointer; border-bottom:1px dotted var(--accent); }
 .vt-word{ font-size:18px; font-weight:700; color:var(--ink-1); }
 .vt-pron{ margin-left:8px; color:var(--muted); font-size:13px; }
-.vt-lv{ margin-left:8px; font-size:11px; padding:2px 7px; border-radius:var(--radius-pill); background:var(--primary-soft); color:var(--primary-dark); }
+.vt-lv{ margin-left:8px; font-size:11px; padding:2px 7px; border-radius:var(--radius-pill); background:var(--accent-soft); color:var(--accent-ink); }
 .vt-mean{ margin-top:6px; font-size:14px; color:var(--ink-1); }
 .vt-ex{ margin-top:6px; font-size:13px; color:var(--ink-3); font-style:italic; }
 .vt-hint{ margin-top:10px; font-size:11px; color:var(--muted); text-align:center; }
+
+/* 单词卡 / 资源卡 / 翻译卡 */
+.vocab-card{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+  min-height:96px; padding:14px;
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-sm);
+  cursor:pointer; transition:all var(--t-fast);
+}
+.vocab-card:hover{ border-color:var(--accent); box-shadow:var(--shadow-sm); }
+.vocab-card .vc-word{ font-size:18px; font-weight:750; color:var(--ink-1); }
+.vocab-card .vc-hint{ font-size:11px; color:var(--muted); margin-top:6px; }
+.res-card{
+  display:flex; align-items:center; gap:12px; padding:12px 14px;
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-sm);
+  margin-bottom:10px; transition:all var(--t-fast);
+}
+.res-card:hover{ border-color:var(--accent); box-shadow:var(--shadow-sm); }
+.res-card .rc-icon{ width:38px; height:38px; border-radius:10px; background:var(--accent-soft); color:var(--accent-ink); display:grid; place-items:center; font-size:16px; flex-shrink:0; }
+.res-card .rc-title{ font-weight:650; font-size:14px; color:var(--ink-1); }
+.res-card .rc-url{ font-size:12px; color:var(--accent); word-break:break-all; }
+.trans-card{
+  padding:12px 14px; margin-bottom:10px;
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-sm);
+}
+.trans-card .tc-q{ font-weight:600; margin-bottom:6px; color:var(--ink-1); }
+.trans-card .tc-hint{ font-size:12px; color:var(--muted); margin-bottom:10px; }
 
 /* =====================================================================
    选题 / 拍摄 (Topic / Shoot)
@@ -680,15 +791,45 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 .tp-main{ font-size:15px; font-weight:650; color:var(--ink-1); }
 .tp-sub{ font-size:13px; color:var(--ink-3); margin-top:4px; }
 .tp-tag{ display:inline-block; margin-top:8px; font-size:11px; padding:3px 9px; border-radius:var(--radius-pill); background:var(--pink-soft); color:var(--pink); font-weight:650; }
-.today-pick{ display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:var(--radius-sm); background:var(--accent-soft); border:1px solid color-mix(in srgb,var(--accent) 25%, transparent); }
 
 /* =====================================================================
    运动 / 肌肉 (Sport / Muscle)
    ===================================================================== */
-.sport-sec{ margin-bottom:14px; }
+.sport-sec{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-bottom:10px; transition:box-shadow var(--t-fast); }
+.sport-sec:hover{ box-shadow:var(--shadow-sm); }
+.sport-sec > summary{ list-style:none; display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer; user-select:none; }
+.sport-sec > summary::-webkit-details-marker{ display:none; }
+.sport-sec .chev{ color:var(--muted); font-size:12px; transition:transform var(--t-fast); flex-shrink:0; width:14px; text-align:center; }
+.sport-sec[open] > summary .chev{ transform:rotate(90deg); }
+.sport-sec .ss-head{ flex:1; min-width:0; }
+.sport-sec .sec-body{ padding:0 16px 16px; }
 .sport-tabs{ display:flex; gap:6px; background:var(--panel-ins); padding:4px; border-radius:var(--radius-pill); margin-bottom:12px; }
-.sport-tab{ flex:1; padding:8px; border-radius:var(--radius-pill); font-size:13px; font-weight:600; color:var(--ink-3); transition:all var(--t-fast); }
-.sport-tab.active{ background:var(--panel); color:var(--primary-dark); box-shadow:var(--shadow-soft); }
+.sport-tab{ flex:1; text-align:center; padding:8px; border-radius:var(--radius-pill); font-size:13px; font-weight:600; color:var(--ink-3); transition:all var(--t-fast); cursor:pointer; }
+.sport-tab.active{ background:var(--panel); color:var(--accent); box-shadow:var(--shadow-soft); }
+
+/* =====================================================================
+   书行 / 书单卡片 (Book Row)
+   ===================================================================== */
+.book-row{
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; margin-bottom:10px;
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-sm);
+  transition:box-shadow var(--t-fast), border-color var(--t-fast);
+}
+.book-row:hover{ box-shadow:var(--shadow-sm); border-color:var(--line-1); }
+.book-row .br-main{ flex:1; min-width:0; }
+.book-row .br-title{ font-weight:650; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink-1); }
+.book-row .br-meta{ font-size:12px; color:var(--muted); margin-top:2px; }
+.book-row .br-actions{ display:flex; align-items:center; gap:6px; margin-top:8px; flex-wrap:wrap; }
+.book-row .br-actions:empty{ display:none; }
+.book-cover{
+  width:46px; height:64px; border-radius:5px; flex-shrink:0;
+  display:grid; place-items:center;
+  font-size:18px; font-weight:750; color:var(--purple);
+  background:var(--purple-soft);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--purple) 12%, transparent);
+}
+.book-cover img{ width:100%; height:100%; object-fit:cover; border-radius:5px; }
 
 .muscle-canvas-wrap{
   position:relative; width:100%; aspect-ratio:3/4; max-height:340px;
@@ -732,14 +873,23 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
    健康 / 记账 (Health / Bill)
    ===================================================================== */
 .budget-dashboard{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow-sm); }
-.budget-main{ display:flex; align-items:baseline; gap:8px; }
-.budget-num{ font-size:30px; font-weight:740; color:var(--ink-1); font-feature-settings:"tnum"; letter-spacing:-.02em; }
-.budget-big{ font-size:34px; font-weight:740; color:var(--ink-1); }
-.budget-block{ display:block; }
-.budget-status{ font-size:12px; color:var(--muted); margin-top:2px; }
-.budget-bar-wrap{ margin-top:12px; }
-.budget-bar-bg{ height:10px; border-radius:var(--radius-pill); background:var(--panel-ins); overflow:hidden; }
-.budget-bar-fill{ height:100%; border-radius:var(--radius-pill); background:linear-gradient(90deg,var(--green),#5fd6a0); transition:width .5s var(--ease); }
+.budget-dashboard.over{ background:var(--red-soft); border-color:color-mix(in srgb,var(--red) 30%,transparent); }
+.budget-dashboard.warn{ background:var(--accent-soft); border-color:color-mix(in srgb,var(--accent) 30%,transparent); }
+.budget-main{ display:flex; justify-content:space-between; align-items:flex-end; gap:16px; }
+.budget-hero{ flex:1; min-width:0; }
+.budget-hero .budget-num{ font-size:12.5px; font-weight:650; color:var(--muted); letter-spacing:.02em; text-transform:uppercase; margin-bottom:4px; }
+.budget-hero .budget-big{ font-size:36px; font-weight:760; color:var(--ink-1); line-height:1.1; letter-spacing:-.03em; }
+.budget-side{ display:flex; flex-direction:column; gap:8px; text-align:right; flex-shrink:0; }
+.budget-side-row{ display:flex; flex-direction:column; gap:1px; }
+.budget-side-row .side-label{ font-size:11px; color:var(--muted); }
+.budget-side-row .side-value{ font-size:17px; font-weight:720; color:var(--ink-1); font-feature-settings:"tnum"; line-height:1.2; }
+.budget-side-row .side-value small{ font-size:11px; font-weight:500; color:var(--muted); }
+.budget-status{ font-size:12.5px; color:var(--muted); margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); }
+.budget-bar-wrap{ margin-top:14px; }
+.budget-bar-bg{ height:12px; border-radius:var(--radius-pill); background:var(--panel-ins); overflow:hidden; }
+.budget-bar-fill{ height:100%; border-radius:var(--radius-pill); background:var(--g-green); transition:width .5s var(--ease); }
+.budget-bar-fill.over{ background:var(--g-red); }
+.budget-bar-fill.warn{ background:var(--g-accent); }
 
 /* 日历 / 热力图 */
 .week-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
@@ -941,7 +1091,7 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
 }
 .dash-pill > *{ position:relative; }
 .dash-pill .dp-top span:first-child{ background:var(--c-soft); }
-.dash-pill .dp-num{ background:var(--c-grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.dash-pill .dp-num{ color:var(--ink-3); }
 .dash-pill:hover{ transform:translateY(-2px); box-shadow:0 12px 26px -14px color-mix(in srgb,var(--c) 70%, transparent); border-color:color-mix(in srgb,var(--c) 26%, var(--line)); }
 .dash-pill:active{ transform:scale(.97); }
 .dash-pill.done{ border-color:color-mix(in srgb,var(--green) 40%, var(--line)); }
@@ -1107,6 +1257,9 @@ h1,h2,h3,h4{ color:var(--ink-1); font-weight:650; letter-spacing:-.01em; }
   background:var(--panel-ins);
 }
 .metric .mv{ font-size:17px; font-weight:760; color:var(--ink-1); font-feature-settings:"tnum"; line-height:1.2; }
+.metric .mv.exp{ color:var(--red); }
+.metric .mv.inc{ color:var(--green); }
+.metric .mv.zero{ color:var(--muted); }
 .metric .ml{ font-size:11px; color:var(--muted); margin-top:2px; }
 
 /* 统计卡活力化 */
@@ -1203,6 +1356,182 @@ button.tag{ min-height:28px; display:inline-flex; align-items:center; gap:2px; }
   .metric-row{ grid-template-columns:repeat(3,1fr); }
 }
 
+/* =====================================================================
+   Batch 16 · UI 美化补强 (Calm Growth OS 2.0)
+   目标：在不改动结构 / 数据的前提下，让 卡片 / 空状态 / 首页磁贴 / Tab / 我页 / 按钮
+        观感更精致、更有层次。全部基于既有设计令牌，向后兼容。
+   ===================================================================== */
+
+/* ---- 卡片：克制的悬浮抬升 + 描边高亮（作用于全部页面的 .card） ---- */
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow);
+  border-color:color-mix(in srgb, var(--primary) 14%, var(--line));
+}
+
+/* ---- 按钮：实心按钮加一层柔光，更通透 ---- */
+.btn{
+  background-image:linear-gradient(180deg, rgba(255,255,255,.20), rgba(255,255,255,0) 58%);
+}
+.btn.outline, .btn.subtle, .btn.ghost, .btn:disabled{ background-image:none; }
+
+/* ---- 空状态：图标入柔光圆，整体更友好（作用于全部 .empty-box） ---- */
+.empty-box{
+  gap:8px; padding:30px 18px;
+  border:1px dashed color-mix(in srgb, var(--primary) 22%, var(--line-1));
+  background:radial-gradient(130% 120% at 50% 0%, var(--panel-2), var(--panel-ins) 72%);
+  box-shadow:var(--shadow-soft);
+}
+.empty-box .eb-ic{
+  font-size:30px; opacity:1;
+  width:54px; height:54px; border-radius:50%;
+  display:grid; place-items:center;
+  background:var(--panel); box-shadow:var(--shadow-soft);
+  margin-bottom:2px;
+}
+.empty-box .eb-t{ font-size:14px; color:var(--ink-2); }
+.empty-box div:last-child{ font-size:12px; color:var(--muted); }
+
+/* ---- 首页磁贴：悬浮抬升 + 右下角前进箭头 / 完成对勾 ---- */
+.dash-pill{ border-radius:22px; padding:15px 14px 14px; }
+.dash-pill:hover{ transform:translateY(-3px); box-shadow:var(--shadow); }
+.dash-pill::after{
+  content:'›'; position:absolute; right:12px; bottom:12px;
+  width:22px; height:22px; border-radius:50%;
+  display:grid; place-items:center;
+  background:var(--c-soft); color:var(--c);
+  font-size:17px; font-weight:700; line-height:1;
+  opacity:0; transform:translateX(-4px);
+  transition:opacity var(--t-fast), transform var(--t-fast);
+}
+.dash-pill:hover::after{ opacity:1; transform:translateX(0); }
+.dash-pill.done::after{ content:'✓'; opacity:1; transform:translateX(0); background:var(--green-soft); color:var(--green); }
+
+/* ---- Tabbar：激活态更轻盈 + 顶部小指示条 ---- */
+#tabbar button{ position:relative; }
+#tabbar button.active{
+  color:var(--primary-dark);
+  background:color-mix(in srgb, var(--primary-soft) 78%, transparent);
+}
+#tabbar button.active::after{
+  content:''; position:absolute; top:3px; left:50%; transform:translateX(-50%);
+  width:18px; height:3px; border-radius:var(--radius-pill);
+  background:var(--primary); opacity:.85;
+}
+#tabbar button.active .ic{ filter:none; transform:translateY(-1px); }
+
+/* ---- 我 · 个人页（重构 header / 数据条 / 操作列表） ---- */
+.me-hero{
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; gap:14px;
+  padding:18px; margin:4px 0 2px;
+  background:linear-gradient(135deg, var(--primary-soft), color-mix(in srgb, var(--purple-soft) 70%, transparent));
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-sm);
+}
+.me-hero::before{
+  content:''; position:absolute; right:-40px; top:-40px; width:160px; height:160px;
+  background:radial-gradient(circle, var(--accent-soft), transparent 70%); opacity:.6;
+}
+.me-avatar{
+  flex:0 0 auto; width:60px; height:60px; border-radius:50%;
+  display:grid; place-items:center; font-size:30px; position:relative;
+  background:var(--panel); border:3px solid var(--primary);
+  box-shadow:var(--shadow-soft); cursor:pointer;
+}
+.me-avatar:active{ transform:scale(.94); }
+.me-id{ flex:1; min-width:0; position:relative; }
+.me-name{ font-size:17px; font-weight:740; color:var(--ink-1); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; letter-spacing:-.01em; }
+.me-sub{ font-size:12px; color:var(--ink-3); margin-top:2px; }
+.me-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:12px 0; }
+.me-stat{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:14px 8px; text-align:center; box-shadow:var(--shadow-sm);
+}
+.me-stat .ms-num{
+  font-size:22px; font-weight:760; line-height:1; font-feature-settings:"tnum";
+  background:var(--g-primary); -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.me-stat .ms-lbl{ font-size:11.5px; color:var(--muted); margin-top:5px; }
+.me-actions{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:6px; box-shadow:var(--shadow-sm); display:flex; flex-direction:column; gap:2px;
+}
+.me-action{
+  display:flex; align-items:center; gap:12px; width:100%;
+  padding:12px 10px; border-radius:var(--radius-sm); cursor:pointer;
+  background:transparent; text-align:left; color:var(--ink-1);
+  transition:background var(--t-fast), transform var(--t-fast);
+}
+.me-action:active{ transform:scale(.985); }
+.me-action:hover{ background:var(--panel-ins); }
+.me-action .ma-ic{
+  font-size:20px; flex:0 0 auto; width:34px; height:34px; border-radius:10px;
+  display:grid; place-items:center; background:var(--panel-ins);
+}
+.me-action .ma-t{ flex:1; min-width:0; font-size:14px; font-weight:600; color:var(--ink-1); display:flex; flex-direction:column; gap:1px; }
+.me-action .ma-t small{ font-size:11px; font-weight:400; color:var(--muted); }
+.me-action .ma-go{ flex:0 0 auto; color:var(--muted); font-size:18px; }
+.me-action.danger .ma-ic{ background:var(--red-soft); }
+.me-action.danger .ma-t{ color:var(--red); }
+.me-action.danger .ma-go{ display:none; }
+.me-action.full{ width:100%; justify-content:flex-start; background:var(--red-soft); border-radius:var(--radius-sm); margin-top:10px; }
+
+/* =====================================================================
+   Batch 17 · 全局美化层（一致性 / 细节打磨 · Calm Growth OS 2.1）
+   ===================================================================== */
+
+/* —— 学习内容更新提醒（替代旧的报警式边框盒子）—— */
+.reminder{
+  --c:var(--accent); --c-soft:var(--accent-soft); --c-ink:var(--accent-ink);
+  position:relative; display:flex; gap:14px; align-items:flex-start;
+  padding:15px 16px 15px 18px; border-radius:var(--radius);
+  background:var(--c-soft); border:1px solid color-mix(in srgb,var(--c) 22%, transparent);
+  overflow:hidden; transition:transform var(--t-fast), box-shadow var(--t-fast);
+}
+.reminder::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--c); }
+.reminder .r-ic{
+  flex:0 0 auto; width:38px; height:38px; border-radius:11px;
+  display:grid; place-items:center; font-size:19px;
+  background:var(--panel); color:var(--c); box-shadow:var(--shadow-sm);
+}
+.reminder .r-body{ flex:1; min-width:0; }
+.reminder .r-title{ font-size:14.5px; font-weight:700; color:var(--ink-1); margin:1px 0 4px; letter-spacing:.01em; }
+.reminder .r-sub{ font-size:12.5px; color:var(--ink-3); line-height:1.65; }
+.reminder .r-sub strong{ color:var(--c-ink); font-weight:700; }
+.reminder.info{ --c:var(--primary); --c-soft:var(--primary-soft); --c-ink:var(--primary-dark); }
+.reminder.ok{   --c:var(--green);   --c-soft:var(--green-soft);   --c-ink:var(--green); }
+.reminder.warn{ --c:var(--accent);  --c-soft:var(--accent-soft);  --c-ink:var(--accent-ink); }
+.reminder.alert{--c:var(--red);     --c-soft:var(--red-soft);     --c-ink:var(--red-ink); }
+
+/* —— 自定义滚动条（克制、贴合主题）—— */
+* { scrollbar-width:thin; scrollbar-color:var(--line-1) transparent; }
+::-webkit-scrollbar{ width:9px; height:9px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--line-1); border-radius:999px; border:2px solid transparent; background-clip:content-box; }
+::-webkit-scrollbar-thumb:hover{ background:var(--muted); background-clip:content-box; }
+
+/* —— 清单项：统一悬停反馈 —— */
+.item{ transition:background-color var(--t-fast); border-radius:var(--radius-sm); }
+.item:hover{ background:var(--panel-ins); }
+
+/* —— 折叠块：标题更清晰 + 悬停反馈 —— */
+details.fold > summary{ color:var(--ink-2); border-radius:var(--radius-sm); transition:color var(--t-fast); }
+details.fold > summary:hover{ color:var(--ink-1); }
+
+/* —— 选项卡：选中态加层次 —— */
+.tabs button.active{ box-shadow:0 2px 8px color-mix(in srgb,var(--primary) 22%, transparent); font-weight:700; }
+
+/* —— 全局文本节奏 / 抗锯齿 —— */
+body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; }
+
+/* —— SVG 趋势图标签/坐标轴随主题（覆盖 svgBars 内硬编码中性灰）—— */
+.chart text{ fill:var(--muted); }
+.chart line{ stroke:var(--line-1); }
+
+/* —— 钢琴内嵌模块：明确边界，与外壳区分 —— */
+#pianoFrame{ border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-sm); }
+
 </style>
 <script type="importmap">
 { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
@@ -1221,23 +1550,23 @@ button.tag{ min-height:28px; display:inline-flex; align-items:center; gap:2px; }
 <style>
   :root{
     --bg:#1f1f1f; --panel:rgba(45,45,45,.62); --panel-2:#2a2a2a; --line:#3a3a3a;
-    --ink:#f0f0f0; --muted:#9b948b; --primary:#0078d4; --primary-2:#106ebe;
-    --primary-hover:#106ebe; --primary-pressed:#005a9e; --primary-soft:rgba(0,120,212,.18);
-    --green:#107c10; --red:#d83b01; --gold:#f0c040; --radius:8px; --radius-sm:6px;
+    --ink:#f0f0f0; --muted:#9b948b; --primary:#6f9bff; --primary-2:#84aaff;
+    --primary-hover:#84aaff; --primary-pressed:#5a86f0; --primary-soft:rgba(80,120,255,.16);
+    --green:#3fd089; --red:#ff6b6f; --gold:#ffc861; --radius:8px; --radius-sm:6px;
     --shadow:0 2px 4px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.18);
   }
-  /* 浅色主题：与工作台（Fluent/Mica 浅色）保持一致 */
+  /* 浅色主题：与主工作台设计令牌保持一致（主色 #3b6fff / 金 #d99a1c） */
   :root.pmod-light{
     --bg:#f3f2f1; --panel:rgba(255,255,255,.72); --panel-2:#faf9f8; --line:#e1dfdd;
-    --ink:#201f1e; --muted:#8a8886; --primary:#0078d4; --primary-2:#106ebe;
-    --primary-hover:#106ebe; --primary-pressed:#005a9e; --primary-soft:#deecf9;
-    --green:#107c10; --red:#d83b01; --gold:#b8860b; --radius:8px; --radius-sm:6px;
+    --ink:#201f1e; --muted:#8a8886; --primary:#3b6fff; --primary-2:#2f5fe6;
+    --primary-hover:#2f5fe6; --primary-pressed:#2750c9; --primary-soft:#e9f0ff;
+    --green:#18a558; --red:#e5484d; --gold:#d99a1c; --radius:8px; --radius-sm:6px;
     --shadow:0 2px 4px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
   }
   :root.pmod-light body{background:transparent;color:var(--ink)}
   :root.pmod-light .piano-shell{background:linear-gradient(180deg,#fbfbfc,#eef0f3);border-color:#d8dadf}
-  :root.pmod-light .chip.on{background:rgba(43,136,216,.12);border-color:var(--primary);color:var(--primary)}
-  :root.pmod-light .btn.ghost.on{background:rgba(43,136,216,.14);border-color:var(--primary);color:var(--primary)}
+  :root.pmod-light .chip.on{background:rgba(59,111,255,.12);border-color:var(--primary);color:var(--primary)}
+  :root.pmod-light .btn.ghost.on{background:rgba(59,111,255,.14);border-color:var(--primary);color:var(--primary)}
   :root.pmod-light .stage .std{color:#5a5a5a}
   :root.pmod-light .ex .e{color:#444}
   :root.pmod-light .toast{background:#fff;color:#201f1e;border-color:#e1dfdd;box-shadow:0 8px 30px rgba(0,0,0,.14)}
@@ -1383,6 +1712,9 @@ button.tag{ min-height:28px; display:inline-flex; align-items:center; gap:2px; }
   /* 嵌入工作台模式：隐藏独立页面的标题栏和页脚，与主界面融合 */
   header.top{display:none}
   footer{display:none}
+  /* 阶段路线图统一由外层「钢琴练习」页渲染（可编辑/增删自定义曲目），
+     此处隐藏 iframe 内重复的「进阶路线进度 / 当前阶段 / 全部阶段」，避免重复与不一致 */
+  #pmodRoadmap, #pmodCurStage, #pmodAllStage, #curStage, #allStage{display:none !important}
 
   /* ===================== 日记模块（排版小动物） ===================== */
   .diary-animals{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
@@ -1481,8 +1813,8 @@ button.tag{ min-height:28px; display:inline-flex; align-items:center; gap:2px; }
     </div>
   </div>
 
-  <!-- 练习计划 -->
-  <div class="card">
+  <!-- 练习计划（嵌入工作台时隐藏：阶段路线图统一由外层页面渲染，避免重复） -->
+  <div class="card" id="pmodRoadmap">
     <div class="card-title">🗺 进阶路线</div>
     <div class="card-sub">5 阶段循序渐进；练到「过关标准」点「标记掌握」解锁下一阶段。</div>
     <div class="progress" style="margin-top:10px"><span id="stageProg" style="width:0%"></span></div>
@@ -1491,9 +1823,9 @@ button.tag{ min-height:28px; display:inline-flex; align-items:center; gap:2px; }
 
   <!-- 手动打卡已移除：与工作台「钢琴练习」页上方的打卡卡片合并，避免重复。跟弹练习仍会自动记时。 -->
 
-  <div class="section-title">当前阶段</div>
+  <div class="section-title" id="pmodCurStage">当前阶段</div>
   <div id="curStage"></div>
-  <div class="section-title">全部阶段</div>
+  <div class="section-title" id="pmodAllStage">全部阶段</div>
   <div id="allStage"></div>
 
   <footer>
@@ -3318,24 +3650,36 @@ let LANG = window.LANG_DATA || {};
       const updDaysAgo = lastUpd ? Math.floor((Date.parse(tdy) - Date.parse(lastUpd)) / 86400000) : null;
       let learnReminder;
       if (updDaysAgo === null) {
-        learnReminder = `<div class="card" style="border:2px solid var(--accent);background:var(--accent-soft)">
-          <div class="card-title" style="color:#a0702d">📚 每日学习内容还没开始更新</div>
-          <div class="card-sub" style="color:#7a5530">AI 半自动方案已启用。对 AI 说：<strong>"帮我更新学习内容"</strong>，我会用 WebSearch 搜索当周热门内容（英语文章/韩语粤语会话/钢琴曲/选题），每天更新到工作台。</div>
+        learnReminder = `<div class="reminder info">
+          <div class="r-ic">📚</div>
+          <div class="r-body">
+            <div class="r-title">每日学习内容还没开始更新</div>
+            <div class="r-sub">AI 半自动方案已启用。对 AI 说：<strong>"帮我更新学习内容"</strong>，我会用 WebSearch 搜索当周热门内容（英语文章/韩语粤语会话/钢琴曲/选题），每天更新到工作台。</div>
+          </div>
         </div>`;
       } else if (updDaysAgo === 0) {
-        learnReminder = `<div class="card" style="border:1px solid var(--primary);background:var(--primary-soft)">
-          <div class="card-title" style="color:var(--primary-dark)">✅ 今日学习内容已更新</div>
-          <div class="card-sub">上次更新：今天 · 进入学习中心查看 →</div>
+        learnReminder = `<div class="reminder ok">
+          <div class="r-ic">✅</div>
+          <div class="r-body">
+            <div class="r-title">今日学习内容已更新</div>
+            <div class="r-sub">上次更新：今天 · 进入学习中心查看 →</div>
+          </div>
         </div>`;
       } else if (updDaysAgo <= 2) {
-        learnReminder = `<div class="card" style="border:2px solid var(--accent);background:var(--accent-soft)">
-          <div class="card-title" style="color:#a0702d">⏰ 学习内容 ${updDaysAgo} 天没更新了</div>
-          <div class="card-sub">上次更新：${lastUpd}（${updDaysAgo} 天前）。对 AI 说 "帮我更新学习内容" 立刻加新内容。</div>
+        learnReminder = `<div class="reminder warn">
+          <div class="r-ic">⏰</div>
+          <div class="r-body">
+            <div class="r-title">学习内容 ${updDaysAgo} 天没更新了</div>
+            <div class="r-sub">上次更新：${lastUpd}（${updDaysAgo} 天前）。对 AI 说 "帮我更新学习内容" 立刻加新内容。</div>
+          </div>
         </div>`;
       } else {
-        learnReminder = `<div class="card" style="border:2px solid #d9534f;background:#fbe9e7">
-          <div class="card-title" style="color:#a94442">⚠️ 学习内容 ${updDaysAgo} 天没更新</div>
-          <div class="card-sub">上次更新：${lastUpd}。已经停更多天了，今天让 AI 加点新内容吧 → 说 "帮我更新学习内容"。</div>
+        learnReminder = `<div class="reminder alert">
+          <div class="r-ic">⚠️</div>
+          <div class="r-body">
+            <div class="r-title">学习内容 ${updDaysAgo} 天没更新</div>
+            <div class="r-sub">上次更新：${lastUpd}。已经停更多天了，今天让 AI 加点新内容吧 → 说 "帮我更新学习内容"。</div>
+          </div>
         </div>`;
       }
       // 首页模块进度驾驶舱（v15：横向胶囊，一眼看全模块状态，点按直达）
@@ -3548,7 +3892,7 @@ let LANG = window.LANG_DATA || {};
     const DASH_DEFAULT = ['study','piano','book','topic','shoot','sport','health','bill','diary','game'];
     function recordRecent(v){ const skip={home:1,daily:1}; if(skip[v]) return; try{ let r=Array.isArray(state.recents)?state.recents.slice():[]; r.unshift(v); r=r.filter((x,i)=>r.indexOf(x)===i); if(r.length>8) r=r.slice(0,8); state.recents=r; save(); }catch(_){} }
     function renderDash(){ const order=(Array.isArray(state.recents)&&state.recents.length)?state.recents:DASH_DEFAULT; const pills=order.filter(v=>DASH_META[v]).map(v=>({...DASH_META[v],v}));
-      const dashPill=x=>`<div class=\"dash-pill\" data-action=\"go\" data-v=\"${x.v}\" role=\"button\" tabindex=\"0\" aria-label=\"${x.lbl}\"><div class=\"dp-top\"><span>${x.ic}</span><span>${x.lbl}</span></div><div class=\"dp-num\">点击进入</div><div class=\"dp-lbl\">最近使用</div></div>`;
+      const dashPill=x=>`<div class=\"dash-pill\" data-action=\"go\" data-v=\"${x.v}\" role=\"button\" tabindex=\"0\" aria-label=\"${x.lbl}\"><div class=\"dp-top\"><span>${x.ic}</span><span>${x.lbl}</span></div><div class=\"dp-num\">进入 ›</div></div>`;
       return `<div class=\"section-title\">最近使用<span class=\"st-count\">${pills.length} 个模块 · 点过的会往前排</span></div><div class=\"dash-row\">${pills.map(dashPill).join('')}</div>`; }
 
     // ===================== 本周回顾(P3: 成长复盘飞轮) =====================
@@ -3711,7 +4055,7 @@ let LANG = window.LANG_DATA || {};
               <div class="item-title">${h.t}</div>
               <div class="item-desc">${h.done ? h.doneTxt + ' ✓' : h.todoTxt}</div>
             </div>
-            ${h.done ? `<span class="tag ${h.cls}">已完成</span>` : `<button class="btn sm grad ${h.cls==='red'?'':h.cls}" ${h.act}>${h.btn}</button>`}
+            ${h.done ? `<span class="tag green">已完成</span>` : `<button class="btn sm grad" ${h.act}>${h.btn}</button>`}
           </div>`).join('')}
         </div>`;
       // 回车即添加，减少一次点击
@@ -3748,7 +4092,7 @@ let LANG = window.LANG_DATA || {};
       const qn = studyQuizToday();
       const langs = Object.keys(LANG);
       // ① 语言筛选标签（此前计算后未插入 DOM，功能丢失 → 恢复）
-      const langTabsHtml = `<div class="tabs" role="tablist" aria-label="语言筛选">` +
+      const langTabsHtml = `<div class="tabs lang-tabs" role="tablist" aria-label="语言筛选">` +
         `<button role="tab" aria-selected="${!curLang}" class="${!curLang?'active':''}" data-action="lang-all">🌐 全部</button>` +
         langs.map(k=>`<button role="tab" aria-selected="${curLang===k}" class="${curLang===k?'active':''}" data-action="lang" data-k="${k}">${LANG[k].flag} ${LANG[k].name}</button>`).join('') +
         `</div>`;
@@ -3771,9 +4115,10 @@ let LANG = window.LANG_DATA || {};
             </span>
           </div>
         </div>
-        <div class="card" style="margin-top:12px;padding:12px 14px">
-          <div class="card-sub" style="margin:0 0 8px;font-size:12px">选语言 → 选模式，每天 10 分钟胜过周末突击</div>
+        <div class="card" style="margin-top:14px;padding:16px">
+          <div class="card-sub" style="margin:0 0 12px;font-size:12px">选语言 → 选模式，每天 10 分钟胜过周末突击</div>
           ${langTabsHtml}
+          <div style="height:12px"></div>
           ${modeHtml}
         </div>
         <div id="langBody"></div>`;
@@ -3826,32 +4171,33 @@ let LANG = window.LANG_DATA || {};
       const todayLine = sceneLines.length ? sceneLines[dayKey % sceneLines.length] : (L.dialogues&&L.dialogues.length?L.dialogues[dayKey%L.dialogues.length]:null);
       const todayNews = L.news ? L.news[dayKey % L.news.length] : null;
         return `
-        <div class="card" style="padding:0;overflow:hidden">
-          <div style="padding:14px 16px;border-bottom:1px solid var(--line-2)">
-            <div style="display:flex;align-items:center;gap:12px">
-              <div style="font-size:24px;line-height:1">${L.flag}</div>
+        <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px">
+          <div style="padding:16px 18px;border-bottom:1px solid var(--line-2)">
+            <div style="display:flex;align-items:center;gap:14px">
+              <div style="font-size:28px;line-height:1">${L.flag}</div>
               <div style="flex:1;min-width:0">
-                <div style="font-weight:700;font-size:15px;color:var(--ink)">${L.name}</div>
-                <div class="goal-chip">🎯 精通 + 看懂时政新闻</div>
+                <div style="font-weight:700;font-size:16px;color:var(--ink)">${L.name}</div>
+                <div class="goal-chip" style="margin-top:6px">🎯 精通 + 看懂时政新闻</div>
               </div>
               <div style="text-align:right">
                 <div style="font-size:11px;color:var(--muted)">目标进度</div>
-                <div style="font-weight:700;font-size:14px;color:${goalDone?'var(--accent-3)':'var(--accent)'}">${lvName}</div>
+                <div style="font-weight:700;font-size:14px;color:${goalDone?'var(--green)':'var(--accent)'}">${lvName}</div>
               </div>
             </div>
           </div>
-          <div style="padding:12px 16px">
-            <div class="lv-dash" style="margin-top:0;grid-template-columns:1fr 1fr 1fr">
+          <div style="padding:16px 18px">
+            <div class="lv-dash" style="margin-top:0;grid-template-columns:1fr 1fr;gap:10px">
               <div class="mini-stat"><div class="ms-label">🗣 情景对话库</div><div class="ms-value">${sceneCnt} 场景 <small>· ${lineCnt} 句</small></div></div>
               <div class="mini-stat"><div class="ms-label">📚 单词 / 翻译</div><div class="ms-value">${L.vocabulary.length} / ${L.translations.length}</div></div>
               <div class="mini-stat"><div class="ms-label">📰 新闻精读</div><div class="ms-value">${L.news.length} 篇</div></div>
+              <div class="mini-stat"><div class="ms-label">🎯 目标</div><div class="ms-value">${goalDone?'已达成':'进行中'}</div></div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0">
               <button class="btn sm outline" data-action="lang" data-k="${k}" data-m="dialog">🗣 情景</button>
               <button class="btn sm outline" data-action="lang" data-k="${k}" data-m="flash">🎴 单词</button>
               <button class="btn sm outline" data-action="lang" data-k="${k}" data-m="listen">👂 精听</button>
             </div>
-            <div style="font-size:11px;color:var(--muted);background:var(--bg);border-radius:8px;padding:8px 10px;line-height:1.6">
+            <div style="font-size:12px;color:var(--muted);background:var(--bg);border-radius:10px;padding:12px 14px;line-height:1.7">
               <div>🗣 今日一句 · ${todayLine?(todayLine.f||todayLine.ko):'—'}</div>
               <div>🎴 今日单词 · ${todayVocab.word} <span style="color:var(--muted)">(${todayVocab.meaning || ''})</span></div>
               <div>✍️ 今日翻译 · ${todayTr.answer.slice(0,22)}…</div>
@@ -3861,10 +4207,10 @@ let LANG = window.LANG_DATA || {};
         </div>`;
       }).join('');
       $('langBody').innerHTML = `
-        <div class="goal-banner" style="margin-bottom:14px">
+        <div class="goal-banner" style="margin-bottom:16px">
           <div class="gb-label">🎯 三语齐学 · 共同目标</div>
           <div class="gb-text">无痛对话本地人 + 看懂当地时政新闻</div>
-          <div class="gb-sub">英语 / 韩语 / 粤语，按真实生活场景（餐厅·交通·购物·住宿·就医·闲聊·邀约·求助）分组练对话；并内置 BBC News 等当地主流媒体的时政新闻精读，照着练既能无痛开口，也能读懂新闻。</div>
+          <div class="gb-sub">英语 / 韩语 / 粤语，按真实生活场景分组练对话；内置 BBC News 等时政新闻精读。</div>
         </div>
         ${cards}
         <div style="height:8px"></div>
@@ -3886,25 +4232,26 @@ let LANG = window.LANG_DATA || {};
       const lvTotal = L.levels.length;
       const goalDone = lvIdx!==null && lvIdx>=lvTotal-1;
       const dashHtml = `
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="card lang-dash">
+          <div class="ld-head">
             <div>
-              <div style="font-size:12px;color:var(--muted)">当前阶段</div>
-              <div style="font-weight:700;font-size:16px;color:var(--ink);margin-top:2px">${lvIdx===null?'未测评':esc(L.levels[lvIdx])} <span style="font-weight:400;font-size:12px;color:var(--muted)">/ 共 ${lvTotal} 阶段</span></div>
+              <div class="ld-label">当前阶段</div>
+              <div class="ld-stage">${lvIdx===null?'未测评':esc(L.levels[lvIdx])}<small>/ 共 ${lvTotal} 阶段</small></div>
             </div>
             ${lvIdx===null ? `<button class="btn sm" data-action="assess">📝 测评</button>` : `<button class="btn sm outline" data-action="assess">重测</button>`}
           </div>
-          <div class="lv-bar" style="margin-top:10px"><span style="width:${lvIdx===null?0:Math.round(((lvIdx+1)/lvTotal)*100)}%"></span></div>
-          <div class="lv-dash" style="grid-template-columns:1fr 1fr 1fr">
-            <div class="mini-stat"><div class="ms-label">🎯 目标：精通+新闻</div><div class="ms-value">${goalDone?'✅ 已达成':(lvIdx===null?'待测评':'进行中')}</div></div>
-            <div class="mini-stat"><div class="ms-label">🗣 情景对话库</div><div class="ms-value">${sceneCnt} 场景 <small>· ${lineCnt} 句</small></div></div>
-            <div class="mini-stat"><div class="ms-label">📰 新闻精读</div><div class="ms-value">${L.news.length} 篇</div></div>
+          <div class="lv-bar ld-bar"><span style="width:${lvIdx===null?0:Math.round(((lvIdx+1)/lvTotal)*100)}%"></span></div>
+          <div class="ld-stats">
+            <div class="ld-stat"><div class="ldsl">🎯 目标</div><div class="ldsv">${goalDone?'✅ 已达成':(lvIdx===null?'待测评':'进行中')}</div></div>
+            <div class="ld-stat"><div class="ldsl">🗣 情景对话库</div><div class="ldsv">${sceneCnt}<small> 场景 · ${lineCnt} 句</small></div></div>
+            <div class="ld-stat"><div class="ldsl">📰 新闻精读</div><div class="ldsv">${L.news.length}<small> 篇</small></div></div>
+            <div class="ld-stat"><div class="ldsl">🎴 单词 / 翻译</div><div class="ldsv">${L.vocabulary.length}<small> / ${L.translations.length}</small></div></div>
           </div>
-          ${lvIdx!==null?`<div style="margin-top:10px"><button class="btn sm" data-action="lang-done" data-i="${lvIdx}">✅ 本阶段完成</button></div>`:''}
+          ${lvIdx!==null?`<div class="ld-action"><button class="btn sm block" data-action="lang-done" data-i="${lvIdx}">✅ 本阶段完成</button></div>`:''}
         </div>`;
       const todayHtml = `
-        <div class="card">
-          <div class="card-title">📅 今日三件套 <span style="font-weight:400;font-size:12px;color:var(--muted)">· 每天自动轮换</span></div>
+        <div class="card" style="padding-bottom:16px">
+          <div class="card-title" style="margin-bottom:12px">📅 今日三件套 <span style="font-weight:400;font-size:12px;color:var(--muted)">· 每天自动轮换</span></div>
           <div class="today-pick">
             <div class="tp-card"><div class="tp-tag">🗣 今日一句</div><div class="tp-main">${tDialog?esc(tDialog.f):'—'}</div><div class="tp-sub">${tDialog?esc(tDialog.zh):''}</div></div>
             <div class="tp-card"><div class="tp-tag">🎴 今日单词</div><div class="tp-main">${tWord?esc(tWord.word):'—'}</div><div class="tp-sub">${tWord?esc(tWord.meaning||''):''}</div></div>
@@ -3939,8 +4286,9 @@ let LANG = window.LANG_DATA || {};
             ${(() => {
               const list = L.vocabulary; const offset = day % list.length; const p2 = [];
               for (let i = 0; i < Math.min(15, list.length); i++) p2.push(list[(offset + i) % list.length]);
-              return p2.map((w) => `<div class="video-card" data-action="flip-card" data-w="${encodeURIComponent(JSON.stringify(w))}" data-l="${L.tts}" style="cursor:pointer;background:var(--bg);text-align:center;flex-direction:column;padding:14px;min-height:90px;justify-content:center">
-                <div class="card-front"><div style="font-size:18px;font-weight:700">${esc(w.word)}</div><div style="font-size:11px;color:var(--muted);margin-top:4px">[${L.name === '英语' ? esc(w.level) : ''}${w.level ? ' · ' : ''}点翻]</div></div>
+              return p2.map((w) => `<div class="vocab-card" data-action="flip-card" data-w="${encodeURIComponent(JSON.stringify(w))}" data-l="${L.tts}">
+                <div class="vc-word">${esc(w.word)}</div>
+                <div class="vc-hint">${L.name === '英语' && w.level ? esc(w.level) + ' · ' : ''}点翻</div>
               </div>`).join('');
             })()}
           </div>
@@ -3952,17 +4300,22 @@ let LANG = window.LANG_DATA || {};
             ${(() => {
               const list = L.translations; const offset = day % list.length; const p3 = [];
               for (let i = 0; i < Math.min(5, list.length); i++) p3.push(list[(offset + i) % list.length]);
-              return p3.map((t, i) => `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px" data-ti="${i}">
-                <div style="font-weight:600;margin-bottom:6px">📝 第 ${i+1} 题：</div>
-                <div style="margin-bottom:6px">${esc(t.source)}</div>
-                <div style="font-size:12px;color:var(--muted);margin-bottom:8px">💡 ${esc(t.hint)} · ${esc(t.note)}</div>
+              return p3.map((t, i) => `<div class="trans-card" data-ti="${i}">
+                <div class="tc-q">📝 第 ${i+1} 题：${esc(t.source)}</div>
+                <div class="tc-hint">💡 ${esc(t.hint)} · ${esc(t.note)}</div>
                 <div class="row"><input class="input" id="ti${i}" placeholder="输入翻译..." style="flex:1" /><button class="btn sm" data-action="check-trans" data-i="${i}" data-key="${encodeURIComponent(JSON.stringify(t))}">核对</button></div>
                 <div id="tres${i}" style="margin-top:8px;font-size:13px"></div>
               </div>`).join('');
             })()}
           </div>
         </div>` : '';
-      const resHtml = `<div class="sec-body"><div class="card">${L.resources.map(r=>`<div class="video-card"><div class="play">🔗</div><div><div style="font-weight:600;font-size:14px">${esc(r.title)}</div><a href="${esc(r.url)}" data-action="open-link" data-url="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url)}</a></div></div>`).join('')}</div></div>`;
+      const resHtml = `<div class="sec-body">${L.resources.map(r=>`<div class="res-card" data-action="open-link" data-url="${esc(r.url)}">
+        <div class="rc-icon">🔗</div>
+        <div>
+          <div class="rc-title">${esc(r.title)}</div>
+          <a href="${esc(r.url)}" data-action="open-link" data-url="${esc(r.url)}" target="_blank" rel="noopener" class="rc-url">${esc(r.url)}</a>
+        </div>
+      </div>`).join('')}</div>`;
       const newsHtml = L.news ? `
         <div class="sec-body">
           <div class="card-sub">精选当地主流媒体的时政／社会新闻（对标 BBC News 水准），逐句精读＋朗读，练到能看懂当地新闻。</div>
@@ -3984,13 +4337,10 @@ let LANG = window.LANG_DATA || {};
         </div>` : '';
 
       $('langBody').innerHTML = `
-        <div class="goal-banner">
-          <div class="gb-label">🎯 我的语言目标</div>
-          <div class="gb-text">${esc(L.goal)}</div>
-          <div class="gb-sub">已内置 ${sceneCnt} 个真实生活场景、${lineCnt} 句本地人对话，外加 ${L.news.length} 篇当地主流媒体时政新闻精读（逐句＋朗读），照着练既能无痛开口，也能看懂新闻。</div>
-        </div>
         ${dashHtml}
+        <div style="height:12px"></div>
         ${todayHtml}
+        <div style="height:12px"></div>
         <details class="lang-sec" open>
           <summary><span class="sec-count">${sceneCnt} 场景</span>🗣 情景对话脚本（按真实生活场景）<span class="chev">▶</span></summary>
           <div class="sec-body">${sceneHtml}</div>
@@ -4045,11 +4395,11 @@ let LANG = window.LANG_DATA || {};
       } else {
         body = `<div class="card">
           <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px"><span>第 ${st.idx+1}/${st.qs.length} 题</span><span>${st.score} 分</span></div>
-          <div style="height:6px;background:var(--line-2);border-radius:4px;overflow:hidden;margin-bottom:14px"><div style="height:100%;width:${prog}%;background:linear-gradient(90deg,#5b8def,#7c5cff)"></div></div>
+          <div style="height:6px;background:var(--line-2);border-radius:4px;overflow:hidden;margin-bottom:14px"><div style="height:100%;width:${prog}%;background:var(--g-accent)"></div></div>
           <div style="font-size:16px;font-weight:600;margin-bottom:4px">${esc(q.q)}</div>
           ${q.say?`<button class="btn sm outline" data-action="speak" data-t="${encodeURIComponent(q.say)}" data-l="${q.sayLang}" style="margin-bottom:12px">🔊 听发音</button>`:''}
           <div style="display:flex;flex-direction:column;gap:8px">
-            ${q.opts.map(o=>`<button class="btn ${st.chosen?(o===q.answer?'sm ok':'sm'):'sm outline'}" data-action="quiz-ans" data-o="${esc(o)}" ${st.chosen?'disabled':''} style="justify-content:flex-start;${st.chosen&&o===q.answer?'background:var(--primary-soft);color:var(--primary);border-color:var(--primary)':''}${st.chosen&&st.chosen===o&&o!==q.answer?'background:#fde8e8;color:var(--red)':''}">${esc(o)}</button>`).join('')}
+            ${q.opts.map(o=>`<button class="btn ${st.chosen?(o===q.answer?'sm ok':'sm'):'sm outline'}" data-action="quiz-ans" data-o="${esc(o)}" ${st.chosen?'disabled':''} style="justify-content:flex-start;${st.chosen&&o===q.answer?'background:var(--primary-soft);color:var(--primary);border-color:var(--primary)':''}${st.chosen&&st.chosen===o&&o!==q.answer?'background:var(--red-soft);color:var(--red)':''}">${esc(o)}</button>`).join('')}
           </div>
           ${st.chosen?`<div style="margin-top:12px;font-size:13px;color:${st.chosen===q.answer?'var(--green)':'var(--red)'}">${st.chosen===q.answer?'✅ 答对啦':'❌ 正确答案：'+esc(q.answer)}</div><button class="btn sm" data-action="quiz-next" style="margin-top:8px">${st.idx+1>=st.qs.length?'看结果':'下一题 →'}</button>`:''}
         </div>`;
@@ -4074,7 +4424,7 @@ let LANG = window.LANG_DATA || {};
       $('langBody').innerHTML = `
         <div class="card">
           <div class="flex-between" style="margin-bottom:10px">
-            <span class="tag primary">第 ${st.idx+1}/${st.pick.length} 张</span>
+            <span class="tag accent">第 ${st.idx+1}/${st.pick.length} 张</span>
             <span class="lbl">${L.flag} ${L.name}</span>
           </div>
           <div class="progress" style="margin-bottom:14px"><span style="width:${fPct}%"></span></div>
@@ -4085,7 +4435,7 @@ let LANG = window.LANG_DATA || {};
           </div>
           <button class="btn sm outline block" data-action="speak" data-t="${encodeURIComponent(w.word)}" data-l="${L.tts}" style="margin-top:10px">🔊 发音</button>
           ${st.flipped?`<div style="margin-top:10px;padding:14px;background:var(--panel-ins);border-radius:var(--radius-sm)">
-            <div style="font-size:18px;font-weight:700;color:var(--primary)">${esc(w.meaning)}</div>
+            <div style="font-size:18px;font-weight:700;color:var(--accent)">${esc(w.meaning)}</div>
             <div style="font-size:13px;color:var(--ink-2);margin-top:8px;font-style:italic">「${esc(w.example||'')}」</div>
           </div>`:''}
         </div>
@@ -4714,11 +5064,11 @@ let LANG = window.LANG_DATA || {};
       const detailHtml = activeTab === 'cardio' ? cardioSports.map(s => `
         <details class="sport-sec">
           <summary>
-            <div>
+            <span class="chev">▶</span>
+            <div class="ss-head">
               <div class="ss-title">${s.icon} ${s.name}</div>
               ${s.goal?`<div class="ss-sub">${s.goal}</div>`:''}
             </div>
-            <span class="chev">▶</span>
           </summary>
           <div class="sec-body">
             ${s.note?`<div class="card-sub" style="color:var(--accent)">💡 ${s.note}</div>`:''}
@@ -4736,11 +5086,11 @@ let LANG = window.LANG_DATA || {};
         </details>`).join('') : strengthSports.map(s => `
         <details class="sport-sec">
           <summary>
-            <div>
+            <span class="chev">▶</span>
+            <div class="ss-head">
               <div class="ss-title">${s.icon} ${s.name} <span class="ss-tag">${s.muscles?.map(m=>MUSCLES[m]?.short||m).join('/')||''}</span></div>
               ${s.goal?`<div class="ss-sub">${s.goal}</div>`:''}
             </div>
-            <span class="chev">▶</span>
           </summary>
           <div class="sec-body">
             ${s.exercises ? `<div style="margin:8px 0">${s.exercises.map(e=>`<div class="exercise"><div style="font-weight:600;font-size:13px">${e.name}</div><div class="item-desc" style="margin-top:2px">${(MUSCLES[e.muscle]||{}).name||e.muscle} · ${e.sets}×${e.reps} · 休${e.rest}</div></div>`).join('')}</div>`:''}
@@ -5020,10 +5370,10 @@ let LANG = window.LANG_DATA || {};
               <div class="item">
                 <div class="item-body"><div class="item-title">${esc(t)}</div>
                   <div class="item-actions" style="margin-top:6px">
-                    <button class="tag pink" data-action="douyin-search" data-t="${esc(t)}" style="cursor:pointer;border:0">📱 抖音搜</button>
-                    <button class="tag purple" data-action="open-link" data-url="https://www.xiaohongshu.com/search?keyword=${encodeURIComponent(t)}" style="cursor:pointer;border:0">小红书 →</button>
-                    <button class="tag gold" data-action="copy-topic" data-t="${esc(t)}" style="cursor:pointer;border:0">📋 复制</button>
-                    <button class="tag teal" data-action="go" data-v="shoot" style="cursor:pointer;border:0">去拍摄计划</button>
+                    <button class="tag gray" data-action="douyin-search" data-t="${esc(t)}" style="cursor:pointer;border:1px solid var(--line-1)">📱 抖音搜</button>
+                    <button class="tag gray" data-action="open-link" data-url="https://www.xiaohongshu.com/search?keyword=${encodeURIComponent(t)}" style="cursor:pointer;border:1px solid var(--line-1)">小红书 →</button>
+                    <button class="tag gray" data-action="copy-topic" data-t="${esc(t)}" style="cursor:pointer;border:1px solid var(--line-1)">📋 复制</button>
+                    <button class="tag gray" data-action="go" data-v="shoot" style="cursor:pointer;border:1px solid var(--line-1)">去拍摄计划</button>
                   </div>
                 </div>
                 <button class="icon-btn" data-action="save-topic" data-t="${esc(t)}" title="移出灵感库" aria-label="移出灵感库" style="color:var(--red);flex-shrink:0">✕</button>
@@ -5115,18 +5465,21 @@ let LANG = window.LANG_DATA || {};
       return c;
     }
     function bookHeatmap() {
-      // 自适应范围（已减半）：没数据时只显示近期，有数据才从首次读书那周向前展开
+      // 自适应范围：没数据时只显示近期；有数据从首次读书那周向前展开；同时按卡片宽度自动铺满
       const logs = Object.keys(state.books.log || {}).filter(k => state.books.log[k] && state.books.log[k].done).sort();
-      let startWeeksAgo = 8;
+      let dataWeeks = 3;
       if (logs.length) {
         const earliest = new Date(logs[0]);
         const weeksSince = Math.ceil((Date.now() - earliest.getTime()) / (7 * 86400000));
-        startWeeksAgo = Math.min(8, Math.max(3, weeksSince + 1));
-      } else {
-        startWeeksAgo = 3; // 没数据时只显示近 3 周作为引导
+        dataWeeks = Math.min(30, Math.max(3, weeksSince + 1));
       }
+      // 小方格固定 18px，靠"显示更多周"把热力图铺满卡片宽度（手机 ~14 周、平板封顶 26 周避免溢出）
+      const avail = (window.innerWidth || 390) - 56;
+      const weeksForWidth = Math.max(3, Math.min(26, Math.floor((avail - 16) / (18 + 4))));
+      const startWeeksAgo = Math.max(dataWeeks, weeksForWidth);
       const WEEKS = startWeeksAgo, DAYS = WEEKS * 7;
-      const lvColor = ['var(--line-2)','#c6f6d5','#9ae6b4','#68d391','#38a169'];
+      // 与「读书」页紫色主题统一：空=浅线，热度=由浅到深的紫色阶（深浅主题自动适配）
+      const lvColor = ['var(--line-2)','var(--purple-soft)','color-mix(in srgb, var(--purple) 45%, var(--purple-soft))','color-mix(in srgb, var(--purple) 70%, var(--purple-soft))','var(--purple)'];
       const wdLabel = ['一','二','三','四','五','六','日'];
       const todayKey = today();
       // build 7×WEEKS grid: col 0 = oldest week (LEFT), col WEEKS-1 = newest (RIGHT) — like GitHub
@@ -5153,25 +5506,24 @@ let LANG = window.LANG_DATA || {};
             monthLabels.push({ col, label: (d.getMonth()+1)+'月' });
           }
           const isToday = (k === todayKey);
-          const txtColor = lvl >= 2 ? '#fff' : 'rgba(0,0,0,.55)';
-          const base = `width:18px;height:18px;border-radius:3px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:${txtColor};overflow:hidden`;
+          const base = `width:18px;height:18px;border-radius:4px;box-sizing:border-box;display:block`;
           const cellStyle = isToday
-            ? `${base};background:${lvColor[lvl]};border:1px solid rgba(0,120,212,.65);box-shadow:0 0 0 2px var(--primary)`
-            : `${base};background:${lvColor[lvl]};border:1px solid rgba(0,0,0,.08)`;
-          grid[row].push(`<div title="${k}${isToday?' (今天)':''}${rec&&rec.done?(' · 读 '+rec.min+' 分钟'):''}" style="${cellStyle}">${d.getDate()}</div>`);
+            ? `${base};background:${lvColor[lvl]};border:1.5px solid var(--purple);box-shadow:0 0 0 2px color-mix(in srgb,var(--purple) 28%, transparent)`
+            : `${base};background:${lvColor[lvl]};border:1px solid var(--line)`;
+          grid[row].push(`<div title="${k}${isToday?' (今天)':''}${rec&&rec.done?(' · 读 '+rec.min+' 分钟'):''}" style="${cellStyle}"></div>`);
         }
       }
       // month label row (aligned above their columns)
       let mlCells = '';
       for (let c = 0; c < WEEKS; c++) {
         const ml = monthLabels.find(m=>m.col===c);
-        mlCells += `<div style="font-size:10px;color:var(--muted);text-align:left;padding-left:1px">${ml?ml.label:''}</div>`;
+        mlCells += `<div style="font-size:10px;color:var(--muted);text-align:left;padding-left:1px;overflow:hidden;white-space:nowrap">${ml?ml.label:''}</div>`;
       }
       // body rows with weekday labels on the left
       const rowsHtml = grid.map((cells, ri) =>
         `<div style="display:flex;align-items:center;gap:4px"><span style="width:16px;font-size:10px;color:var(--muted);text-align:right;flex-shrink:0;line-height:1">${wdLabel[ri]}</span><div style="display:grid;grid-template-columns:repeat(${WEEKS},18px);gap:4px">${cells.join('')}</div></div>`
       ).join('');
-      return `<div>${mlCells?`<div style="display:grid;grid-template-columns:repeat(${WEEKS},18px);gap:4px;margin-bottom:4px;margin-left:20px">${mlCells}</div>`:''}<div>${rowsHtml}</div><div style="font-size:11px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px"><span style="width:13px;height:13px;border-radius:2px;background:var(--line-2);box-shadow:0 0 0 2px var(--primary);display:inline-block"></span> 蓝框 = 今天（${todayKey}）</div></div>`;
+      return `<div style="width:fit-content;margin:0 auto"><div>${rowsHtml}</div>${mlCells?`<div style="display:grid;grid-template-columns:repeat(${WEEKS},18px);gap:4px;margin-top:6px;margin-left:20px">${mlCells}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px"><span style="width:13px;height:13px;border-radius:3px;background:var(--line-2);border:1.5px solid var(--purple);display:inline-block"></span> 紫框 = 今天（${todayKey}）</div></div>`;
     }
     function bookGoalRing() {
       const total = state.books.goal.yearTarget || 24;
@@ -5188,24 +5540,28 @@ let LANG = window.LANG_DATA || {};
     }
     function bookShelfCard(b) {
       const statusLabel = { want: '想读', reading: '在读', done: '读完' }[b.status];
-      return `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px;background:rgba(255,255,255,.4)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-          <div style="flex:1;min-width:0">
-            <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(b.author || '佚名')} · <span class="tag" style="font-size:10px;padding:0 6px">${statusLabel}</span></div>
+      const initial = b.title.replace(/[《》]/g,'').slice(0,1);
+      return `<div class="book-row">
+        <div class="book-cover">${initial}</div>
+        <div class="br-main">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+            <div style="flex:1;min-width:0">
+              <div class="br-title">${esc(b.title)}</div>
+              <div class="br-meta">${esc(b.author || '佚名')} · <span class="tag purple" style="font-size:10px;padding:1px 6px">${statusLabel}</span></div>
+            </div>
+            <button class="icon-btn" data-action="book-del-shelf" data-id="${b.id}" style="color:var(--red);flex-shrink:0" title="移出书架">✕</button>
           </div>
-          <button class="icon-btn" data-action="book-del-shelf" data-id="${b.id}" style="color:var(--red);flex-shrink:0" title="移出书架">✕</button>
-        </div>
-        ${b.status === 'reading' ? `<div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-          <div style="flex:1;height:8px;background:var(--line-2);border-radius:999px;overflow:hidden"><div style="height:100%;width:${b.progress || 0}%;background:var(--primary);border-radius:999px;transition:width .3s"></div></div>
-          <span style="font-size:11px;color:var(--muted);min-width:34px;text-align:right">${b.progress || 0}%</span>
-          <button class="btn sm outline" data-action="book-progress" data-id="${b.id}" style="padding:3px 8px;font-size:11px">更新</button>
-        </div>` : ''}
-        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-          ${(b.builtin||b.text) ? `<button class="btn sm accent" data-action="book-read" data-id="${b.id}" style="padding:4px 9px;font-size:12px">${b.status==='reading'&&(b.progress||0)>0?'📖 续读':'📖 阅读'}</button>` : ''}
-          ${b.status !== 'want' ? `<button class="btn sm outline" data-action="book-status" data-id="${b.id}" data-s="want" style="padding:4px 9px;font-size:12px">↩ 想读</button>` : ''}
-          ${b.status !== 'reading' ? `<button class="btn sm outline" data-action="book-status" data-id="${b.id}" data-s="reading" style="padding:4px 9px;font-size:12px">📖 在读</button>` : ''}
-          ${b.status !== 'done' ? `<button class="btn sm ${b.status === 'reading' ? '' : 'outline'}" data-action="book-status" data-id="${b.id}" data-s="done" style="padding:4px 9px;font-size:12px">✓ 读完</button>` : `<span class="tag primary" style="font-size:11px;align-self:center">✓ 已读完</span>`}
+          ${b.status === 'reading' ? `<div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+            <div style="flex:1;height:8px;background:var(--line-2);border-radius:999px;overflow:hidden"><div style="height:100%;width:${b.progress || 0}%;background:var(--purple);border-radius:999px;transition:width .3s"></div></div>
+            <span style="font-size:11px;color:var(--muted);min-width:34px;text-align:right">${b.progress || 0}%</span>
+            <button class="btn sm outline" data-action="book-progress" data-id="${b.id}" style="padding:3px 8px;font-size:11px">更新</button>
+          </div>` : ''}
+          <div class="br-actions">
+            ${(b.builtin||b.text) ? `<button class="btn sm grad purple" data-action="book-read" data-id="${b.id}" style="padding:4px 9px;font-size:12px">${b.status==='reading'&&(b.progress||0)>0?'📖 续读':'📖 阅读'}</button>` : ''}
+            ${b.status !== 'want' ? `<button class="btn sm outline" data-action="book-status" data-id="${b.id}" data-s="want" style="padding:4px 9px;font-size:12px">↩ 想读</button>` : ''}
+            ${b.status !== 'reading' ? `<button class="btn sm ${b.status === 'want' && !(b.builtin||b.text) ? 'grad purple' : 'outline'}" data-action="book-status" data-id="${b.id}" data-s="reading" style="padding:4px 9px;font-size:12px">📖 在读</button>` : ''}
+            ${b.status !== 'done' ? `<button class="btn sm outline" data-action="book-status" data-id="${b.id}" data-s="done" style="padding:4px 9px;font-size:12px">✓ 读完</button>` : `<span class="tag purple" style="font-size:11px;align-self:center">✓ 已读完</span>`}
+          </div>
         </div>
       </div>`;
     }
@@ -5293,6 +5649,7 @@ let LANG = window.LANG_DATA || {};
       }
       if (!paras.length){ toast('这本书还没有可阅读的正文，先「贴入全文」吧'); return; }
       const meta = bookItemMeta(item);
+      try { const pt = $('pageTitle'); if (pt) pt.textContent = (meta && meta.title) ? meta.title : '读书计划'; } catch(_){}
       if (item.status !== 'reading'){ item.status = 'reading'; }
       if (!state.books.log[today()]) state.books.log[today()] = { done:false, min:0 };
       state.books.log[today()].done = true;
@@ -5529,11 +5886,11 @@ let LANG = window.LANG_DATA || {};
             <div style="width:fit-content;margin:0 auto">
               <div style="margin-top:10px;padding-bottom:4px">${bookHeatmap()}</div>
               <div style="display:flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;color:var(--muted);padding-left:22px">
-                <span>少</span><span style="width:13px;height:13px;border-radius:2px;background:var(--line-2);display:inline-block"></span>
-                <span style="width:13px;height:13px;border-radius:2px;background:#c6f6d5;display:inline-block"></span>
-                <span style="width:13px;height:13px;border-radius:2px;background:#9ae6b4;display:inline-block"></span>
-                <span style="width:13px;height:13px;border-radius:2px;background:#68d391;display:inline-block"></span>
-                <span style="width:13px;height:13px;border-radius:2px;background:#38a169;display:inline-block"></span><span>多</span>
+                <span>少</span><span style="width:13px;height:13px;border-radius:3px;background:var(--line-2);border:1px solid var(--line);display:inline-block"></span>
+                <span style="width:13px;height:13px;border-radius:3px;background:var(--purple-soft);display:inline-block"></span>
+                <span style="width:13px;height:13px;border-radius:3px;background:color-mix(in srgb,var(--purple) 45%,var(--purple-soft));display:inline-block"></span>
+                <span style="width:13px;height:13px;border-radius:3px;background:color-mix(in srgb,var(--purple) 70%,var(--purple-soft));display:inline-block"></span>
+                <span style="width:13px;height:13px;border-radius:3px;background:var(--purple);display:inline-block"></span><span>多</span>
               </div>
             </div>
           </details>
@@ -5597,12 +5954,15 @@ let LANG = window.LANG_DATA || {};
               const inShelf = state.books.shelf.find(s=>s.builtin===b.id);
               const prog = inShelf ? (inShelf.progress||0) : 0;
               const hasParas = !!(b.paras);
-              return `<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line-2)">
-                <div style="flex:1;min-width:0">
-                  <div style="font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
-                  <div style="font-size:11.5px;color:var(--muted);margin-top:1px">${esc(b.author)} · ${b.year}${prog?(' · 已读 '+prog+'%'):''}${!hasParas?' · 待加载正文':''}</div>
+              return `<div class="book-row">
+                <div class="book-cover">${b.title.slice(0,1)}</div>
+                <div class="br-main">
+                  <div class="br-title">${esc(b.title)}</div>
+                  <div class="br-meta">${esc(b.author)} · ${b.year}${prog?(' · 已读 '+prog+'%'):''}${!hasParas?' · 待加载正文':''}</div>
+                  <div class="br-actions">
+                    <button class="btn sm ${prog?'outline':'grad purple'}" data-action="book-read" data-builtin="${b.id}">${prog?'📖 续读':(hasParas?'📖 阅读':'📥 加载')}</button>
+                  </div>
                 </div>
-                <button class="btn sm ${prog?'outline':(hasParas?'grad':'primary')}" data-action="book-read" data-builtin="${b.id}" style="flex-shrink:0;padding:5px 12px;font-size:12px">${prog?'📖 续读':(hasParas?'📖 阅读':'📥 加载')}</button>
               </div>`;
             }).join('') || '<div class="empty-box"><div class="eb-ic">📚</div><div class="eb-t">内置书库未初始化</div></div>'}
           </details>
@@ -5649,17 +6009,17 @@ let LANG = window.LANG_DATA || {};
       const saved = state.bookSaved.includes(b.t);
       const onShelf = state.books && state.books.shelf.some(s=>s.title===b.t);
       const hasText = !!(state.books && state.books.shelf.find(s=>s.title===b.t && (s.builtin||s.text)));
-      return `<div style="display:flex;gap:12px;padding:14px;border:1px solid var(--line);border-radius:var(--radius-sm);margin-bottom:14px;background:rgba(255,255,255,.55)">
-        <div style="width:52px;height:72px;background:${b.cover || '#deecf9'};border-radius:4px;flex-shrink:0;display:grid;place-items:center;font-size:22px;color:#0078d4;font-weight:700">${b.t.slice(0,1)}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.t)}</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(b.a)} · ${b.y} <span class="tag" style="background:${b.cover};color:#0078d4;padding:1px 6px;font-size:10px;margin-left:4px">${esc(b.cat)}</span></div>
-          <div style="display:flex;align-items:center;gap:6px;margin-top:10px;flex-wrap:wrap">
-            <button class="btn sm ${onShelf?'outline':'primary'}" data-action="book-add-shelf" data-t="${esc(b.t)}" data-a="${esc(b.a)}" style="padding:5px 11px;font-size:12px">${onShelf?'✓ 在书架':'＋ 加入书架'}</button>
-            <button class="btn sm ${hasText?'outline':'accent'}" data-action="book-read" data-title="${esc(b.t)}" data-author="${esc(b.a)}" style="padding:5px 11px;font-size:12px">${hasText?'📖 续读':'📖 阅读'}</button>
+      return `<div class="book-row">
+        <div class="book-cover" style="background:${b.cover || 'var(--purple-soft)'};color:var(--purple)">${b.t.slice(0,1)}</div>
+        <div class="br-main">
+          <div class="br-title">${esc(b.t)}</div>
+          <div class="br-meta">${esc(b.a)} · ${b.y} <span class="tag purple" style="margin-left:4px">${esc(b.cat)}</span></div>
+          <div class="br-actions">
+            <button class="btn sm ${onShelf?'outline':'grad purple'}" data-action="book-add-shelf" data-t="${esc(b.t)}" data-a="${esc(b.a)}">${onShelf?'✓ 在书架':'＋ 加入书架'}</button>
+            <button class="btn sm ${hasText?'outline':'grad purple'}" data-action="book-read" data-title="${esc(b.t)}" data-author="${esc(b.a)}">${hasText?'📖 续读':'📖 阅读'}</button>
             <span style="flex:1"></span>
-            <a href="${esc(b.douban)}" data-action="open-link" data-url="${esc(b.douban)}" target="_blank" rel="noopener" style="font-size:11.5px;color:var(--primary);text-decoration:none;white-space:nowrap;padding:4px 6px">豆瓣 ↗</a>
-            <button class="btn sm ghost" data-action="save-book" data-t="${esc(b.t)}" style="padding:4px 8px;font-size:11.5px">${saved?'★ 已藏':'☆ 收藏'}</button>
+            <a href="${esc(b.douban)}" data-action="open-link" data-url="${esc(b.douban)}" target="_blank" rel="noopener" style="font-size:11.5px;color:var(--purple);text-decoration:none;white-space:nowrap;padding:4px 6px">豆瓣 ↗</a>
+            <button class="btn sm ghost" data-action="save-book" data-t="${esc(b.t)}">${saved?'★ 已藏':'☆ 收藏'}</button>
           </div>
         </div>
       </div>`;
@@ -5671,15 +6031,15 @@ let LANG = window.LANG_DATA || {};
       const olink = 'https://openlibrary.org' + b.key;
       const alink = (b.ia && b.ia[0]) ? `https://archive.org/details/${b.ia[0]}` : '';
       const glink = `https://books.google.com/books?q=${encodeURIComponent(b.title + ' ' + ((b.author_name||[])[0]||''))}`;
-      return `<div style="display:flex;gap:10px;padding:12px;border:1px solid var(--line);border-radius:var(--radius-sm);margin-bottom:10px;background:var(--bg)">
-        ${cover ? `<img src="${cover}" style="width:56px;height:80px;object-fit:cover;border-radius:4px;flex-shrink:0">` : '<div style="width:56px;height:80px;background:var(--line);border-radius:4px;flex-shrink:0;display:grid;place-items:center;font-size:20px">📖</div>'}
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.title)}</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(authors)} · ${year}</div>
-          <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
-            <a href="${olink}" data-action="open-link" data-url="${olink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">📖 Open Library</a>
-            ${alink ? `<a href="${alink}" data-action="open-link" data-url="${alink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">📚 Archive 阅读</a>` : ''}
-            <a href="${glink}" data-action="open-link" data-url="${glink}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px;text-decoration:none">🔍 Google Books</a>
+      return `<div class="book-row">
+        ${cover ? `<div class="book-cover"><img src="${cover}" alt="${esc(b.title)}"></div>` : '<div class="book-cover">📖</div>'}
+        <div class="br-main">
+          <div class="br-title">${esc(b.title)}</div>
+          <div class="br-meta">${esc(authors)} · ${year}</div>
+          <div class="br-actions">
+            <a href="${olink}" data-action="open-link" data-url="${olink}" target="_blank" rel="noopener" style="color:var(--purple);font-size:12px;text-decoration:none">📖 Open Library</a>
+            ${alink ? `<a href="${alink}" data-action="open-link" data-url="${alink}" target="_blank" rel="noopener" style="color:var(--purple);font-size:12px;text-decoration:none">📚 Archive</a>` : ''}
+            <a href="${glink}" data-action="open-link" data-url="${glink}" target="_blank" rel="noopener" style="color:var(--purple);font-size:12px;text-decoration:none">🔍 Google</a>
           </div>
         </div>
       </div>`;
@@ -5723,13 +6083,18 @@ let LANG = window.LANG_DATA || {};
     function bookCard(b){
       const saved = state.bookSaved.includes(b.t);
       const quote = b.q[0];
-      return `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px">
-        <div style="font-weight:700">${b.t}</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">${b.a} · ${b.m}</div>
-        <div class="quote" style="font-size:14px">「${quote}」</div>
-        <div class="item-actions" style="margin-top:8px">
-          <button class="btn sm ${saved?'outline':'accent'}" data-action="save-book" data-t="${b.t}">${saved?'已收藏':'收藏'}</button>
-        </div></div>`;
+      const initial = b.t.replace(/[《》]/g,'').slice(0,1);
+      return `<div class="book-row">
+        <div class="book-cover">${initial}</div>
+        <div class="br-main">
+          <div class="br-title">${b.t}</div>
+          <div class="br-meta">${b.a} · ${b.m}</div>
+          <div class="quote" style="font-size:13.5px;color:var(--ink-3);margin-top:6px">「${quote}」</div>
+          <div class="br-actions">
+            <button class="btn sm ${saved?'outline':'grad purple'}" data-action="save-book" data-t="${b.t}">${saved?'★ 已收藏':'☆ 收藏'}</button>
+          </div>
+        </div>
+      </div>`;
     }
 
     // ===================== 拍摄计划 =====================
@@ -5846,7 +6211,7 @@ let LANG = window.LANG_DATA || {};
           <details class="fold">
             <summary>🎞 胶片模拟配方库（X-M5 杀手锏 · ${SHOOT_FILM.length} 种）</summary>
             <div class="grid cols-2" style="gap:4px 12px;margin-top:8px">
-              ${SHOOT_FILM.map(f=>`<div style="font-size:12.5px;line-height:1.8"><b style="color:var(--red,#e6433a)">${f.n}</b> · <span class="sub">${f.u}</span></div>`).join('')}
+              ${SHOOT_FILM.map(f=>`<div style="font-size:12.5px;line-height:1.8"><b style="color:var(--red)">${f.n}</b> · <span class="sub">${f.u}</span></div>`).join('')}
             </div>
             <div class="card-sub" style="margin-top:8px">机顶胶片模拟转盘 + 3 个可自定义档位，把常用配方存进去一键切换。</div>
           </details>
@@ -5899,7 +6264,7 @@ let LANG = window.LANG_DATA || {};
         <div style="display:flex;align-items:center;gap:8px;margin:7px 0">
           <span style="width:54px;font-size:12px;color:var(--muted);flex-shrink:0">${esc(x.c)}</span>
           <div style="flex:1;height:10px;background:var(--line-2);border-radius:6px;overflow:hidden">
-            <div style="height:100%;width:${Math.round(x.v/maxCat*100)}%;background:linear-gradient(90deg,#ff9a3c,#ff6b6b);border-radius:6px"></div>
+            <div style="height:100%;width:${Math.round(x.v/maxCat*100)}%;background:linear-gradient(90deg,var(--expense-a),var(--expense-b));border-radius:6px"></div>
           </div>
           <span style="width:64px;text-align:right;font-size:12px;font-weight:600">${fmtMoney(x.v)}</span>
         </div>`).join('') : '<div class="empty-box" style="padding:18px 12px"><div class="eb-ic">📭</div><div>本月还没有支出</div></div>';
@@ -5917,7 +6282,7 @@ let LANG = window.LANG_DATA || {};
               <div style="font-size:11px;color:var(--muted);margin-top:2px">${esc(f.book)}</div>
             </div>
             <div style="display:flex;align-items:center;gap:10px">
-              <span style="font-weight:700;font-size:15px;color:${f.type==='inc'?'#2e9e5b':'var(--ink-1)'}">${f.type==='inc'?'+':'-'}${fmtMoney(f.amount).replace('¥','¥')}</span>
+              <span style="font-weight:700;font-size:15px;color:${f.type==='inc'?'var(--green)':'var(--ink-1)'}">${f.type==='inc'?'+':'-'}${fmtMoney(f.amount).replace('¥','¥')}</span>
               <button class="icon-btn inline" data-action="del-bill" data-id="${f.id}" title="删除" style="color:var(--red)">✕</button>
             </div>
           </div>
@@ -5933,25 +6298,27 @@ let LANG = window.LANG_DATA || {};
             <div class="card-title">💰 本月概览</div><span class="tag green">${mk}</span>
           </div>
           <div class="metric-row">
-            <div class="metric"><div class="mv" style="color:var(--red)">${fmtMoney(exp)}</div><div class="ml">支出</div></div>
-            <div class="metric"><div class="mv" style="color:var(--green)">${fmtMoney(inc)}</div><div class="ml">收入</div></div>
-            <div class="metric"><div class="mv">${fmtMoney(balance)}</div><div class="ml">结余</div></div>
+            <div class="metric"><div class="mv ${exp>0?'exp':'zero'}">${fmtMoney(exp)}</div><div class="ml">支出</div></div>
+            <div class="metric"><div class="mv ${inc>0?'inc':'zero'}">${fmtMoney(inc)}</div><div class="ml">收入</div></div>
+            <div class="metric"><div class="mv ${balance>0?'inc':balance<0?'exp':'zero'}">${fmtMoney(balance)}</div><div class="ml">结余</div></div>
           </div>
 
           <div class="budget-dashboard ${over?'over':overForecast?'warn':''}">
             <div class="budget-main">
-              <div class="budget-block">
-                <div class="budget-num ${over?'over-num':''}">${over?'超支':remaining>0?'剩余':'剩余'}</div>
+              <div class="budget-hero">
+                <div class="budget-num ${over?'over-num':''}">${over?'超支':'剩余'}</div>
                 <div class="budget-big ${over?'over-num':remaining<=0?'zero':''}">${over?fmtMoney(exp-budget):fmtMoney(remaining)}</div>
               </div>
-              ${remaining > 0 ? `
-                <div class="budget-block">
-                  <div class="budget-num">日均可用</div>
-                  <div class="budget-big">${fmtMoney(dailyLeft)}<small>/天</small></div>
-                </div>` : ''}
-              <div class="budget-block">
-                <div class="budget-num">已用预算</div>
-                <div class="budget-big">${budgetPct}%</div>
+              <div class="budget-side">
+                ${remaining > 0 ? `
+                  <div class="budget-side-row">
+                    <span class="side-label">日均可用</span>
+                    <span class="side-value">${fmtMoney(dailyLeft)}<small>/天</small></span>
+                  </div>` : ''}
+                <div class="budget-side-row">
+                  <span class="side-label">已用预算</span>
+                  <span class="side-value ${over?'over-num':overForecast?'warn-text':''}">${budgetPct}%</span>
+                </div>
               </div>
             </div>
             <div class="budget-bar-wrap">
@@ -6512,27 +6879,33 @@ let LANG = window.LANG_DATA || {};
 
     // ===================== 「我」视图（导航重构：底部第四Tab）=====================
     function renderMe(){
+      const topics = Array.isArray(state.topicSaved) ? state.topicSaved.length : 0;
+      const diaryN = (state.diary && Array.isArray(state.diary.entries)) ? state.diary.entries.length : 0;
+      const pianoStat = pianoModuleStat(); const mastered = pianoStat.mastered;
+      const streak = (typeof bookStreak === 'function') ? bookStreak() : 0;
       const html = `
-        <div class="section-title" data-c="primary">我的</div>
-        <div class="card">
-          <div style="display:flex;align-items:center;gap:12px">
-            <div class="avatar" data-action="open-avatar" title="点击换头像" style="cursor:pointer;font-size:30px">${esc(state.avatar||'🎯')}</div>
-            <div style="flex:1;min-width:0">
-              <div style="font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(state.wbName||'我的工作台')}</div>
-              <div class="card-sub">Personal Growth OS · v15</div>
-            </div>
-            <button class="btn sm outline" data-action="rename-me">改名</button>
+        <div class="me-hero">
+          <div class="me-avatar" data-action="open-avatar" title="点击换头像" role="button" tabindex="0" aria-label="更换头像">${esc(state.avatar||'🎯')}</div>
+          <div class="me-id">
+            <div class="me-name">${esc(state.wbName||'我的工作台')}</div>
+            <div class="me-sub">Personal Growth OS · v15</div>
           </div>
+          <button class="btn sm outline" data-action="rename-me">改名</button>
+        </div>
+        <div class="me-stats">
+          <div class="me-stat"><div class="ms-num">${mastered}</div><div class="ms-lbl">钢琴曲</div></div>
+          <div class="me-stat"><div class="ms-num">${topics}</div><div class="ms-lbl">灵感</div></div>
+          <div class="me-stat"><div class="ms-num">${diaryN}</div><div class="ms-lbl">日记</div></div>
         </div>
         <div class="section-title" data-c="primary">数据与备份</div>
-        <div class="card" style="display:flex;flex-direction:column;gap:8px">
-          <button class="btn sm outline" data-action="export" style="width:100%">⬇️ 导出数据(备份/传手机)</button>
-          <button class="btn sm outline" data-action="import" style="width:100%">⬆️ 导入数据</button>
-          <button class="btn sm outline" data-action="help-update" style="width:100%">🔄 PWA 没更新?点这里</button>
-          <button class="btn sm outline" data-action="reset-data" style="width:100%;color:var(--red)">🗑️ 清空所有数据</button>
+        <button class="btn grad block" data-action="export" style="justify-content:center">⬇️ 导出数据<small style="font-weight:400;opacity:.85;margin-left:6px">备份 / 传手机</small></button>
+        <div class="row" style="gap:10px;margin-top:10px">
+          <button class="btn outline block" data-action="import" style="justify-content:center;flex:1">⬆️ 导入数据</button>
+          <button class="btn outline block" data-action="help-update" style="justify-content:center;flex:1">🔄 PWA 没更新?</button>
         </div>
-        <div class="card-sub" style="margin:2px 2px 14px;font-size:11px">数据存在本机浏览器,换设备/清缓存会丢,记得常导出。</div>
-        <button class="btn outline" data-action="open-drawer" style="width:100%">☰ 查看全部模块</button>
+        <button class="me-action danger full" data-action="reset-data" style="margin-top:14px"><span class="ma-ic">🗑️</span><span class="ma-t">清空所有数据<small>不可恢复，请谨慎</small></span></button>
+        <button class="btn ghost block" data-action="open-drawer" style="margin-top:12px;justify-content:center">☰ 查看全部模块</button>
+        <div class="card-sub" style="margin:12px 2px 14px;font-size:11px;text-align:center">数据存在本机浏览器，换设备 / 清缓存会丢，记得常导出。</div>
       `;
       $('main').innerHTML = html;
     }
@@ -6681,7 +7054,7 @@ let LANG = window.LANG_DATA || {};
           const ans = data.answer.replace(/[.!?。！？,，;；]+$/g,'').replace(/\s+/g,' ').trim().toLowerCase();
           const ua = userInput.replace(/[.!?。！？,，;；]+$/g,'').replace(/\s+/g,' ').trim().toLowerCase();
           const result = document.getElementById('tres'+i);
-          if (!userInput) { result.innerHTML = '<span style="color:#a94442">请先输入翻译</span>'; break; }
+          if (!userInput) { result.innerHTML = '<span style="color:var(--red-ink)">请先输入翻译</span>'; break; }
           // 智能核对：完全一致或 80% 相似算正确
           const exact = ua === ans;
           const sim = (function(a, b){
@@ -6691,9 +7064,9 @@ let LANG = window.LANG_DATA || {};
             return inter / Math.max(setA.size, setB.size);
           })(ua, ans);
           if (exact || sim >= 0.8) {
-            result.innerHTML = `<span style="color:#4caf84;font-weight:600">✓ 正确！</span><div style="margin-top:4px;color:var(--muted);font-size:13px">参考答案：${data.answer}</div>`;
+            result.innerHTML = `<span style="color:var(--green);font-weight:600">✓ 正确！</span><div style="margin-top:4px;color:var(--muted);font-size:13px">参考答案：${data.answer}</div>`;
           } else {
-            result.innerHTML = `<span style="color:#d9534f;font-weight:600">✗ 再试试</span><div style="margin-top:4px;color:var(--muted);font-size:13px">参考答案：${data.answer}</div>`;
+            result.innerHTML = `<span style="color:var(--red);font-weight:600">✗ 再试试</span><div style="margin-top:4px;color:var(--muted);font-size:13px">参考答案：${data.answer}</div>`;
           }
           break;
         }
