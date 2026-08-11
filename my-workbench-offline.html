@@ -3159,9 +3159,9 @@ let LANG = window.LANG_DATA || {};
     const TOPIC_HOT = [
       { t:'#钢琴版热门BGM 挑战', cat:'弹琴', platform:'douyin' },
       { t:'#30天学会一首歌', cat:'挑战', platform:'douyin' },
-      { t:'#普通人学琴第N天', cat:'成长', platform:'xiaohongshu', url:'https://www.xiaohongshu.com/search?keyword=普通人学琴' },
+      { t:'#普通人学琴第N天', cat:'成长', platform:'xiaohongshu', url:'https://www.xiaohongshu.com/search_result?keyword=普通人学琴' },
       { t:'#Barre芭杆塑形', cat:'运动', platform:'douyin' },
-      { t:'#零基础学韩语', cat:'学习', platform:'xiaohongshu', url:'https://www.xiaohongshu.com/search?keyword=零基础学韩语' },
+      { t:'#零基础学韩语', cat:'学习', platform:'xiaohongshu', url:'https://www.xiaohongshu.com/search_result?keyword=零基础学韩语' },
       { t:'#粤语港剧打卡', cat:'语言', platform:'douyin' }
     ];
 
@@ -3516,17 +3516,11 @@ let LANG = window.LANG_DATA || {};
         } catch (_) { toast('抖音网页已封,请在 App 内搜索'); }
         return;
       }
-      const isPWA = (window.navigator.standalone === true) ||
-                    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
       try {
-        // 策略1：新窗口打开，并保留源的 PWA 页面（有返回）
-        const w = window.open('about:blank', '_blank', 'noopener');
-        if (w) {
-          // 先写个跳转页，规避 iOS PWA 对 opener 的限制
-          try { w.opener = null; } catch (_) {}
-          w.location.href = url;
-          return;
-        }
+        // 策略1：直接用目标 URL 开新窗口（不再先开 about:blank 再跳转——
+        // 那样在移动端易残留空白页，且部分浏览器会拦截二次跳转导致白屏）
+        const w = window.open(url, '_blank', 'noopener,noreferrer');
+        if (w) { try { w.opener = null; } catch (_) {} return; }
       } catch (_) {}
       try {
         // 策略2：兜底，用 a 标签触发（部分浏览器需要真实用户手势上下文）
@@ -5306,9 +5300,9 @@ let LANG = window.LANG_DATA || {};
           { title:'#钢琴版热门BGM挑战', url:'https://www.douyin.com/search?keyword=%E9%92%A2%E7%90%B4%E7%89%88BGM%E6%8C%91%E6%88%98', hot:410000 }
         ],
         xiaohongshu: [
-          { title:'#零基础学韩语', url:'https://www.xiaohongshu.com/search?keyword=%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%AD%A6%E9%9F%A9%E8%AF%AD', hot:380000 },
-          { title:'#Barre芭杆塑形', url:'https://www.xiaohongshu.com/search?keyword=Barre%E8%8A%AD%E6%9D%86', hot:320000 },
-          { title:'#粤语港剧打卡', url:'https://www.xiaohongshu.com/search?keyword=%E7%B2%A4%E8%AF%AD%E6%B8%AF%E5%89%A7', hot:280000 }
+          { title:'#零基础学韩语', url:'https://www.xiaohongshu.com/search_result?keyword=%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%AD%A6%E9%9F%A9%E8%AF%AD', hot:380000 },
+          { title:'#Barre芭杆塑形', url:'https://www.xiaohongshu.com/search_result?keyword=Barre%E8%8A%AD%E6%9D%86', hot:320000 },
+          { title:'#粤语港剧打卡', url:'https://www.xiaohongshu.com/search_result?keyword=%E7%B2%A4%E8%AF%AD%E6%B8%AF%E5%89%A7', hot:280000 }
         ],
         bilibili: [
           { title:'钢琴入门 30 课', url:'https://search.bilibili.com/all?keyword=%E9%92%A2%E7%90%B4%E5%85%A5%E9%97%A8', hot:560000 },
@@ -5409,7 +5403,7 @@ let LANG = window.LANG_DATA || {};
                 <div class="item-body"><div class="item-title">${esc(t)}</div>
                   <div class="item-actions" style="margin-top:6px">
                     <button class="tag gray" data-action="douyin-search" data-t="${esc(t)}" style="cursor:pointer;border:1px solid var(--line-1)">📱 抖音搜</button>
-                    <button class="tag gray" data-action="open-link" data-url="https://www.xiaohongshu.com/search?keyword=${encodeURIComponent(t)}" style="cursor:pointer;border:1px solid var(--line-1)">小红书 →</button>
+                    <button class="tag gray" data-action="open-link" data-url="https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(t)}" style="cursor:pointer;border:1px solid var(--line-1)">小红书 →</button>
                     <button class="tag gray" data-action="copy-topic" data-t="${esc(t)}" style="cursor:pointer;border:1px solid var(--line-1)">📋 复制</button>
                     <button class="tag gray" data-action="go" data-v="shoot" style="cursor:pointer;border:1px solid var(--line-1)">去拍摄计划</button>
                   </div>
@@ -5433,7 +5427,7 @@ let LANG = window.LANG_DATA || {};
             <div class="item-actions">
               ${t.tags.map(x=>{
                 const u = x === '抖音' ? 'https://www.douyin.com/search?keyword=' + encodeURIComponent(t.t)
-                  : x === '小红书' ? 'https://www.xiaohongshu.com/search?keyword=' + encodeURIComponent(t.t)
+                  : x === '小红书' ? 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent(t.t)
                   : x === 'B站' ? 'https://search.bilibili.com/all?keyword=' + encodeURIComponent(t.t) : '';
                 if (x === '抖音') {
                   return `<button class="tag gray" data-action="douyin-search" data-t="${esc(t.t)}" style="cursor:pointer;border:1px solid var(--line-1)">📱 抖音</button>`;
@@ -7021,7 +7015,7 @@ let LANG = window.LANG_DATA || {};
       const streak = (typeof bookStreak === 'function') ? bookStreak() : 0;
       const html = `
         <div class="me-hero">
-          <div class="me-avatar" data-action="open-avatar" title="点击换头像" role="button" tabindex="0" aria-label="更换头像">${esc(state.avatar||'🎯')}</div>
+          <div class="me-avatar" data-action="open-avatar" title="点击换头像" role="button" tabindex="0" aria-label="更换头像">${avatarSVG(state.avatar)}</div>
           <div class="me-id">
             <div class="me-name">${esc(state.wbName||'我的工作台')}</div>
             <div class="me-sub">Personal Growth OS · v15</div>
@@ -7070,6 +7064,7 @@ let LANG = window.LANG_DATA || {};
         case 'back': history.back(); break;
         case 'open-drawer': openDrawer(); break;
         case 'rename-me': rename(); if (currentView === 'me') renderMe(); break;
+        case 'rename-confirm': applyRename(); break;
         case 'report': navigate('week', t.dataset.mod); break;
         case 'go': {
           if(_reader) finalizeReader();
@@ -7732,7 +7727,20 @@ let LANG = window.LANG_DATA || {};
       r.readAsText(file);
     }
 
-    function rename(){ const n=prompt('给工作台起个名字：', state.wbName); if(n&&n.trim()){ state.wbName=n.trim(); save(); $('pageTitle').textContent=state.wbName; $('drawerName').textContent=state.wbName; } }
+    function rename(){
+      openModal(`<h3>给工作台起个名字</h3>
+        <input class="input" id="renameInput" value="${esc(state.wbName||'')}" placeholder="例如：我的成长工作台" aria-label="工作台名称" style="margin:12px 0" />
+        <div class="modal-actions"><button class="btn subtle" data-action="modal-close">取消</button><button class="btn grad" data-action="rename-confirm">保存</button></div>`);
+      const inp = document.getElementById('renameInput');
+      if (inp) { inp.focus(); inp.select(); inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); const b = document.querySelector('[data-action="rename-confirm"]'); if (b) b.click(); } }); }
+    }
+    function applyRename(){
+      const inp = document.getElementById('renameInput');
+      const n = inp ? inp.value.trim() : '';
+      if (n) { state.wbName = n; save(); const pt = $('pageTitle'); if (pt) pt.textContent = n; const dn = $('drawerName'); if (dn) dn.textContent = n; }
+      closeModal();
+      if (currentView === 'me') renderMe();
+    }
 
     // 渲染抽屉顶部头像
     function renderDrawerAvatar(){
