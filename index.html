@@ -3502,7 +3502,46 @@ let LANG = window.LANG_DATA || {};
       };
       tryScheme(0);
     }
-    // 外部链接打开器（v14 修复：抖音/小红书/B站打不开、B站跳知乎回不来）
+    // 小红书：网页端搜索已被封锁（返回「你访问的页面不见了」），与抖音同理——
+    // 直接唤起 App 搜索，未安装则复制搜索词兜底
+    function openXhsSearch(keyword) {
+      const txt = (keyword || '').replace(/^#/, '').trim();
+      if (!txt) { toast('话题为空'); return; }
+      const kw = encodeURIComponent(txt);
+      // 先复制，保证即便唤起失败也有可粘贴内容
+      try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).catch(()=>{}); } catch (_) {}
+      const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+      if (!isMobile) {
+        toast('已复制「' + txt + '」，请打开小红书 App 搜索框粘贴');
+        return;
+      }
+      // 自定义 scheme 唤起（不会像 http 那样替换当前页；未安装则静默失败）
+      const schemes = [
+        'xhsdiscover://search_result?keyword=' + kw,
+        'xhsdiscover://search?keyword=' + kw,
+        'xhsdiscover://'
+      ];
+      let invoked = false;
+      const tryScheme = (i) => {
+        if (i >= schemes.length || invoked) return;
+        const onHide = () => {
+          invoked = true;
+          document.removeEventListener('visibilitychange', onHide);
+          toast('已打开小红书 App，搜索：' + txt);
+        };
+        document.addEventListener('visibilitychange', onHide);
+        setTimeout(() => {
+          document.removeEventListener('visibilitychange', onHide);
+          if (!invoked && i === schemes.length - 1) {
+            toast('已复制「' + txt + '」，去小红书 App 搜索框粘贴');
+          } else if (!invoked) {
+            tryScheme(i + 1);
+          }
+        }, 900);
+        try { location.href = schemes[i]; } catch (_) { tryScheme(i + 1); }
+      };
+      tryScheme(0);
+    }
     // 核心思路：在 PWA standalone / iOS 下，不能用 window.location.href 替换当前页
     // （会丢失返回、且抖音小红书 webview 白屏拦截），必须开新窗口并保留本页。
     function openExternal(url) {
@@ -3513,6 +3552,14 @@ let LANG = window.LANG_DATA || {};
           const kw = new URL(url).searchParams.get('keyword') || '';
           openDouyinSearch(decodeURIComponent(kw));
         } catch (_) { toast('抖音网页已封,请在 App 内搜索'); }
+        return;
+      }
+      // 小红书网页端搜索已封锁（返回「你访问的页面不见了」）：不跳网页，改唤起 App 搜（兜底复制）
+      if (/xiaohongshu\.com\/search_result/.test(url)) {
+        try {
+          const kw = new URL(url).searchParams.get('keyword') || '';
+          openXhsSearch(decodeURIComponent(kw));
+        } catch (_) { toast('小红书网页已封,请在 App 内搜索'); }
         return;
       }
       try {
@@ -5402,7 +5449,7 @@ let LANG = window.LANG_DATA || {};
                 <div class="item-body"><div class="item-title">${esc(t)}</div>
                   <div class="item-actions" style="margin-top:6px">
                     <button class="tag gray" data-action="douyin-search" data-t="${esc(t)}" style="cursor:pointer;border:1px solid var(--line-1)">📱 抖音搜</button>
-                    <button class="tag gray" data-action="open-link" data-url="https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(t)}" style="cursor:pointer;border:1px solid var(--line-1)">小红书 →</button>
+                    <button class="tag gray" data-action="xhs-search" data-t="${esc(t)}" style="cursor:pointer;border:1px solid var(--line-1)">📱 小红书</button>
                     <button class="tag gray" data-action="copy-topic" data-t="${esc(t)}" style="cursor:pointer;border:1px solid var(--line-1)">📋 复制</button>
                     <button class="tag gray" data-action="go" data-v="shoot" style="cursor:pointer;border:1px solid var(--line-1)">去拍摄计划</button>
                   </div>
@@ -5431,6 +5478,9 @@ let LANG = window.LANG_DATA || {};
                 if (x === '抖音') {
                   return `<button class="tag gray" data-action="douyin-search" data-t="${esc(t.t)}" style="cursor:pointer;border:1px solid var(--line-1)">📱 抖音</button>`;
                 }
+                if (x === '小红书') {
+                  return `<button class="tag gray" data-action="xhs-search" data-t="${esc(t.t)}" style="cursor:pointer;border:1px solid var(--line-1)">📱 小红书</button>`;
+                }
                 return u ? `<button class="tag gray" data-action="open-link" data-url="${esc(u)}" style="cursor:pointer;border:1px solid var(--line-1)">${x} →</button>` : `<span class="tag gray">${x}</span>`;
               }).join('')}
               ${starBtn(t.t)}
@@ -5440,8 +5490,8 @@ let LANG = window.LANG_DATA || {};
 
         <div class="section-title" data-c="pink">可点击热点<span class="st-count">${TOPIC_HOT.length}</span></div>
         <div class="card">
-          <div class="card-sub">点链接直接跳到抖音 / 小红书查看相关视频。</div>
-          ${TOPIC_HOT.map(h=>{ const u=(h.url||''); const isDouyin = h.platform==='douyin' || /douyin\.com/.test(u); return `<div class="video-card"><div class="play">🔥</div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">${esc(h.t)} <span class="tag pink">${esc(h.cat||'')}</span></div><div class="item-actions" style="margin-top:6px">${ isDouyin ? `<button class="btn sm outline" data-action="douyin-search" data-t="${esc(h.t)}" style="padding:3px 10px;font-size:12px">📱 打开抖音搜</button>` : u ? `<button class="btn sm outline" data-action="open-link" data-url="${esc(u)}" style="padding:3px 10px;font-size:12px">查看 →</button>` : `<span class="tag gray">敬请期待</span>` }${starBtn(h.t)}</div></div></div>`; }).join('')}
+          <div class="card-sub">点按钮唤起抖音 / 小红书 App 搜索相关话题（网页端搜索已被平台封锁，会自动复制关键词兜底）。</div>
+          ${TOPIC_HOT.map(h=>{ const u=(h.url||''); const isDouyin = h.platform==='douyin' || /douyin\.com/.test(u); const isXhs = h.platform==='xiaohongshu' || /xiaohongshu\.com/.test(u); return `<div class="video-card"><div class="play">🔥</div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">${esc(h.t)} <span class="tag pink">${esc(h.cat||'')}</span></div><div class="item-actions" style="margin-top:6px">${ isDouyin ? `<button class="btn sm outline" data-action="douyin-search" data-t="${esc(h.t)}" style="padding:3px 10px;font-size:12px">📱 打开抖音搜</button>` : isXhs ? `<button class="btn sm outline" data-action="xhs-search" data-t="${esc(h.t)}" style="padding:3px 10px;font-size:12px">📱 打开小红书搜</button>` : u ? `<button class="btn sm outline" data-action="open-link" data-url="${esc(u)}" style="padding:3px 10px;font-size:12px">查看 →</button>` : `<span class="tag gray">敬请期待</span>` }${starBtn(h.t)}</div></div></div>`; }).join('')}
         </div>
 
         <div class="section-title" data-c="pink">从 0 做千万账号</div>
@@ -7395,6 +7445,11 @@ let LANG = window.LANG_DATA || {};
         case 'douyin-search': {
           // 唤起抖音 App 搜索该话题（网页端/未装App 则复制话题名兜底）
           openDouyinSearch(t.dataset.t || '');
+          break;
+        }
+        case 'xhs-search': {
+          // 唤起小红书 App 搜索该话题（网页端搜索已被封锁；未装App 则复制话题名兜底）
+          openXhsSearch(t.dataset.t || '');
           break;
         }
         case 'copy-topic': {
