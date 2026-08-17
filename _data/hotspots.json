@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-16T03:15:13.072Z",
+  "updatedAt": "2026-08-17T03:15:27.472Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "我实现了我儿时的梦想",
+        "url": "https://b23.tv/BV1iTgA6hENv",
+        "hot": 3795270,
+        "rank": 1
+      },
+      {
+        "title": "用MC还原《神的随波逐流》 【B萌应援】",
+        "url": "https://b23.tv/BV1e1gH67EjN",
+        "hot": 2562096,
+        "rank": 2
+      },
+      {
+        "title": "飞机安检模拟器",
+        "url": "https://b23.tv/BV1fTb16KEDk",
+        "hot": 5508034,
+        "rank": 3
+      },
+      {
+        "title": "赛伯朋克之大圣归来：耗时两年半，精品制作，一口气看完。",
+        "url": "https://b23.tv/BV15xgn6GEjH",
+        "hot": 8751174,
+        "rank": 4
+      },
+      {
+        "title": "WasteTheFallen丨首曝PV＆实机演示：凝视深渊，人性渐泯",
+        "url": "https://b23.tv/BV1FRgn6pEph",
+        "hot": 10353242,
+        "rank": 5
+      },
+      {
+        "title": "《一切正常｜異常なし》MV：当所有日本人都说没问题 那问题大了",
+        "url": "https://b23.tv/BV1Z9gT61EnM",
+        "hot": 3609526,
+        "rank": 6
+      },
+      {
+        "title": "老王出息了，今天带家人们一起探班龙餐馆的幕后~",
+        "url": "https://b23.tv/BV1e5gN6eE1D",
+        "hot": 3768997,
+        "rank": 7
+      },
+      {
+        "title": "《下一个是谁》音乐特辑",
+        "url": "https://b23.tv/BV1nLgs6vEX5",
+        "hot": 1752007,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
