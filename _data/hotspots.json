@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-18T03:09:04.010Z",
+  "updatedAt": "2026-08-19T03:12:54.094Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "飞机安检模拟器",
-        "url": "https://b23.tv/BV1fTb16KEDk",
-        "hot": 6573273,
-        "rank": 1
-      },
-      {
-        "title": "《一切正常｜異常なし》MV：当所有日本人都说没问题 那问题大了",
-        "url": "https://b23.tv/BV1Z9gT61EnM",
-        "hot": 4597623,
-        "rank": 2
-      },
-      {
-        "title": "什么⁉Bye bye baby blue翻译竟然是错的✖！",
-        "url": "https://b23.tv/BV1tMby62EC4",
-        "hot": 2002190,
-        "rank": 3
-      },
-      {
-        "title": "自行车被偷后，保安在监控里发现了霸王龙？#SpecialForAAIFF【AI全民制作人】",
-        "url": "https://b23.tv/BV18Tby67EG9",
-        "hot": 5579145,
-        "rank": 4
-      },
-      {
-        "title": "周处除三害现实版，我们干掉他了！",
-        "url": "https://b23.tv/BV1VfbR6pEw9",
-        "hot": 1641161,
-        "rank": 5
-      },
-      {
-        "title": "我实现了我儿时的梦想",
-        "url": "https://b23.tv/BV1iTgA6hENv",
-        "hot": 4573744,
-        "rank": 6
-      },
-      {
-        "title": "口技表演《定海神珍铁》",
-        "url": "https://b23.tv/BV1N8gG6qEpm",
-        "hot": 2710996,
-        "rank": 7
-      },
-      {
-        "title": "《干噎砒霜》",
-        "url": "https://b23.tv/BV1LrbU66E1G",
-        "hot": 3713478,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
