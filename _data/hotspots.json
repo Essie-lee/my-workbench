@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-23T03:29:51.355Z",
+  "updatedAt": "2026-08-24T03:32:16.479Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -31,51 +31,51 @@
     "weibo": [],
     "bilibili": [
       {
-        "title": "《黑神话：钟馗》15分钟实机演示",
-        "url": "https://b23.tv/BV1kS8H6VERt",
-        "hot": 10647088,
+        "title": "\"复活吧！我的（ ）\"",
+        "url": "https://b23.tv/BV1G48M6XEBt",
+        "hot": 5702464,
         "rank": 1
       },
       {
-        "title": "\"复活吧！我的（ ）\"",
-        "url": "https://b23.tv/BV1G48M6XEBt",
-        "hot": 4083682,
+        "title": "严肃观看儿子的历史记录",
+        "url": "https://b23.tv/BV1Vy8r6JE9z",
+        "hot": 3310071,
         "rank": 2
       },
       {
         "title": "《下一个是谁》第七季（3）",
         "url": "https://b23.tv/BV1yj8T6zE1N",
-        "hot": 2591928,
+        "hot": 3047775,
         "rank": 3
-      },
-      {
-        "title": "严肃观看儿子的历史记录",
-        "url": "https://b23.tv/BV1Vy8r6JE9z",
-        "hot": 1727421,
-        "rank": 4
-      },
-      {
-        "title": "我这一生最大的罪，是把人写成了妖……",
-        "url": "https://b23.tv/BV1rHbY6MEB9",
-        "hot": 12447848,
-        "rank": 5
       },
       {
         "title": "《崩坏：星穹铁道》千星纪游PV——「众声之外」",
         "url": "https://b23.tv/BV1Vj8K6DEFM",
-        "hot": 2334578,
-        "rank": 6
+        "hot": 2414443,
+        "rank": 4
       },
       {
-        "title": "假如你是一个诗人",
-        "url": "https://b23.tv/BV1rTbf6CECX",
-        "hot": 4915638,
-        "rank": 7
+        "title": "您好 没有为您拼命的义务 #乐意效劳",
+        "url": "https://b23.tv/BV1Kz8M6CEVz",
+        "hot": 2347591,
+        "rank": 5
       },
       {
         "title": "我收容了100位粉丝到我的一辈子存档里！",
         "url": "https://b23.tv/BV1DV8F6bEkz",
-        "hot": 3608226,
+        "hot": 5113313,
+        "rank": 6
+      },
+      {
+        "title": "渣渣辉没更新在干嘛：结婚！生小孩！",
+        "url": "https://b23.tv/BV1xz8M6CEdi",
+        "hot": 2587883,
+        "rank": 7
+      },
+      {
+        "title": "《你咋开的车》",
+        "url": "https://b23.tv/BV1dS8P6JEha",
+        "hot": 5186614,
         "rank": 8
       }
     ],
