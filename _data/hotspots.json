@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-25T00:29:34.804Z",
+  "updatedAt": "2026-08-26T00:30:44.256Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -31,51 +31,51 @@
     "weibo": [],
     "bilibili": [
       {
-        "title": "严肃观看儿子的历史记录",
-        "url": "https://b23.tv/BV1Vy8r6JE9z",
-        "hot": 4314083,
+        "title": "王中王夺冠自战解说",
+        "url": "https://b23.tv/BV1PEhP6vERe",
+        "hot": 3710453,
         "rank": 1
-      },
-      {
-        "title": "\"复活吧！我的（ ）\"",
-        "url": "https://b23.tv/BV1G48M6XEBt",
-        "hot": 6507069,
-        "rank": 2
       },
       {
         "title": "护理：一把斩向死亡的温柔刀",
         "url": "https://b23.tv/BV1Jv8p6kEJw",
-        "hot": 3753496,
+        "hot": 4399780,
+        "rank": 2
+      },
+      {
+        "title": "《崩坏：星穹铁道》知更鸟•晴歌角色PV——「追赶风的方向」",
+        "url": "https://b23.tv/BV1oyhM6AETw",
+        "hot": 2865433,
         "rank": 3
       },
       {
-        "title": "您好 没有为您拼命的义务 #乐意效劳",
-        "url": "https://b23.tv/BV1Kz8M6CEVz",
-        "hot": 2766514,
+        "title": "贱谍过家家（8）",
+        "url": "https://b23.tv/BV1gLhK6LEcb",
+        "hot": 3607951,
         "rank": 4
+      },
+      {
+        "title": "严肃观看儿子的历史记录",
+        "url": "https://b23.tv/BV1Vy8r6JE9z",
+        "hot": 5065775,
+        "rank": 5
       },
       {
         "title": "【纪录片TV】大乾乾被撞成两半了……",
         "url": "https://b23.tv/BV1db8x6VE73",
-        "hot": 3877123,
-        "rank": 5
+        "hot": 4544702,
+        "rank": 6
       },
       {
-        "title": "搞笑疯人院：满级病友竟是大佬！大家都有病的时候，楚闻野张口闭口就喊桑九舅舅，桑九也觉得楚闻野是个好孩子，就是脑子不太好。",
-        "url": "https://b23.tv/BV1j38B65Eyw",
-        "hot": 2476916,
-        "rank": 6
+        "title": "《海阔天空》一个人的乐队",
+        "url": "https://b23.tv/BV1or8e6TEte",
+        "hot": 2241941,
+        "rank": 7
       },
       {
         "title": "⚡老牧师口音教学⚡",
         "url": "https://b23.tv/BV1fA8m66EyX",
-        "hot": 2596862,
-        "rank": 7
-      },
-      {
-        "title": "王中王夺冠自战解说",
-        "url": "https://b23.tv/BV1PEhP6vERe",
-        "hot": 1582133,
+        "hot": 3058845,
         "rank": 8
       }
     ],
