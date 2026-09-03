@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-02T01:36:46.053Z",
+  "updatedAt": "2026-09-03T01:40:59.049Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "如果让专业厨师推荐私藏小店他们会怎么推荐？",
-        "url": "https://b23.tv/BV18s4k6gESU",
-        "hot": 1955087,
-        "rank": 1
-      },
-      {
-        "title": "【大学生就业指导】麦当当薯条N重奏！200块买两斤土豆？不能够了！",
-        "url": "https://b23.tv/BV16g4y6tEzY",
-        "hot": 2130234,
-        "rank": 2
-      },
-      {
-        "title": "一个人，耗时18个月，2万元成本，手搓94分钟以刘慈欣小说《山》为故事原型的AI仿真人科幻电影【ai全民制作人】#SpecialForAAIFF",
-        "url": "https://b23.tv/BV1o74y6XEcM",
-        "hot": 1579967,
-        "rank": 3
-      },
-      {
-        "title": "FALSITY…（完整版电影 / 官方正版)",
-        "url": "https://b23.tv/BV1qH4U6iEEy",
-        "hot": 1180363,
-        "rank": 4
-      },
-      {
-        "title": "华强见宋老虎 但是唱跳RAP 【多梦综合征】【AI音乐宇宙】",
-        "url": "https://b23.tv/BV1Hy4k64Erk",
-        "hot": 2975569,
-        "rank": 5
-      },
-      {
-        "title": "当广告挡住关键时刻，可能就是生死之间",
-        "url": "https://b23.tv/BV1YNtb66ErA",
-        "hot": 1989415,
-        "rank": 6
-      },
-      {
-        "title": "当你的资产缩水到A0层级，挑选优质桥洞的六大方案！",
-        "url": "https://b23.tv/BV1ZNtA6CExY",
-        "hot": 5471845,
-        "rank": 7
-      },
-      {
-        "title": "去了一趟西班牙2.0（日全食篇）",
-        "url": "https://b23.tv/BV1Na4Q64Eos",
-        "hot": 2181661,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
