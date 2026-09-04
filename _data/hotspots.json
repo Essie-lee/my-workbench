@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-03T01:40:59.049Z",
+  "updatedAt": "2026-09-04T01:34:37.169Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "西西弗斯推的石头，居然是孙悟空......【AI全民制作人】#SpecialForAAIFF",
+        "url": "https://b23.tv/BV1a3th65EQb",
+        "hot": 4294683,
+        "rank": 1
+      },
+      {
+        "title": "【IGN独家】《鸣潮》共鸣者「心」、「锁暝」演示",
+        "url": "https://b23.tv/BV1Q5tG6bEX3",
+        "hot": 3258722,
+        "rank": 2
+      },
+      {
+        "title": "08年美国讽刺金曲《朋友的酒》（英语填词cover）“空城计の小曲”",
+        "url": "https://b23.tv/BV1Este6wExx",
+        "hot": 2801053,
+        "rank": 3
+      },
+      {
+        "title": "当广告挡住关键时刻，可能就是生死之间",
+        "url": "https://b23.tv/BV1YNtb66ErA",
+        "hot": 2695996,
+        "rank": 4
+      },
+      {
+        "title": "“用最温柔的方式，体面的告别了这个世界”｜听歌/小曲",
+        "url": "https://b23.tv/BV1P4th6PE81",
+        "hot": 2438719,
+        "rank": 5
+      },
+      {
+        "title": "【何同学】库克时代",
+        "url": "https://b23.tv/BV1G7tG6tEwL",
+        "hot": 1740284,
+        "rank": 6
+      },
+      {
+        "title": "“小传人”来了（假期拍摄，快乐起来）",
+        "url": "https://b23.tv/BV1potV6SEWY",
+        "hot": 1068505,
+        "rank": 7
+      },
+      {
+        "title": "把公司当成主题乐园",
+        "url": "https://b23.tv/BV1n1tA67EsT",
+        "hot": 1895946,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
