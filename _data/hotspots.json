@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-05T01:36:05.511Z",
+  "updatedAt": "2026-09-06T01:30:23.123Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "【IGN独家】《鸣潮》共鸣者「心」、「锁暝」演示",
-        "url": "https://b23.tv/BV1Q5tG6bEX3",
-        "hot": 4091505,
-        "rank": 1
-      },
-      {
-        "title": "“用最温柔的方式，体面的告别了这个世界”｜听歌/小曲",
-        "url": "https://b23.tv/BV1P4th6PE81",
-        "hot": 3667683,
-        "rank": 2
-      },
-      {
-        "title": "08年美国讽刺金曲《朋友的酒》（英语填词cover）“空城计の小曲”",
-        "url": "https://b23.tv/BV1Este6wExx",
-        "hot": 3640312,
-        "rank": 3
-      },
-      {
-        "title": "天 雷 滚 滚 纽 约 城【神奇组织53】",
-        "url": "https://b23.tv/BV1bHtd6CESR",
-        "hot": 2689645,
-        "rank": 4
-      },
-      {
-        "title": "网络热传生物鉴定 第63期",
-        "url": "https://b23.tv/BV1FQtt6JEKs",
-        "hot": 2713023,
-        "rank": 5
-      },
-      {
-        "title": "极限挑战——时光大桥",
-        "url": "https://b23.tv/BV1BjtE6HExq",
-        "hot": 2026378,
-        "rank": 6
-      },
-      {
-        "title": "《绝区零》克拉蕾角色展示 | 不想培训，但攻略已写好",
-        "url": "https://b23.tv/BV1wote6gEQ1",
-        "hot": 1506686,
-        "rank": 7
-      },
-      {
-        "title": "直到赛前..我都没想到当教练还得出COS啊???🥹 【bilibilionly同人扶持计划】",
-        "url": "https://b23.tv/BV13QtJ67Eo1",
-        "hot": 2048800,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
