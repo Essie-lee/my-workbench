@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-08T01:38:13.304Z",
+  "updatedAt": "2026-09-09T01:45:48.417Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "《下一个是谁》第七季（4）",
-        "url": "https://b23.tv/BV1HBbE6cEc5",
-        "hot": 2141851,
-        "rank": 1
-      },
-      {
-        "title": "午夜轮班，伪人超市",
-        "url": "https://b23.tv/BV16Htm6rE8n",
-        "hot": 2373295,
-        "rank": 2
-      },
-      {
-        "title": "《崩坏：星穹铁道》千星纪游PV——「深水区」",
-        "url": "https://b23.tv/BV1sAbL6tEEC",
-        "hot": 2457832,
-        "rank": 3
-      },
-      {
-        "title": "我把汉堡搬到了星星上",
-        "url": "https://b23.tv/BV1Xdt26bECx",
-        "hot": 2249699,
-        "rank": 4
-      },
-      {
-        "title": "手机发明之前，人们就是这样手书的……完整版！【bilibilionly同人扶持计划】",
-        "url": "https://b23.tv/BV1aktB6KEA5",
-        "hot": 2029226,
-        "rank": 5
-      },
-      {
-        "title": "慢下来，就会死！",
-        "url": "https://b23.tv/BV1T2ti6REsF",
-        "hot": 1513776,
-        "rank": 6
-      },
-      {
-        "title": "全B站最垃圾的一期视频",
-        "url": "https://b23.tv/BV1sxtk6YEGp",
-        "hot": 3154936,
-        "rank": 7
-      },
-      {
-        "title": "《绝区零》克拉蕾EP | Link Up 血火相连",
-        "url": "https://b23.tv/BV1C9b76cEks",
-        "hot": 1724517,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
