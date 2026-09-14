@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-13T01:36:47.591Z",
+  "updatedAt": "2026-09-14T01:55:33.315Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -31,51 +31,51 @@
     "weibo": [],
     "bilibili": [
       {
-        "title": "我 来 同 你 玩  丨 二洲年快乐",
-        "url": "https://b23.tv/BV1eqYx6UE9V",
-        "hot": 8812173,
+        "title": "思路打开，用擦丝器解锁旋风薯塔！懒人不开火实现烤肉自由，今天的烤猪蹄简直夯爆了！",
+        "url": "https://b23.tv/BV1TEYX62EMp",
+        "hot": 6315374,
         "rank": 1
       },
       {
-        "title": "刘慈欣原著授权 |《流浪地球：望日》首支预告片",
-        "url": "https://b23.tv/BV1tSYx66EvP",
-        "hot": 7599274,
+        "title": "“一饭温情相赠，千里以报恩深.”【红色高跟鞋DJ-降调】【涌泉相报の小曲】",
+        "url": "https://b23.tv/BV1HUY76uEMJ",
+        "hot": 2630011,
         "rank": 2
       },
       {
-        "title": "《崩坏：星穹铁道》砂金•戏浪角色PV——「独家爆料」",
-        "url": "https://b23.tv/BV1yjYx6AEp7",
-        "hot": 2542797,
+        "title": "模仿派对，配音挑战大赛",
+        "url": "https://b23.tv/BV1ZqYX6YEsu",
+        "hot": 3384947,
         "rank": 3
       },
       {
-        "title": "【糖果】人类就要冲出太阳系了！然后被宇宙嫌弃了",
-        "url": "https://b23.tv/BV1WuYh6VEaS",
-        "hot": 2347828,
+        "title": "夏季的温馨碎片，重新剪到一起，准备再赚一次流量",
+        "url": "https://b23.tv/BV1S5YE6HE9Q",
+        "hot": 2003760,
         "rank": 4
       },
       {
         "title": "校长来啦",
         "url": "https://b23.tv/BV1odY76aEio",
-        "hot": 4011991,
+        "hot": 4588402,
         "rank": 5
-      },
-      {
-        "title": "《对三骗王炸》",
-        "url": "https://b23.tv/BV1bxYV6BEwS",
-        "hot": 3799981,
-        "rank": 6
       },
       {
         "title": "《原神》7.1版本PV：「往冥府的安魂歌」",
         "url": "https://b23.tv/BV1yuY96rEL7",
-        "hot": 1274767,
+        "hot": 2000347,
+        "rank": 6
+      },
+      {
+        "title": "【糖果】人类就要冲出太阳系了！然后被宇宙嫌弃了",
+        "url": "https://b23.tv/BV1WuYh6VEaS",
+        "hot": 2723172,
         "rank": 7
       },
       {
-        "title": "模仿派对，配音挑战大赛",
-        "url": "https://b23.tv/BV1ZqYX6YEsu",
-        "hot": 1443873,
+        "title": "《对三骗王炸》",
+        "url": "https://b23.tv/BV1bxYV6BEwS",
+        "hot": 4439744,
         "rank": 8
       }
     ],
