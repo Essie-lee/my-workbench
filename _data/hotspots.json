@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T01:58:56.688Z",
+  "updatedAt": "2026-09-18T01:46:14.138Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -31,51 +31,51 @@
     "weibo": [],
     "bilibili": [
       {
-        "title": "折叠还是直板？iPhone 18 Pro&Duo深度视频",
+        "title": "选哪个？iPhone 18 Pro&Duo深度上手",
         "url": "https://b23.tv/BV1cSec6tEux",
-        "hot": 2109221,
+        "hot": 5309889,
         "rank": 1
       },
       {
-        "title": "《鸣潮》动画短片 | 寻心",
-        "url": "https://b23.tv/BV1WAec6fE5N",
-        "hot": 2577156,
+        "title": "烂烂烂烂烂烂活",
+        "url": "https://b23.tv/BV1t6ex66EKs",
+        "hot": 3739338,
         "rank": 2
       },
       {
         "title": "《原神》薇斯纳角色PV——「『风』行迷踪」",
         "url": "https://b23.tv/BV1sjen6QEQ7",
-        "hot": 1827298,
+        "hot": 2258123,
         "rank": 3
       },
       {
-        "title": "烂烂烂烂烂烂活",
-        "url": "https://b23.tv/BV1t6ex66EKs",
-        "hot": 2249027,
+        "title": "《鸣潮》动画短片 | 寻心",
+        "url": "https://b23.tv/BV1WAec6fE5N",
+        "hot": 4042443,
         "rank": 4
       },
       {
-        "title": "童年的捕虫网，依然在我们的手里——《伊莫》PC端预下载现已开启！",
-        "url": "https://b23.tv/BV1Dve565ENK",
-        "hot": 5167919,
+        "title": "大禹看了沉默，愚公看了流泪",
+        "url": "https://b23.tv/BV1fYes6xEmq",
+        "hot": 4125601,
         "rank": 5
-      },
-      {
-        "title": "Re：从零开始的异世界学园生活·序",
-        "url": "https://b23.tv/BV1PeYe69EWk",
-        "hot": 2012358,
-        "rank": 6
-      },
-      {
-        "title": "“死亡不是终点，遗忘才是。” | 《老秦》原创AI短片【AI全民制作人】",
-        "url": "https://b23.tv/BV1PYYo6XEW9",
-        "hot": 1948040,
-        "rank": 7
       },
       {
         "title": "iPhone18 Pro性能分析：五年来最强的芯片升级！",
         "url": "https://b23.tv/BV1oZeA6fERD",
-        "hot": 949321,
+        "hot": 1654706,
+        "rank": 6
+      },
+      {
+        "title": "天津漫展手机事件",
+        "url": "https://b23.tv/BV1YaeN6xEWR",
+        "hot": 2819373,
+        "rank": 7
+      },
+      {
+        "title": "童年的捕虫网，依然在我们的手里——《伊莫》PC端预下载现已开启！",
+        "url": "https://b23.tv/BV1Dve565ENK",
+        "hot": 5191177,
         "rank": 8
       }
     ],
