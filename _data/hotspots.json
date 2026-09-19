@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-18T01:46:14.138Z",
+  "updatedAt": "2026-09-19T01:51:58.939Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "选哪个？iPhone 18 Pro&Duo深度上手",
-        "url": "https://b23.tv/BV1cSec6tEux",
-        "hot": 5309889,
-        "rank": 1
-      },
-      {
-        "title": "烂烂烂烂烂烂活",
-        "url": "https://b23.tv/BV1t6ex66EKs",
-        "hot": 3739338,
-        "rank": 2
-      },
-      {
-        "title": "《原神》薇斯纳角色PV——「『风』行迷踪」",
-        "url": "https://b23.tv/BV1sjen6QEQ7",
-        "hot": 2258123,
-        "rank": 3
-      },
-      {
-        "title": "《鸣潮》动画短片 | 寻心",
-        "url": "https://b23.tv/BV1WAec6fE5N",
-        "hot": 4042443,
-        "rank": 4
-      },
-      {
-        "title": "大禹看了沉默，愚公看了流泪",
-        "url": "https://b23.tv/BV1fYes6xEmq",
-        "hot": 4125601,
-        "rank": 5
-      },
-      {
-        "title": "iPhone18 Pro性能分析：五年来最强的芯片升级！",
-        "url": "https://b23.tv/BV1oZeA6fERD",
-        "hot": 1654706,
-        "rank": 6
-      },
-      {
-        "title": "天津漫展手机事件",
-        "url": "https://b23.tv/BV1YaeN6xEWR",
-        "hot": 2819373,
-        "rank": 7
-      },
-      {
-        "title": "童年的捕虫网，依然在我们的手里——《伊莫》PC端预下载现已开启！",
-        "url": "https://b23.tv/BV1Dve565ENK",
-        "hot": 5191177,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
