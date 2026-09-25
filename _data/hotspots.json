@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-24T01:49:26.168Z",
+  "updatedAt": "2026-09-25T02:06:01.041Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "《柯洁围棋入门课》",
-        "url": "https://b23.tv/BV1YDhJ6ZEL6",
-        "hot": 3015689,
-        "rank": 1
-      },
-      {
-        "title": "《原神》角色预告-「沃雅妮莎：此夜共沦」",
-        "url": "https://b23.tv/BV1BqhB6nEdN",
-        "hot": 1819770,
-        "rank": 2
-      },
-      {
-        "title": "比电影更夸张？专业保镖到底在做什么？",
-        "url": "https://b23.tv/BV1J7hE6aEDQ",
-        "hot": 3949533,
-        "rank": 3
-      },
-      {
-        "title": "《崩坏：星穹铁道》即兴巡演PV——「至此，已成艺术」",
-        "url": "https://b23.tv/BV1yvhW6sEzi",
-        "hot": 2284333,
-        "rank": 4
-      },
-      {
-        "title": "后续就是还有高手",
-        "url": "https://b23.tv/BV14mez6VEG9",
-        "hot": 7055104,
-        "rank": 5
-      },
-      {
-        "title": "狼王传奇系列1-11集合集【AI全民制作人】",
-        "url": "https://b23.tv/BV1BreB6tEWT",
-        "hot": 2174947,
-        "rank": 6
-      },
-      {
-        "title": "【毕导】这个X你肯定见过，但它其实根本不存在",
-        "url": "https://b23.tv/BV1VVhk6pEiR",
-        "hot": 1851871,
-        "rank": 7
-      },
-      {
-        "title": "那个满眼满心都是我的小猫，去世了！",
-        "url": "https://b23.tv/BV15bez6xEEB",
-        "hot": 2985195,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
