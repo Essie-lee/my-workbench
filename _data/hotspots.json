@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-26T02:11:33.703Z",
+  "updatedAt": "2026-09-27T02:04:16.302Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "游本昌爷爷，一路走好！我们会继续向前",
+        "url": "https://b23.tv/BV17Eaw6DEMi",
+        "hot": 2288575,
+        "rank": 1
+      },
+      {
+        "title": "在机场当志愿者用六门语言帮助老外是什么体验？！",
+        "url": "https://b23.tv/BV1F5h86PEUH",
+        "hot": 2911684,
+        "rank": 2
+      },
+      {
+        "title": "我记录下了妹妹的最后7天...【自制伪纪录片电影】",
+        "url": "https://b23.tv/BV1Deht6rEpZ",
+        "hot": 4652644,
+        "rank": 3
+      },
+      {
+        "title": "超市里已经……没有人类了……",
+        "url": "https://b23.tv/BV18fhb65EGs",
+        "hot": 2274237,
+        "rank": 4
+      },
+      {
+        "title": "每百年一次深渊血战，恶魔世界会如何发展？",
+        "url": "https://b23.tv/BV1JBaA6oEmA",
+        "hot": 2848777,
+        "rank": 5
+      },
+      {
+        "title": "【非AI】这可能是全网最全实拍冷兵器合集！",
+        "url": "https://b23.tv/BV1a2h46yE8m",
+        "hot": 2767636,
+        "rank": 6
+      },
+      {
+        "title": "糟糕！我的粮食被勋宗抢走了！【神奇组织54】",
+        "url": "https://b23.tv/BV1WhaA6hE7s",
+        "hot": 2110788,
+        "rank": 7
+      },
+      {
+        "title": "绷不住就死",
+        "url": "https://b23.tv/BV19ee86cEae",
+        "hot": 2054194,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
