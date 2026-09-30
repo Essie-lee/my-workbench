@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-29T02:55:31.930Z",
+  "updatedAt": "2026-09-30T02:36:59.647Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -33,49 +33,49 @@
       {
         "title": "《原神》六周年主题曲《风的来信》",
         "url": "https://b23.tv/BV14Baa6JENd",
-        "hot": 1989636,
+        "hot": 2453752,
         "rank": 1
       },
       {
         "title": "蛙跳爬泰山",
         "url": "https://b23.tv/BV1Hxah6BEGy",
-        "hot": 1519566,
+        "hot": 1990503,
         "rank": 2
       },
       {
-        "title": "《三角洲行动》群星计划—代号：威龙",
-        "url": "https://b23.tv/BV1fAh96ZELn",
-        "hot": 3005782,
+        "title": "自学动画 爆肝俩月 自创一集《猫和老鼠》【手搓动画大赛】",
+        "url": "https://b23.tv/BV1E6aq6pEKR",
+        "hot": 2656631,
         "rank": 3
-      },
-      {
-        "title": "《崩坏：星穹铁道》真珠角色PV——「如何描绘一种希望」",
-        "url": "https://b23.tv/BV1Rmh96ZEXh",
-        "hot": 2268745,
-        "rank": 4
       },
       {
         "title": "三幻魔集结！超越神的力量！【水无月菌】",
         "url": "https://b23.tv/BV14Qah6DEBL",
-        "hot": 1042886,
-        "rank": 5
-      },
-      {
-        "title": "《以片换物- -洗剪吹》 再不疯狂就老了  借一场大笑，释放藏起来的自己。",
-        "url": "https://b23.tv/BV1JSau6kEou",
-        "hot": 2753866,
-        "rank": 6
+        "hot": 1565486,
+        "rank": 4
       },
       {
         "title": "《纯粹の体育精神》",
         "url": "https://b23.tv/BV1Kyas6wEuz",
-        "hot": 3800670,
-        "rank": 7
+        "hot": 4875052,
+        "rank": 5
+      },
+      {
+        "title": "《崩坏：星穹铁道》真珠角色PV——「如何描绘一种希望」",
+        "url": "https://b23.tv/BV1Rmh96ZEXh",
+        "hot": 2334780,
+        "rank": 6
       },
       {
         "title": "钓鱼被鱼揍了",
         "url": "https://b23.tv/BV1Usat6rEm1",
-        "hot": 1674326,
+        "hot": 2189093,
+        "rank": 7
+      },
+      {
+        "title": "《三角洲行动》群星计划—代号：威龙",
+        "url": "https://b23.tv/BV1fAh96ZELn",
+        "hot": 3228308,
         "rank": 8
       }
     ],
