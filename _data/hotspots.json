@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-01T02:40:38.846Z",
+  "updatedAt": "2026-10-02T02:45:05.458Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "我———问你为什么要折断奥特钥匙!！！（大结局下）",
+        "url": "https://b23.tv/BV1zmYP6aEdH",
+        "hot": 1576739,
+        "rank": 1
+      },
+      {
+        "title": "手绘465张！One Last Kiss【EVA30周年回忆重逢计划】",
+        "url": "https://b23.tv/BV1i4aL6QEYX",
+        "hot": 4655288,
+        "rank": 2
+      },
+      {
+        "title": "自学动画 爆肝俩月 自创一集《猫和老鼠》【手搓动画大赛】",
+        "url": "https://b23.tv/BV1E6aq6pEKR",
+        "hot": 5782834,
+        "rank": 3
+      },
+      {
+        "title": "《下一个是谁》第七季（5）",
+        "url": "https://b23.tv/BV1cAYP6YEvj",
+        "hot": 1422067,
+        "rank": 4
+      },
+      {
+        "title": "《大回忆时代》",
+        "url": "https://b23.tv/BV1ujaZ68Ea5",
+        "hot": 4266138,
+        "rank": 5
+      },
+      {
+        "title": "《善》善良是什么",
+        "url": "https://b23.tv/BV1ygaL6YEbx",
+        "hot": 1823124,
+        "rank": 6
+      },
+      {
+        "title": "章鱼哥，快乐都去哪了呢？",
+        "url": "https://b23.tv/BV1mjad6DEK1",
+        "hot": 1460928,
+        "rank": 7
+      },
+      {
+        "title": "祝福祖国！天安门广场举行国庆升旗仪式",
+        "url": "https://b23.tv/BV1LvYA6QEGP",
+        "hot": 1610183,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
