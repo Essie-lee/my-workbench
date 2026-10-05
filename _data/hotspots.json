@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-04T03:02:26.167Z",
+  "updatedAt": "2026-10-05T02:35:47.437Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -31,51 +31,51 @@
     "weibo": [],
     "bilibili": [
       {
-        "title": "我———问你为什么要折断奥特钥匙!！！（大结局下）",
-        "url": "https://b23.tv/BV1zmYP6aEdH",
-        "hot": 2474101,
-        "rank": 1
-      },
-      {
-        "title": "章鱼哥，快乐都去哪了呢？",
-        "url": "https://b23.tv/BV1mjad6DEK1",
-        "hot": 3707944,
-        "rank": 2
-      },
-      {
-        "title": "《下一个是谁》第七季（5）",
-        "url": "https://b23.tv/BV1cAYP6YEvj",
-        "hot": 2663190,
-        "rank": 3
-      },
-      {
         "title": "ピノキオピー - えねみぃ feat. 初音ミク・重音テト",
         "url": "https://b23.tv/BV1UGa961Ejt",
-        "hot": 1588841,
-        "rank": 4
-      },
-      {
-        "title": "你离开的事实原创高至豪偶遇粉丝，于是为她演奏一曲",
-        "url": "https://b23.tv/BV1wAYP6YEif",
-        "hot": 3006788,
-        "rank": 5
+        "hot": 2050066,
+        "rank": 1
       },
       {
         "title": "逻辑折叠深度解析！华为Mate 90系列韬定律芯片有多强？",
         "url": "https://b23.tv/BV1heam6TExz",
-        "hot": 2018544,
-        "rank": 6
+        "hot": 2220752,
+        "rank": 2
+      },
+      {
+        "title": "你离开的事实原创高至豪偶遇粉丝，于是为她演奏一曲",
+        "url": "https://b23.tv/BV1wAYP6YEif",
+        "hot": 3333484,
+        "rank": 3
       },
       {
         "title": "24位博主为粉丝争夺30万元！",
         "url": "https://b23.tv/BV15far6dEjT",
-        "hot": 2072112,
+        "hot": 2419443,
+        "rank": 4
+      },
+      {
+        "title": "章鱼哥，快乐都去哪了呢？",
+        "url": "https://b23.tv/BV1mjad6DEK1",
+        "hot": 4043909,
+        "rank": 5
+      },
+      {
+        "title": "4名枪匪闯入豪宅，中国男子4秒13枪疯狂反击！",
+        "url": "https://b23.tv/BV18Bam6eEBd",
+        "hot": 11873616,
+        "rank": 6
+      },
+      {
+        "title": "《原神》剧情PV-「燕归来」",
+        "url": "https://b23.tv/BV1cQap6UEr2",
+        "hot": 1229490,
         "rank": 7
       },
       {
-        "title": "《大回忆时代》",
-        "url": "https://b23.tv/BV1ujaZ68Ea5",
-        "hot": 6105907,
+        "title": "有用版新植物：空调寒冰",
+        "url": "https://b23.tv/BV1W7HY6xErH",
+        "hot": 6651281,
         "rank": 8
       }
     ],
