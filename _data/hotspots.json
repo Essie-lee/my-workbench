@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-06T03:29:14.663Z",
+  "updatedAt": "2026-10-07T02:53:52.195Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "《诡异的她》第一季全集·纯享",
-        "url": "https://b23.tv/BV1c3HL6qEyq",
-        "hot": 3945457,
-        "rank": 1
-      },
-      {
-        "title": "有用版新植物：空调寒冰",
-        "url": "https://b23.tv/BV1W7HY6xErH",
-        "hot": 8045466,
-        "rank": 2
-      },
-      {
-        "title": "自学动画 爆肝俩月 自创一集《海绵宝宝》【手搓动画大赛】",
-        "url": "https://b23.tv/BV1TXHY6aETi",
-        "hot": 2904439,
-        "rank": 3
-      },
-      {
-        "title": "看这个视频我不烧心！",
-        "url": "https://b23.tv/BV1WSHL66EdZ",
-        "hot": 3714131,
-        "rank": 4
-      },
-      {
-        "title": "近期画的",
-        "url": "https://b23.tv/BV1Y2Hv65E9Y",
-        "hot": 681887,
-        "rank": 5
-      },
-      {
-        "title": "hanser「花生与葱花」全程录像",
-        "url": "https://b23.tv/BV1r4a96KEfn",
-        "hot": 1162654,
-        "rank": 6
-      },
-      {
-        "title": "ピノキオピー - えねみぃ feat. 初音ミク・重音テト",
-        "url": "https://b23.tv/BV1UGa961Ejt",
-        "hot": 2405890,
-        "rank": 7
-      },
-      {
-        "title": "4名枪匪闯入豪宅，中国男子4秒13枪疯狂反击！",
-        "url": "https://b23.tv/BV18Bam6eEBd",
-        "hot": 16028223,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
