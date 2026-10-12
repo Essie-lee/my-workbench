@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-11T02:26:27.864Z",
+  "updatedAt": "2026-10-12T02:50:54.886Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "超市生存挑战后续！4人吃完整个超市赢100万美金！",
-        "url": "https://b23.tv/BV1VeHQ6tEaS",
-        "hot": 5065030,
-        "rank": 1
-      },
-      {
-        "title": "2026英雄联盟全球总决赛主题曲《KNOW MY NAME》（以我之名）",
-        "url": "https://b23.tv/BV1DRHU6LELy",
-        "hot": 3668862,
-        "rank": 2
-      },
-      {
-        "title": "极极极极，极限战场👉🏻首曝极首测，所见极所玩",
-        "url": "https://b23.tv/BV1PTHS6MEC5",
-        "hot": 9291157,
-        "rank": 3
-      },
-      {
-        "title": "《阴阳师》咲耶CG丨拾此一瞬（CV：小泽亚李）",
-        "url": "https://b23.tv/BV1BsHQ6YEQy",
-        "hot": 2424821,
-        "rank": 4
-      },
-      {
-        "title": "《司机の噩梦》",
-        "url": "https://b23.tv/BV1rxp86jEYH",
-        "hot": 3817680,
-        "rank": 5
-      },
-      {
-        "title": "“我穿越成了一棵树。”",
-        "url": "https://b23.tv/BV1qsHQ6YEs4",
-        "hot": 1297039,
-        "rank": 6
-      },
-      {
-        "title": "deepseek 翻唱《人是猫》完整版，大肥鱼觉得人和猫一样可爱,所以人是猫",
-        "url": "https://b23.tv/BV1XXHD6sEe7",
-        "hot": 878134,
-        "rank": 7
-      },
-      {
-        "title": "【男巫ZachKing】2026最佳魔术！",
-        "url": "https://b23.tv/BV1BuHC6rEuX",
-        "hot": 2521911,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
