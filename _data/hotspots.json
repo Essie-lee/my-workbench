@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-12T02:50:54.886Z",
+  "updatedAt": "2026-10-13T04:06:53.976Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "《司机の噩梦》",
+        "url": "https://b23.tv/BV1rxp86jEYH",
+        "hot": 5917398,
+        "rank": 1
+      },
+      {
+        "title": "12个脑洞大开的做饭方式！",
+        "url": "https://b23.tv/BV1Jjpg6QEkh",
+        "hot": 2878744,
+        "rank": 2
+      },
+      {
+        "title": "“上大学该谈个女朋友了”。我呀？我去谈恋爱啊？！那无敌了……",
+        "url": "https://b23.tv/BV1uvpg6zEdw",
+        "hot": 3222208,
+        "rank": 3
+      },
+      {
+        "title": "超市里……未检测到人脸……",
+        "url": "https://b23.tv/BV1iqpt6cEMU",
+        "hot": 2300628,
+        "rank": 4
+      },
+      {
+        "title": "如果把我和男朋友这几年的约会地点列出来",
+        "url": "https://b23.tv/BV16xpt6BE6t",
+        "hot": 1378475,
+        "rank": 5
+      },
+      {
+        "title": "我们来到了地中海，重走《奥德赛》十年回家路！",
+        "url": "https://b23.tv/BV1mopE6xEqv",
+        "hot": 2768659,
+        "rank": 6
+      },
+      {
+        "title": "逃离闪电侠黄金费德熊！你好邻居Mod",
+        "url": "https://b23.tv/BV1QmpE6aEA7",
+        "hot": 2268065,
+        "rank": 7
+      },
+      {
+        "title": "虽然命还在，但是鱼没了啊！！！【AI全民制作人】",
+        "url": "https://b23.tv/BV1xTpG6iEbV",
+        "hot": 3696291,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
