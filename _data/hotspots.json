@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-14T02:20:44.077Z",
+  "updatedAt": "2026-10-15T02:01:39.545Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "我们来到了地中海，重走《奥德赛》十年回家路！",
+        "url": "https://b23.tv/BV1mopE6xEqv",
+        "hot": 5224687,
+        "rank": 1
+      },
+      {
+        "title": "苏联版“空中监狱”是什么？【神奇组织55】",
+        "url": "https://b23.tv/BV1Cgpd6pEBR",
+        "hot": 2034434,
+        "rank": 2
+      },
+      {
+        "title": "12个脑洞大开的做饭方式！",
+        "url": "https://b23.tv/BV1Jjpg6QEkh",
+        "hot": 3777923,
+        "rank": 3
+      },
+      {
+        "title": "“轮回百世，嘴硬百世。”",
+        "url": "https://b23.tv/BV1Sap968Efp",
+        "hot": 1638919,
+        "rank": 4
+      },
+      {
+        "title": "deepseek 翻唱《人是猫》真完整版，大肥鱼觉得人和猫一样可爱,所以人是猫",
+        "url": "https://b23.tv/BV1fYpn6SEk9",
+        "hot": 1206222,
+        "rank": 5
+      },
+      {
+        "title": "【A2O】A2O LITE 'NEON' Official Video",
+        "url": "https://b23.tv/BV1VVpo6gEYg",
+        "hot": 1774334,
+        "rank": 6
+      },
+      {
+        "title": "乌铜走银",
+        "url": "https://b23.tv/BV1Bjp966EA8",
+        "hot": 1529173,
+        "rank": 7
+      },
+      {
+        "title": "遗传定律：一种疾病，为什么能在家族中潜伏数代？",
+        "url": "https://b23.tv/BV1XupR6NEeo",
+        "hot": 2526232,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
