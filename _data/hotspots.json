@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-19T02:01:07.894Z",
+  "updatedAt": "2026-10-20T02:18:15.769Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -31,51 +31,51 @@
     "weibo": [],
     "bilibili": [
       {
-        "title": "《绝区零》菲欧妮角色展示 | 不要死挑战",
-        "url": "https://b23.tv/BV1d5JQ6pEFS",
-        "hot": 3442882,
+        "title": "不是 AI 特效！这才是《中国功夫》的魅力！",
+        "url": "https://b23.tv/BV1MHJB63Emv",
+        "hot": 2066007,
         "rank": 1
-      },
-      {
-        "title": "科学家们用物理智斗爱因斯坦？",
-        "url": "https://b23.tv/BV1fZJ26mEiY",
-        "hot": 4073062,
-        "rank": 2
-      },
-      {
-        "title": "我造了一块会飞的滑板...",
-        "url": "https://b23.tv/BV1KiJk67EQ9",
-        "hot": 6121788,
-        "rank": 3
-      },
-      {
-        "title": "友情提示：没点艺术细胞的人刷不到这条视频！",
-        "url": "https://b23.tv/BV1WwJy6EEMg",
-        "hot": 2318572,
-        "rank": 4
       },
       {
         "title": "花费上万！真人版弹丸论破开庭！",
         "url": "https://b23.tv/BV1Y2Je6BEDr",
-        "hot": 2316816,
+        "hot": 2787222,
+        "rank": 2
+      },
+      {
+        "title": "科学家们用物理智斗爱因斯坦？",
+        "url": "https://b23.tv/BV1fZJ26mEiY",
+        "hot": 4631090,
+        "rank": 3
+      },
+      {
+        "title": "每一位认真谋生的人都值得被仰望",
+        "url": "https://b23.tv/BV1Jonu6mEwN",
+        "hot": 1934966,
+        "rank": 4
+      },
+      {
+        "title": "带着100万，我们见了成人网红...",
+        "url": "https://b23.tv/BV1pGnn67EbB",
+        "hot": 1718667,
         "rank": 5
       },
       {
-        "title": "“起兵yes削藩no，奉天靖难gogogo！”",
-        "url": "https://b23.tv/BV1HCpS6iEXh",
-        "hot": 2451302,
+        "title": "长乐夜未央丨全新主题区域「未央城」即将上线",
+        "url": "https://b23.tv/BV186Jq6uEFu",
+        "hot": 5185208,
         "rank": 6
       },
       {
-        "title": "手搓版迪迦奥特曼",
-        "url": "https://b23.tv/BV1XJJ96oEXg",
-        "hot": 2023287,
+        "title": "友情提示：没点艺术细胞的人刷不到这条视频！",
+        "url": "https://b23.tv/BV1WwJy6EEMg",
+        "hot": 2525533,
         "rank": 7
       },
       {
-        "title": "挑战全程扛共享单车登顶峨眉山金顶",
-        "url": "https://b23.tv/BV1KoJX6CEGT",
-        "hot": 1275022,
+        "title": "这款游戏出现在21世纪还是太超前了",
+        "url": "https://b23.tv/BV1nFJ66PE1K",
+        "hot": 1568852,
         "rank": 8
       }
     ],
