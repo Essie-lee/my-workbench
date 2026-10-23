@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-22T02:06:00.695Z",
+  "updatedAt": "2026-10-23T02:10:54.015Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "带着100万，我们见了成人网红...",
-        "url": "https://b23.tv/BV1pGnn67EbB",
-        "hot": 4882719,
-        "rank": 1
-      },
-      {
-        "title": "《绝区零》菲欧妮EP | 1% Battery Girl 低电量女孩",
-        "url": "https://b23.tv/BV1SknF6KE5g",
-        "hot": 2633092,
-        "rank": 2
-      },
-      {
-        "title": "【英雄联盟】K/DA官方MV - “FIRESTARTER（燃）”正式上线",
-        "url": "https://b23.tv/BV1j5nj68E48",
-        "hot": 2248803,
-        "rank": 3
-      },
-      {
-        "title": "【NMIXX】\"긴 소원(Birthday Wish)\" M/V",
-        "url": "https://b23.tv/BV1Ben76vEwK",
-        "hot": 1077638,
-        "rank": 4
-      },
-      {
-        "title": "每一位认真谋生的人都值得被仰望",
-        "url": "https://b23.tv/BV1Jonu6mEwN",
-        "hot": 2566789,
-        "rank": 5
-      },
-      {
-        "title": "法国影响力最大的八卦是什么？【神奇组织56】",
-        "url": "https://b23.tv/BV1Vbnn6iEfG",
-        "hot": 1896143,
-        "rank": 6
-      },
-      {
-        "title": "不是 AI 特效！这才是《中国功夫》的魅力！",
-        "url": "https://b23.tv/BV1MHJB63Emv",
-        "hot": 2830189,
-        "rank": 7
-      },
-      {
-        "title": "中文已死：为什么我们越来越不敢好好说话？",
-        "url": "https://b23.tv/BV1Xdnc6jEbL",
-        "hot": 1668763,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
