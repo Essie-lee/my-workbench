@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-23T02:10:54.015Z",
+  "updatedAt": "2026-10-24T02:09:35.510Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "折1万次，会坏吗？iPhone Duo深度评测",
+        "url": "https://b23.tv/BV1xrnz6gEVD",
+        "hot": 7018054,
+        "rank": 1
+      },
+      {
+        "title": "《影之刃零》最终预告",
+        "url": "https://b23.tv/BV1AHnB6NEhM",
+        "hot": 5532628,
+        "rank": 2
+      },
+      {
+        "title": "传统口技表演《大闹天宫》",
+        "url": "https://b23.tv/BV1xwnE6jEUZ",
+        "hot": 1892564,
+        "rank": 3
+      },
+      {
+        "title": "《原神》7.2版本PV：「坏灭肇始之时」",
+        "url": "https://b23.tv/BV1z9nt6aE5H",
+        "hot": 1501758,
+        "rank": 4
+      },
+      {
+        "title": "《人间异想计划》22分钟实机首曝｜间章：如果之事与未践之约",
+        "url": "https://b23.tv/BV1Ranw6DEYW",
+        "hot": 6089527,
+        "rank": 5
+      },
+      {
+        "title": "《最绝望の守门员》",
+        "url": "https://b23.tv/BV1g5nk6xEWk",
+        "hot": 2937972,
+        "rank": 6
+      },
+      {
+        "title": "《南屏晚钟》来啦！",
+        "url": "https://b23.tv/BV1mgnP6yELh",
+        "hot": 2920451,
+        "rank": 7
+      },
+      {
+        "title": "用寂静岭的画风打开《周处除三害》【AI MV大赛】",
+        "url": "https://b23.tv/BV1Cdni6AEQB",
+        "hot": 2388636,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
