@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-25T01:55:58.918Z",
+  "updatedAt": "2026-10-26T01:57:39.230Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "《绝区零》先导演示丨挽昼",
+        "url": "https://b23.tv/BV1U3n46GEzY",
+        "hot": 5169598,
+        "rank": 1
+      },
+      {
+        "title": "传统口技表演《大闹天宫》",
+        "url": "https://b23.tv/BV1xwnE6jEUZ",
+        "hot": 3650524,
+        "rank": 2
+      },
+      {
+        "title": "写了全国所有省份的love me！",
+        "url": "https://b23.tv/BV1w2Hw6KE1j",
+        "hot": 4398798,
+        "rank": 3
+      },
+      {
+        "title": "《原神》7.2版本PV：「坏灭肇始之时」",
+        "url": "https://b23.tv/BV1z9nt6aE5H",
+        "hot": 2525092,
+        "rank": 4
+      },
+      {
+        "title": "《话术博弈》如何优雅的套出对方的真心话？",
+        "url": "https://b23.tv/BV1yVn16XEz7",
+        "hot": 1503205,
+        "rank": 5
+      },
+      {
+        "title": "人工耳蜗里的声音，到底是什么样的？",
+        "url": "https://b23.tv/BV14Enb6LEDe",
+        "hot": 5243695,
+        "rank": 6
+      },
+      {
+        "title": "人性、欲望与奇观，自驾拉斯维加斯，现实夜之城什么样？",
+        "url": "https://b23.tv/BV12qnt6VEM1",
+        "hot": 4496190,
+        "rank": 7
+      },
+      {
+        "title": "😨\"后室里的乌鲁鲁3\"😰",
+        "url": "https://b23.tv/BV1Honn67ENm",
+        "hot": 1242376,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
