@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-27T02:35:32.678Z",
+  "updatedAt": "2026-10-28T02:44:23.185Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "《绝区零》先导演示丨挽昼",
-        "url": "https://b23.tv/BV1U3n46GEzY",
-        "hot": 5792830,
-        "rank": 1
-      },
-      {
-        "title": "写了全国所有省份的love me！",
-        "url": "https://b23.tv/BV1w2Hw6KE1j",
-        "hot": 5100838,
-        "rank": 2
-      },
-      {
-        "title": "《明日方舟》2026「感谢庆典」活动宣传PV",
-        "url": "https://b23.tv/BV1fjHP6eECY",
-        "hot": 2154888,
-        "rank": 3
-      },
-      {
-        "title": "人性、欲望与奇观，自驾拉斯维加斯，现实夜之城什么样？",
-        "url": "https://b23.tv/BV12qnt6VEM1",
-        "hot": 5363754,
-        "rank": 4
-      },
-      {
-        "title": "《话术博弈》如何优雅的套出对方的真心话？",
-        "url": "https://b23.tv/BV1yVn16XEz7",
-        "hot": 1604821,
-        "rank": 5
-      },
-      {
-        "title": "马尔芙小姐，我能请你共舞一曲吗？｜PV",
-        "url": "https://b23.tv/BV1kZHK6VEgZ",
-        "hot": 2804503,
-        "rank": 6
-      },
-      {
-        "title": "《纯阳真气》",
-        "url": "https://b23.tv/BV111na6WExX",
-        "hot": 6248426,
-        "rank": 7
-      },
-      {
-        "title": "我花了3个月！把MC爆改成别的游戏！！",
-        "url": "https://b23.tv/BV1UnHN6SECP",
-        "hot": 3049519,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
