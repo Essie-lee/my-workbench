@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-29T03:04:32.844Z",
+  "updatedAt": "2026-10-30T03:08:55.654Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "旗舰手机芯片大横评：苹果高通发哥玄戒谁最强？",
+        "url": "https://b23.tv/BV1kMxM6FECM",
+        "hot": 2841507,
+        "rank": 1
+      },
+      {
+        "title": "《崩坏：星穹铁道》千星纪游PV：「有关星空的寓言集•其三」",
+        "url": "https://b23.tv/BV1JYsd6sE4k",
+        "hot": 3325123,
+        "rank": 2
+      },
+      {
+        "title": "奶奶的皱纹里，藏着我一生的甜与暖",
+        "url": "https://b23.tv/BV1chxT6xEyo",
+        "hot": 2243462,
+        "rank": 3
+      },
+      {
+        "title": "《原神》米提亚角色PV——「小小伎俩」",
+        "url": "https://b23.tv/BV1dAxE6VErW",
+        "hot": 1019656,
+        "rank": 4
+      },
+      {
+        "title": "《胡闹厨房》",
+        "url": "https://b23.tv/BV1Xun96tEjo",
+        "hot": 3415851,
+        "rank": 5
+      },
+      {
+        "title": "贴脸特写，是每个野生动物摄影师的必备技能！",
+        "url": "https://b23.tv/BV16nxg6fE3s",
+        "hot": 3132106,
+        "rank": 6
+      },
+      {
+        "title": "永远和你在一起",
+        "url": "https://b23.tv/BV1hmx56oEPg",
+        "hot": 1232416,
+        "rank": 7
+      },
+      {
+        "title": "【究极佐菲格斗】第五集 危险的雄狮！佐菲机器人 雷欧 泰罗 超兽黑鸽子 黑暗星人巴巴尔 登场",
+        "url": "https://b23.tv/BV1U3x56HE7v",
+        "hot": 1059929,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
