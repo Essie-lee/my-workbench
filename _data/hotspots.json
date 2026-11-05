@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-04T03:31:48.856Z",
+  "updatedAt": "2026-11-05T03:53:32.505Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "大家好，这里是 DeepSeek Harness，正式入驻 B 站！",
+        "url": "https://b23.tv/BV1i24P6rEmt",
+        "hot": 3576781,
+        "rank": 1
+      },
+      {
+        "title": "《崩坏：星穹铁道》即兴巡演PV——「当阿哈来敲门」",
+        "url": "https://b23.tv/BV1XJ4g6WEyL",
+        "hot": 2974188,
+        "rank": 2
+      },
+      {
+        "title": "《原神》角色预告-「米提亚：井井有条」",
+        "url": "https://b23.tv/BV19b4A6PECX",
+        "hot": 1805494,
+        "rank": 3
+      },
+      {
+        "title": "网络热传生物鉴定 第65期",
+        "url": "https://b23.tv/BV18wxY63Erp",
+        "hot": 3335153,
+        "rank": 4
+      },
+      {
+        "title": "【只对你有感觉】|“【恋爱の小曲】”",
+        "url": "https://b23.tv/BV1w5xh6sEEz",
+        "hot": 4795415,
+        "rank": 5
+      },
+      {
+        "title": "【全网最全】DeepSeek Harness超详细教程！50分钟吃透DSH，让SuperAgent给你干活！",
+        "url": "https://b23.tv/BV1REx46NEc4",
+        "hot": 1760837,
+        "rank": 6
+      },
+      {
+        "title": "一条没下巴的鱼杀穿奥陶纪？",
+        "url": "https://b23.tv/BV1Xx4c6tEKM",
+        "hot": 3433114,
+        "rank": 7
+      },
+      {
+        "title": "痛失爱女十周年！",
+        "url": "https://b23.tv/BV1K64A6oEeA",
+        "hot": 600238,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
