@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-06T03:51:42.519Z",
+  "updatedAt": "2026-11-07T03:25:33.031Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -31,51 +31,51 @@
     "weibo": [],
     "bilibili": [
       {
-        "title": "大家好，这里是 DeepSeek Harness，正式入驻 B 站！",
-        "url": "https://b23.tv/BV1i24P6rEmt",
-        "hot": 4021325,
-        "rank": 1
-      },
-      {
         "title": "《崩坏：星穹铁道》即兴巡演PV——「当阿哈来敲门」",
         "url": "https://b23.tv/BV1XJ4g6WEyL",
-        "hot": 3588334,
-        "rank": 2
-      },
-      {
-        "title": "网络热传生物鉴定 第65期",
-        "url": "https://b23.tv/BV18wxY63Erp",
-        "hot": 3871625,
-        "rank": 3
+        "hot": 4069314,
+        "rank": 1
       },
       {
         "title": "【只对你有感觉】|“【恋爱の小曲】”",
         "url": "https://b23.tv/BV1w5xh6sEEz",
-        "hot": 7595594,
-        "rank": 4
-      },
-      {
-        "title": "《原神》角色预告-「米提亚：井井有条」",
-        "url": "https://b23.tv/BV19b4A6PECX",
-        "hot": 1908120,
-        "rank": 5
+        "hot": 12119137,
+        "rank": 2
       },
       {
         "title": "《崩坏：因缘精灵》幸福PV：缘汽一下",
         "url": "https://b23.tv/BV1nm4g6NE71",
-        "hot": 4441963,
-        "rank": 6
+        "hot": 4685093,
+        "rank": 3
       },
       {
         "title": "《这是我儿子？》",
         "url": "https://b23.tv/BV1PF4g6ME26",
-        "hot": 4922064,
+        "hot": 6337666,
+        "rank": 4
+      },
+      {
+        "title": "大家好，这里是 DeepSeek Harness，正式入驻 B 站！",
+        "url": "https://b23.tv/BV1i24P6rEmt",
+        "hot": 4409256,
+        "rank": 5
+      },
+      {
+        "title": "《崩坏：星穹铁道》阿哈的抓马小曲",
+        "url": "https://b23.tv/BV1LHxQ6gELU",
+        "hot": 1513862,
+        "rank": 6
+      },
+      {
+        "title": "只有站对角度，才能看见消失的孩子！",
+        "url": "https://b23.tv/BV1B54G6vEfm",
+        "hot": 5727588,
         "rank": 7
       },
       {
-        "title": "痛失爱女十周年！",
-        "url": "https://b23.tv/BV1K64A6oEeA",
-        "hot": 677906,
+        "title": "瞎说的什么玩意？",
+        "url": "https://b23.tv/BV1ZVxf6ZENs",
+        "hot": 2167640,
         "rank": 8
       }
     ],
