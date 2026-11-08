@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T03:25:33.031Z",
+  "updatedAt": "2026-11-08T02:53:45.482Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "《崩坏：星穹铁道》即兴巡演PV——「当阿哈来敲门」",
-        "url": "https://b23.tv/BV1XJ4g6WEyL",
-        "hot": 4069314,
-        "rank": 1
-      },
-      {
-        "title": "【只对你有感觉】|“【恋爱の小曲】”",
-        "url": "https://b23.tv/BV1w5xh6sEEz",
-        "hot": 12119137,
-        "rank": 2
-      },
-      {
-        "title": "《崩坏：因缘精灵》幸福PV：缘汽一下",
-        "url": "https://b23.tv/BV1nm4g6NE71",
-        "hot": 4685093,
-        "rank": 3
-      },
-      {
-        "title": "《这是我儿子？》",
-        "url": "https://b23.tv/BV1PF4g6ME26",
-        "hot": 6337666,
-        "rank": 4
-      },
-      {
-        "title": "大家好，这里是 DeepSeek Harness，正式入驻 B 站！",
-        "url": "https://b23.tv/BV1i24P6rEmt",
-        "hot": 4409256,
-        "rank": 5
-      },
-      {
-        "title": "《崩坏：星穹铁道》阿哈的抓马小曲",
-        "url": "https://b23.tv/BV1LHxQ6gELU",
-        "hot": 1513862,
-        "rank": 6
-      },
-      {
-        "title": "只有站对角度，才能看见消失的孩子！",
-        "url": "https://b23.tv/BV1B54G6vEfm",
-        "hot": 5727588,
-        "rank": 7
-      },
-      {
-        "title": "瞎说的什么玩意？",
-        "url": "https://b23.tv/BV1ZVxf6ZENs",
-        "hot": 2167640,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
