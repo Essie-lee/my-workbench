@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-11T03:22:04.861Z",
+  "updatedAt": "2026-11-12T04:32:06.817Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "【2026全球总决赛】11月9日 BLG vs T1",
+        "url": "https://b23.tv/BV1TgWp6MEHJ",
+        "hot": 15322723,
+        "rank": 1
+      },
+      {
+        "title": "《崩坏：星穹铁道》动画短片：「月下的欢快葬礼」",
+        "url": "https://b23.tv/BV1gHWg6GEqj",
+        "hot": 2882451,
+        "rank": 2
+      },
+      {
+        "title": "《阴阳师》笼梦祸津神CG丨祸至无日（CV：中野彩麻）",
+        "url": "https://b23.tv/BV1sCWx6GEsH",
+        "hot": 2630381,
+        "rank": 3
+      },
+      {
+        "title": "选举大败特朗普和马斯克这下惨了",
+        "url": "https://b23.tv/BV1WEWs66EBP",
+        "hot": 3559754,
+        "rank": 4
+      },
+      {
+        "title": "如何盗走《蒙娜丽莎》？【硬核狠人92】",
+        "url": "https://b23.tv/BV1i4W86zEUS",
+        "hot": 1812288,
+        "rank": 5
+      },
+      {
+        "title": "耗时5个月，5万元成本，我用AI拍了一部68分钟的原创中国科幻长片《灰蚀危机》【ai全民制作人】",
+        "url": "https://b23.tv/BV18GW76hEdg",
+        "hot": 1245395,
+        "rank": 6
+      },
+      {
+        "title": "当我死去，群山不会震颤，河水不会倒流｜AI长片《汤症》【AI全民制作人】【完整版合集】",
+        "url": "https://b23.tv/BV1vmWJ6LEmW",
+        "hot": 4837083,
+        "rank": 7
+      },
+      {
+        "title": "辽阔的土地生不出狭隘的爱",
+        "url": "https://b23.tv/BV1hrW367Emp",
+        "hot": 2489705,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
