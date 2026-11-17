@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-16T03:24:42.567Z",
+  "updatedAt": "2026-11-17T05:24:30.045Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "【2026全球总决赛】11月15日 GEN vs BLG",
-        "url": "https://b23.tv/BV15es76gEgL",
-        "hot": 23252480,
-        "rank": 1
-      },
-      {
-        "title": "BLG S16夺冠赞歌《仰望星空》",
-        "url": "https://b23.tv/BV14VsJ6aEJd",
-        "hot": 2402575,
-        "rank": 2
-      },
-      {
-        "title": "他真的太优雅了！灰太狼&红太狼【非凡之爱】【AI MV大赛】",
-        "url": "https://b23.tv/BV1aNWm6UEeC",
-        "hot": 14934250,
-        "rank": 3
-      },
-      {
-        "title": "1穿4连斩LCK战队！恭喜BLG，加冕为王！",
-        "url": "https://b23.tv/BV1yvsj6SE6m",
-        "hot": 2466296,
-        "rank": 4
-      },
-      {
-        "title": "根本没有这样的夹子",
-        "url": "https://b23.tv/BV12oWi6VEz7",
-        "hot": 5044392,
-        "rank": 5
-      },
-      {
-        "title": "命运让他们彼此对立，也让他们彼此靠近｜上",
-        "url": "https://b23.tv/BV1jHsp69Ekg",
-        "hot": 1346796,
-        "rank": 6
-      },
-      {
-        "title": "为什么是最后一期？影视飓风1800万粉丝Q&A！",
-        "url": "https://b23.tv/BV1kZWX62ENY",
-        "hot": 6112254,
-        "rank": 7
-      },
-      {
-        "title": "全看过的这辈子有了",
-        "url": "https://b23.tv/BV1rpWe6ZEWn",
-        "hot": 3315962,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
