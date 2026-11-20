@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-19T04:42:28.644Z",
+  "updatedAt": "2026-11-20T04:33:22.103Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "《最礼乐崩坏の一集》",
-        "url": "https://b23.tv/BV1b2sK6aEJ9",
-        "hot": 3408469,
-        "rank": 1
-      },
-      {
-        "title": "“成华大道没有「烂奇迹」”",
-        "url": "https://b23.tv/BV1BDsE67Eom",
-        "hot": 1933091,
-        "rank": 2
-      },
-      {
-        "title": "灭霸金融小课堂：应届生小浣熊的疑惑，什么是五险一金？",
-        "url": "https://b23.tv/BV1JRsw66E1s",
-        "hot": 2349035,
-        "rank": 3
-      },
-      {
-        "title": "THANK YOU ZmjjKK",
-        "url": "https://b23.tv/BV1YWsr6NEs7",
-        "hot": 1746946,
-        "rank": 4
-      },
-      {
-        "title": "“46块3，问清一条规则。”",
-        "url": "https://b23.tv/BV1VBs76qE16",
-        "hot": 6121816,
-        "rank": 5
-      },
-      {
-        "title": "大肥鱼捅穿AZ3？！带着大肥鱼猛攻三角洲是什么感觉？",
-        "url": "https://b23.tv/BV16GsF6hEKf",
-        "hot": 2822795,
-        "rank": 6
-      },
-      {
-        "title": "《哈利波特与死亡火器》",
-        "url": "https://b23.tv/BV1v8sP6vEiq",
-        "hot": 2930366,
-        "rank": 7
-      },
-      {
-        "title": "“他们没有任何血缘关系，但却拥有同一个妈妈.”【Scared play sacred place】【治愈心灵の小曲】",
-        "url": "https://b23.tv/BV12MsK6tEV1",
-        "hot": 3656267,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
