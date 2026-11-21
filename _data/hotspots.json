@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-20T04:33:22.103Z",
+  "updatedAt": "2026-11-21T04:28:37.503Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "【登陆少年】朱志鑫21岁生日特别企划短片《署名》(Signature)",
+        "url": "https://b23.tv/BV13qs46FE9C",
+        "hot": 262936,
+        "rank": 1
+      },
+      {
+        "title": "第一次在B站发视频，求关注！",
+        "url": "https://b23.tv/BV1Z1sA6vEN6",
+        "hot": 1415377,
+        "rank": 2
+      },
+      {
+        "title": "THANK YOU ZmjjKK",
+        "url": "https://b23.tv/BV1YWsr6NEs7",
+        "hot": 2820107,
+        "rank": 3
+      },
+      {
+        "title": "尾随NPC的真实反应",
+        "url": "https://b23.tv/BV1v7s86zE7f",
+        "hot": 4324321,
+        "rank": 4
+      },
+      {
+        "title": "【侠盗猎车手6】4K 最高画质 全网首发 全任务 全剧情流程通关攻略 开放世界冒险游戏 GTA6 - Grand Theft Auto VI",
+        "url": "https://b23.tv/BV1NDsS6UE8D",
+        "hot": 6335705,
+        "rank": 5
+      },
+      {
+        "title": "最败家的一次",
+        "url": "https://b23.tv/BV1p5sm6vEJe",
+        "hot": 2991862,
+        "rank": 6
+      },
+      {
+        "title": "美国总统特朗普：美国不支持“台独”",
+        "url": "https://b23.tv/BV1jQst6BEf2",
+        "hot": 1930292,
+        "rank": 7
+      },
+      {
+        "title": "对不起 欺骗了大家这么久 以后不会了",
+        "url": "https://b23.tv/BV1PXsS67EC3",
+        "hot": 5564096,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
