@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-26T05:39:21.067Z",
+  "updatedAt": "2026-11-27T05:33:08.307Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,56 +29,7 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [
-      {
-        "title": "当我用AI续写爱情公寓4关谷悠悠婚礼【AI全民制作人】",
-        "url": "https://b23.tv/BV1atse6EEfx",
-        "hot": 9988398,
-        "rank": 1
-      },
-      {
-        "title": "你从未见过的硬核开箱视频！",
-        "url": "https://b23.tv/BV1QAypzyE7B",
-        "hot": 1615723,
-        "rank": 2
-      },
-      {
-        "title": "“别人过得好 你就要扣自己的分吗”",
-        "url": "https://b23.tv/BV1oSyJz1EiC",
-        "hot": 3764937,
-        "rank": 3
-      },
-      {
-        "title": "【火影十一年 神临时刻】漩涡鸣人[阳之力]即将登场！",
-        "url": "https://b23.tv/BV1qYyRz5EdM",
-        "hot": 5074738,
-        "rank": 4
-      },
-      {
-        "title": "《绝区零》挽昼角色展示 | 日陨之前",
-        "url": "https://b23.tv/BV1esyZz7ExF",
-        "hot": 1796443,
-        "rank": 5
-      },
-      {
-        "title": "游戏自由度太高也不是什么好事",
-        "url": "https://b23.tv/BV1NzyHzwEKB",
-        "hot": 5252340,
-        "rank": 6
-      },
-      {
-        "title": "我想回家吃饭（两小时大电影）",
-        "url": "https://b23.tv/BV1LoyGzZEX8",
-        "hot": 2858511,
-        "rank": 7
-      },
-      {
-        "title": "考公务员很难，但是为人民服务却很容易！",
-        "url": "https://b23.tv/BV1uyyazBEUA",
-        "hot": 2186940,
-        "rank": 8
-      }
-    ],
+    "bilibili": [],
     "baidu": [],
     "douyin": [
       {
