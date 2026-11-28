@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-27T05:33:08.307Z",
+  "updatedAt": "2026-11-28T05:09:28.275Z",
   "sources": {
     "weibo": {
       "label": "微博热搜",
@@ -29,7 +29,56 @@
   },
   "items": {
     "weibo": [],
-    "bilibili": [],
+    "bilibili": [
+      {
+        "title": "《下一个是谁》第七季（6）",
+        "url": "https://b23.tv/BV15Q1WzRENh",
+        "hot": 1644587,
+        "rank": 1
+      },
+      {
+        "title": "吴 众",
+        "url": "https://b23.tv/BV1xvykzsEPv",
+        "hot": 3036817,
+        "rank": 2
+      },
+      {
+        "title": "“为人民服务”",
+        "url": "https://b23.tv/BV11yyZzeET3",
+        "hot": 1490933,
+        "rank": 3
+      },
+      {
+        "title": "长得帅就要被网爆么?",
+        "url": "https://b23.tv/BV11AyUz6E6h",
+        "hot": 2566582,
+        "rank": 4
+      },
+      {
+        "title": "去了一趟纽约。",
+        "url": "https://b23.tv/BV1tCyzzpEB6",
+        "hot": 3810191,
+        "rank": 5
+      },
+      {
+        "title": "《绝区零》挽昼角色展示 | 日陨之前",
+        "url": "https://b23.tv/BV1esyZz7ExF",
+        "hot": 2979186,
+        "rank": 6
+      },
+      {
+        "title": "“MJ宇宙之最正能量的一集”",
+        "url": "https://b23.tv/BV1euy6zeEDx",
+        "hot": 1968329,
+        "rank": 7
+      },
+      {
+        "title": "《蓝色星原：旅谣》公测版本PV | 星跃始动",
+        "url": "https://b23.tv/BV1UByzzRE4K",
+        "hot": 8028287,
+        "rank": 8
+      }
+    ],
     "baidu": [],
     "douyin": [
       {
